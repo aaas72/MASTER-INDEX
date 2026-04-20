@@ -1,0 +1,133 @@
+{
+  "quick-sort": {
+    "id": "quick-sort",
+    "title": {
+      "ar": "الترتيب السريع",
+      "en": "Quick Sort"
+    },
+    "category": "Sorting",
+    "difficulty": "Intermediate",
+    "complexity": {
+      "time": {
+        "best": "O(n log n)",
+        "average": "O(n log n)",
+        "worst": "O(n^2)"
+      },
+      "space": "O(log n)",
+      "stable": false,
+      "in_place": true,
+      "recursive": true
+    },
+    "content": {
+      "abstract": {
+        "ar": "خوارزمية ترتيب فعالة تعتمد على استراتيجية 'فرق تسد' لتقسيم مصفوفة إلى مصفوفتين فرعيتين، ثم ترتيبهما بشكل مستقل. تشتهر بقدرتها على الترتيب في المكان وأدائها الممتاز في الحالة المتوسطة.",
+        "en": "A highly efficient sorting algorithm that uses a divide-and-conquer strategy to partition an array into two sub-arrays, then sorting them independently. Renowned for its in-place sorting capabilities and average-case performance."
+      },
+      "logic_steps": [
+        {
+          "description_en": "Initial unsorted array.",
+          "description_ar": "المصفوفة الأولية غير المرتبة.",
+          "array_state": [8, 3, 11, 5, 1, 9, 4, 7, 10, 2, 6],
+          "pivot_index": null,
+          "partition_range": [0, 10]
+        },
+        {
+          "description_en": "Select pivot (6) and partition the array.",
+          "description_ar": "اختيار المحور (6) وتقسيم المصفوفة.",
+          "array_state": [3, 5, 1, 4, 2, 6, 8, 9, 7, 11, 10],
+          "pivot_index": 5,
+          "partition_range": [0, 10]
+        },
+        {
+          "description_en": "Recursively sort the left sub-array.",
+          "description_ar": "ترتيب المصفوفة الفرعية اليسرى بشكل تعاودي.",
+          "array_state": [1, 2, 3, 4, 5, 6, 8, 9, 7, 11, 10],
+          "pivot_index": 2,
+          "partition_range": [0, 4]
+        },
+        {
+          "description_en": "Recursively sort the right sub-array.",
+          "description_ar": "ترتيب المصفوفة الفرعية اليمنى بشكل تعاودي.",
+          "array_state": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+          "pivot_index": 8,
+          "partition_range": [6, 10]
+        },
+        {
+          "description_en": "Final sorted array.",
+          "description_ar": "المصفوفة النهائية المرتبة.",
+          "array_state": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+          "pivot_index": null,
+          "partition_range": null
+        }
+      ],
+      "proof_latex": "T(n) = 2T(n/2) + \\Theta(n)"
+    },
+    "code": [
+      {
+        "language": "python",
+        "snippet": "def quick_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    pivot = arr[len(arr) // 2]\n    left = [x for x in arr if x < pivot]\n    middle = [x for x in arr if x == pivot]\n    right = [x for x in arr if x > pivot]\n    return quick_sort(left) + middle + quick_sort(right)",
+        "github_url": "https://github.com/example/repo/blob/main/quick_sort.py"
+      }
+    ],
+    "benchmarks": [
+      {
+        "input_size": 1000000,
+        "execution_time_ms": 150,
+        "environment_specs": "Intel i7-11800H, 32GB RAM"
+      },
+      {
+        "input_size": 10000000,
+        "execution_time_ms": 1800,
+        "environment_specs": "Intel i7-11800H, 32GB RAM"
+      }
+    ]
+  },
+  "a-star": {
+    "id": "a-star",
+    "title": {
+      "ar": "خوارزمية A*",
+      "en": "A* Search"
+    },
+    "category": "Graph",
+    "difficulty": "Advanced",
+    "complexity": {
+      "time": {
+        "best": "O(E)",
+        "average": "O(E log V)",
+        "worst": "O(E log V)"
+      },
+      "space": "O(V)",
+      "stable": true,
+      "in_place": false,
+      "recursive": false
+    },
+    "content": {
+      "abstract": {
+        "ar": "خوارزمية بحث تستخدم في إيجاد أقصر مسار بين نقطتين في رسم بياني. تتميز باستخدامها لدالة 'heuristic' لتقدير المسار الأمثل.",
+        "en": "A graph traversal and path search algorithm, which is often used in many fields of computer science due to its completeness, optimality, and optimal efficiency."
+      },
+      "logic_steps": [
+        "INITIALIZE_OPEN_SET",
+        "LOOP_UNTIL_OPEN_SET_EMPTY",
+        "GET_NODE_WITH_LOWEST_F_SCORE",
+        "CHECK_IF_GOAL",
+        "EVALUATE_NEIGHBORS"
+      ],
+      "proof_latex": "f(n) = g(n) + h(n)"
+    },
+    "code": [
+      {
+        "language": "python",
+        "snippet": "# A* implementation in Python\n# ... (code snippet) ...",
+        "github_url": "https://github.com/example/repo/blob/main/a_star.py"
+      }
+    ],
+    "benchmarks": [
+      {
+        "input_size": 5000,
+        "execution_time_ms": 80,
+        "environment_specs": "Intel i7-11800H, 32GB RAM"
+      }
+    ]
+  }
+}

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>THE HUB | Master Index</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&amp;family=IBM+Plex+Serif:ital@0;1&amp;family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#525c89",
+                        "on-error-container": "#93000a",
+                        "surface-container": "#ebeef2",
+                        "on-surface-variant": "#444653",
+                        "on-secondary-fixed": "#0d1842",
+                        "primary-fixed": "#dde1ff",
+                        "on-tertiary": "#ffffff",
+                        "tertiary-fixed": "#ffdad2",
+                        "tertiary": "#530c00",
+                        "tertiary-container": "#7a1801",
+                        "on-primary-fixed-variant": "#1439af",
+                        "surface-container-high": "#e5e8ec",
+                        "secondary-container": "#c0c9fd",
+                        "primary": "#001e73",
+                        "outline-variant": "#c4c5d6",
+                        "on-tertiary-fixed": "#3d0700",
+                        "surface-variant": "#e0e3e7",
+                        "surface-container-highest": "#e0e3e7",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#2d3134",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001355",
+                        "surface-tint": "#3654c8",
+                        "on-tertiary-container": "#ff876a",
+                        "background": "#f7fafe",
+                        "secondary-fixed": "#dde1ff",
+                        "surface-bright": "#f7fafe",
+                        "secondary-fixed-dim": "#bac4f8",
+                        "on-primary-container": "#90a4ff",
+                        "tertiary-fixed-dim": "#ffb4a3",
+                        "primary-fixed-dim": "#b8c4ff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-container": "#4a5480",
+                        "on-background": "#181c1f",
+                        "inverse-on-surface": "#eef1f5",
+                        "surface-container-low": "#f1f4f8",
+                        "primary-container": "#002fa7",
+                        "on-surface": "#181c1f",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#3a4470",
+                        "on-primary": "#ffffff",
+                        "surface-dim": "#d7dade",
+                        "on-tertiary-fixed-variant": "#872108",
+                        "inverse-primary": "#b8c4ff",
+                        "outline": "#757685",
+                        "error": "#ba1a1a",
+                        "surface": "#f7fafe"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    "fontFamily": {
+                        "headline": ["IBM Plex Sans", "sans-serif"],
+                        "body": ["IBM Plex Serif", "serif"],
+                        "label": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'IBM Plex Serif', serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .font-sans { font-family: 'IBM Plex Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .custom-shadow { box-shadow: 0 20px 40px rgba(0, 30, 115, 0.06); }
+    
+        /* Hero Animation Styles */
+        .hero-canvas-container {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #ffffff 0%, #f7fafe 100%);
+            z-index: 0;
+        }
+
+        .data-stream {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: rgba(0, 47, 167, 0.15);
+            white-space: nowrap;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        @keyframes tree-expand {
+            0%, 100% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.05); opacity: 0.4; }
+        }
+
+        @keyframes path-draw {
+            0% { stroke-dashoffset: 1000; opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { stroke-dashoffset: 0; opacity: 0.1; }
+        }
+
+        @keyframes node-pulse {
+            0%, 100% { r: 4; opacity: 0.4; }
+            50% { r: 6; opacity: 0.8; }
+        }
+
+        .tree-node {
+            animation: node-pulse 4s ease-in-out infinite;
+        }
+
+        .tree-edge {
+            stroke-dasharray: 1000;
+            animation: path-draw 10s linear infinite;
+        }
+
+        .tree-container {
+            animation: tree-expand 20s ease-in-out infinite;
+            transform-origin: center;
+        }
+
+        .binary-cell {
+            transition: opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface overflow-x-hidden">
+<!-- TopAppBar from JSON -->
+<header class="fixed top-0 w-full z-50 bg-[#ffffff] border-none flex justify-between items-center px-6 py-4">
+<div class="flex items-center gap-8">
+<h1 class="text-2xl font-bold tracking-tighter text-black uppercase font-sans">THE HUB</h1>
+<nav class="hidden md:flex gap-6">
+<a class="text-[#002FA7] font-bold border-b-2 border-[#002FA7] transition-all duration-100 font-sans text-sm tracking-tight" href="#">INDEX</a>
+<a class="text-slate-500 hover:text-black transition-colors duration-150 font-sans text-sm tracking-tight" href="#">LABORATORY</a>
+<a class="text-slate-500 hover:text-black transition-colors duration-150 font-sans text-sm tracking-tight" href="#">DOCUMENTATION</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden lg:flex items-center bg-surface-container-low px-3 py-1.5 border-b border-outline-variant">
+<span class="material-symbols-outlined text-sm text-outline mr-2" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-xs font-mono w-48 p-0" placeholder="Quick Search (Cmd+K)" type="text"/>
+</div>
+<span class="material-symbols-outlined text-slate-500 hover:bg-[#f1f4f8] p-2 transition-colors duration-150 cursor-pointer" data-icon="account_circle">account_circle</span>
+<span class="material-symbols-outlined text-slate-500 hover:bg-[#f1f4f8] p-2 transition-colors duration-150 cursor-pointer" data-icon="help_outline">help_outline</span>
+<button class="bg-primary-container text-white px-4 py-2 text-xs font-sans font-bold uppercase tracking-widest hover:opacity-80 transition-all">Query</button>
+</div>
+</header>
+<!-- SideNavBar from JSON -->
+<aside class="fixed left-0 top-0 h-full w-64 bg-[#f7fafe] z-40 flex flex-col p-0 pt-20 border-r-0">
+<div class="px-6 py-8 mb-4">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-8 bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm" data-icon="terminal">terminal</span>
+</div>
+<div class="flex flex-col">
+<span class="text-lg font-bold text-black uppercase font-sans">MASTER INDEX</span>
+<span class="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">LIBRARIAN GUIDE</span>
+</div>
+</div>
+</div>
+<nav class="flex-grow">
+<!-- Active: Categories -->
+<a class="flex items-center px-6 py-4 bg-[#002FA7] text-white font-mono translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="category">category</span>
+<span class="text-xs uppercase tracking-widest">Categories</span>
+</a>
+<a class="flex items-center px-6 py-4 text-slate-600 font-mono hover:bg-[#e0e3e7] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="compare_arrows">compare_arrows</span>
+<span class="text-xs uppercase tracking-widest">Versus Hub</span>
+</a>
+<a class="flex items-center px-6 py-4 text-slate-600 font-mono hover:bg-[#e0e3e7] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="terminal">terminal</span>
+<span class="text-xs uppercase tracking-widest">Algorithms</span>
+</a>
+<a class="flex items-center px-6 py-4 text-slate-600 font-mono hover:bg-[#e0e3e7] transition-colors duration-150" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="inventory_2">inventory_2</span>
+<span class="text-xs uppercase tracking-widest">Archives</span>
+</a>
+<a class="flex items-center px-6 py-4 text-slate-600 font-mono hover:bg-[#e0e3e7] transition-colors duration-150 mt-auto" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="settings">settings</span>
+<span class="text-xs uppercase tracking-widest">Settings</span>
+</a>
+</nav>
+<div class="p-6">
+<button class="w-full border border-[#002FA7] text-[#002FA7] py-3 text-xs font-mono uppercase tracking-widest hover:bg-[#002FA7] hover:text-white transition-all">New Entry</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-16 min-h-screen">
+<!-- Interface Hero Section -->
+<section class="bg-surface-container-lowest py-32 flex flex-col border-b border-surface-container relative overflow-hidden">
+<!-- New Prominent Background Animation -->
+<div class="hero-canvas-container">
+<svg class="w-full h-full opacity-30" viewbox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+<g class="tree-container">
+<!-- Level 0: Root -->
+<circle class="tree-node" cx="500" cy="100" fill="#002FA7" r="6"></circle>
+<!-- Level 1 -->
+<path class="tree-edge" d="M500,100 L300,200" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M500,100 L700,200" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<circle class="tree-node" cx="300" cy="200" fill="#002FA7" r="4" style="animation-delay: -1s"></circle>
+<circle class="tree-node" cx="700" cy="200" fill="#002FA7" r="4" style="animation-delay: -1.5s"></circle>
+<!-- Level 2 -->
+<path class="tree-edge" d="M300,200 L150,350" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M300,200 L450,350" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M700,200 L600,350" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M700,200 L850,350" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<circle class="tree-node" cx="150" cy="350" fill="#002FA7" r="3" style="animation-delay: -2s"></circle>
+<circle class="tree-node" cx="450" cy="350" fill="#002FA7" r="3" style="animation-delay: -2.5s"></circle>
+<circle class="tree-node" cx="600" cy="350" fill="#002FA7" r="3" style="animation-delay: -3s"></circle>
+<circle class="tree-node" cx="850" cy="350" fill="#002FA7" r="3" style="animation-delay: -3.5s"></circle>
+<!-- Level 3: Expanding Leaves -->
+<path class="tree-edge" d="M150,350 L80,500" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M150,350 L220,500" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M450,350 L400,500" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M600,350 L650,500" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<path class="tree-edge" d="M850,350 L920,500" fill="none" stroke="#002FA7" stroke-width="1"></path>
+<circle class="tree-node" cx="80" cy="500" fill="#002FA7" r="2" style="animation-delay: -4s"></circle>
+<circle class="tree-node" cx="220" cy="500" fill="#002FA7" r="2" style="animation-delay: -4.5s"></circle>
+<circle class="tree-node" cx="400" cy="500" fill="#002FA7" r="2" style="animation-delay: -5s"></circle>
+<circle class="tree-node" cx="650" cy="500" fill="#002FA7" r="2" style="animation-delay: -5.5s"></circle>
+<circle class="tree-node" cx="920" cy="500" fill="#002FA7" r="2" style="animation-delay: -6s"></circle>
+</g>
+</svg>
+<!-- Shifting Data Columns -->
+<div class="data-stream" style="top: 10%; left: 5%;">01011001 11001010 01110101</div>
+<div class="data-stream" style="top: 15%; right: 10%;">TREE_TRAVERSAL_RUNNING</div>
+<div class="data-stream" style="bottom: 20%; left: 8%;">NODE_EXPANSION_STABLE</div>
+<div class="data-stream" style="bottom: 10%; right: 15%;">MEMORY_GRAPH_INIT_v4.2</div>
+</div>
+<div class="max-w-[1280px] w-full mx-auto px-12">
+<div class="max-w-3xl w-full relative z-10 text-left">
+<span class="text-[#002FA7] font-mono text-xs uppercase tracking-[0.3em] mb-4 block">The Librarian Guide</span>
+<h2 class="text-5xl md:text-7xl font-sans font-extrabold text-black tracking-tighter leading-[0.95] mb-12">Search the Global Algorithm Repository.</h2>
+<div class="relative w-full group">
+<div class="absolute inset-y-0 left-6 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-primary-container text-2xl" data-icon="manage_search">manage_search</span>
+</div>
+<input class="w-full bg-white/90 backdrop-blur-sm border-none border-b-2 border-outline-variant focus:border-primary-container focus:ring-0 px-16 py-8 text-xl font-body italic placeholder:text-slate-400 custom-shadow transition-all" placeholder="Type an algorithm, complexity, or category..." type="text"/>
+<div class="absolute inset-y-0 right-6 flex items-center space-x-2">
+<kbd class="hidden md:inline-flex items-center px-2 py-1 font-mono text-[10px] text-slate-400 bg-white border border-outline-variant">⌘</kbd>
+<kbd class="hidden md:inline-flex items-center px-2 py-1 font-mono text-[10px] text-slate-400 bg-white border border-outline-variant">K</kbd>
+</div>
+</div>
+<div class="mt-8 flex justify-between items-center">
+<p class="font-mono text-xs text-slate-500 uppercase tracking-widest">
+                        Showing <span class="text-[#002FA7] font-bold">[72]</span> Algorithms across <span class="text-[#002FA7] font-bold">[8]</span> Categories
+                    </p>
+<div class="flex gap-4">
+<span class="px-3 py-1 bg-surface-container-high font-mono text-[10px] text-primary uppercase">Trending: Dijkstra</span>
+<span class="px-3 py-1 bg-surface-container-high font-mono text-[10px] text-primary uppercase">New: Bloom Filters</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Master Index Table Section -->
+<section class="py-12">
+<div class="max-w-[1280px] w-full mx-auto px-12">
+<div class="flex justify-between items-end mb-12">
+<div class="max-w-xl">
+<h3 class="font-sans font-bold text-2xl uppercase tracking-tight text-black mb-2">Master Index</h3>
+<p class="text-on-surface-variant font-body text-lg">A comprehensive ledger of computational procedures, categorized by operational intent and architectural lineage.</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="filter_list">filter_list</span>
+</button>
+<button class="p-2 border border-outline-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="download">download</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="text-left bg-surface-container-low">
+<th class="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">Algorithm Name</th>
+<th class="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">Category</th>
+<th class="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">Time Complexity</th>
+<th class="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">Space Complexity</th>
+<th class="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">Status</th>
+<th class="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">Ref</th>
+</tr>
+</thead>
+<tbody class="divide-y-0">
+<!-- Row 1 -->
+<tr class="group hover:bg-surface-container-lowest transition-colors border-b border-surface-container-low">
+<td class="px-6 py-8">
+<span class="font-sans font-bold text-lg text-black block">A* Search</span>
+<span class="font-mono text-[10px] text-slate-400 uppercase">Pathfinding • Heuristic</span>
+</td>
+<td class="px-6 py-8">
+<span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-mono font-bold uppercase">Graph Theory</span>
+</td>
+<td class="px-6 py-8">
+<code class="font-mono text-sm font-bold text-[#002FA7]">O(E log V)</code>
+</td>
+<td class="px-6 py-8">
+<code class="font-mono text-sm text-slate-600">O(V)</code>
+</td>
+<td class="px-6 py-8">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-green-500"></div>
+<span class="font-mono text-[10px] uppercase tracking-tighter">Code Ready</span>
+</div>
+</td>
+<td class="px-6 py-8">
+<span class="material-symbols-outlined text-slate-300 group-hover:text-[#002FA7] cursor-pointer" data-icon="arrow_outward">arrow_outward</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-surface-container-lowest transition-colors border-b border-surface-container-low">
+<td class="px-6 py-8">
+<span class="font-sans font-bold text-lg text-black block">QuickSort (Dual-Pivot)</span>
+<span class="font-mono text-[10px] text-slate-400 uppercase">Divide &amp; Conquer • Sorting</span>
+</td>
+<td class="px-6 py-8">
+<span class="px-3 py-1 bg-surface-container-high text-slate-600 text-[10px] font-mono font-bold uppercase">Base Sorts</span>
+</td>
+<td class="px-6 py-8">
+<code class="font-mono text-sm font-bold text-[#002FA7]">O(n log n)</code>
+</td>
+<td class="px-6 py-8">
+<code class="font-mono text-sm text-slate-600">O(log n)</code>
+</td>
+<td class="px-6 py-8">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-purple-500"></div>
+<span class="font-mono text-[10px] uppercase tracking-tighter">Simulation</span>
+</div>
+</td>
+<td class="px-6 py-8">
+<span class="material-symbols-outlined text-slate-300 group-hover:text-[#002FA7] cursor-pointer" data-icon="arrow_outward">arrow_outward</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-surface-container-lowest transition-colors border-b border-surface-container-low">
+<td class="px-6 py-8">
+<span class="font-sans font-bold text-lg text-black block">Bellman-Ford</span>
+<span class="font-mono text-[10px] text-slate-400 uppercase">Dynamic Programming • Optimization</span>
+</td>
+<td class="px-6 py-8">
+<span class="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-mono font-bold uppercase">Graph Theory</span>
+</td>
+<td class="px-6 py-8">
+<code class="font-mono text-sm font-bold text-[#002FA7]">O(VE)</code>
+</td>
+<td class="px-6 py-8">
+<code class="font-mono text-sm text-slate-600">O(V)</code>
+</td>
+<td class="px-6 py-8">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-[#002FA7]"></div>
+<span class="font-mono text-[10px] uppercase tracking-tighter">Researching</span>
+</div>
+</td>
+<td class="px-6 py-8">
+<span class="material-symbols-outlined text-slate-300 group-hover:text-[#002FA7] cursor-pointer" data-icon="arrow_outward">arrow_outward</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Versus Hub Section -->
+<section class="py-24 bg-surface-container-low">
+<div class="max-w-[1280px] w-full mx-auto px-12">
+<div class="mb-16 text-left border-l-4 border-[#002FA7] pl-8">
+<h3 class="font-sans font-extrabold text-4xl uppercase tracking-tighter text-black mb-2">Versus Hub</h3>
+<p class="font-mono text-xs text-slate-500 uppercase tracking-widest">Head-to-head performance benchmarks in varied theoretical constraints.</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- Dual Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-1 flex flex-col custom-shadow">
+<div class="flex h-64">
+<div class="w-1/2 p-8 border-r border-outline-variant flex flex-col justify-between">
+<div>
+<span class="font-mono text-[10px] text-slate-400 uppercase block mb-2">Challenger A</span>
+<h4 class="font-sans font-bold text-2xl text-black">Merge Sort</h4>
+</div>
+<p class="text-xs font-body italic text-on-surface-variant">Stable sorting with guaranteed logarithmic performance.</p>
+</div>
+<div class="w-1/2 p-8 bg-[#002FA7] text-white flex flex-col justify-between relative overflow-hidden">
+<div>
+<span class="font-mono text-[10px] opacity-60 uppercase block mb-2">Challenger B</span>
+<h4 class="font-sans font-bold text-2xl">Quick Sort</h4>
+</div>
+<div class="absolute -right-4 -bottom-4 rotate-12 opacity-10">
+<span class="material-symbols-outlined text-9xl" data-icon="bolt">bolt</span>
+</div>
+<div class="z-10 flex justify-between items-end">
+<span class="bg-white text-[#002FA7] px-3 py-1 font-mono text-[10px] font-bold uppercase">Winner: Speed</span>
+<span class="material-symbols-outlined" data-icon="military_tech">military_tech</span>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-outline-variant flex justify-between items-center">
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="font-mono text-[8px] uppercase text-slate-400">Context</span>
+<span class="font-mono text-xs font-bold text-black">Random Large Array</span>
+</div>
+<div class="flex flex-col">
+<span class="font-mono text-[8px] uppercase text-slate-400">Latency</span>
+<span class="font-mono text-xs font-bold text-[#002FA7]">-14.2%</span>
+</div>
+</div>
+<button class="text-[10px] font-mono uppercase tracking-widest font-bold text-[#002FA7] border-b-2 border-[#002FA7]">View Breakdown</button>
+</div>
+</div>
+<!-- Dual Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant p-1 flex flex-col custom-shadow">
+<div class="flex h-64">
+<div class="w-1/2 p-8 border-r border-outline-variant flex flex-col justify-between bg-surface-container-high">
+<div>
+<span class="font-mono text-[10px] text-slate-400 uppercase block mb-2">Challenger A</span>
+<h4 class="font-sans font-bold text-2xl text-black">DFS</h4>
+</div>
+<p class="text-xs font-body italic text-on-surface-variant">Recursive traversal optimizing for depth first.</p>
+</div>
+<div class="w-1/2 p-8 flex flex-col justify-between relative">
+<div class="absolute top-4 right-4">
+<span class="px-2 py-1 bg-tertiary-fixed text-tertiary font-mono text-[8px] uppercase font-bold">Recommended</span>
+</div>
+<div>
+<span class="font-mono text-[10px] text-slate-400 uppercase block mb-2">Challenger B</span>
+<h4 class="font-sans font-bold text-2xl text-black">BFS</h4>
+</div>
+<div class="flex justify-between items-end">
+<span class="bg-[#002FA7] text-white px-3 py-1 font-mono text-[10px] font-bold uppercase">Winner: Shortest Path</span>
+<span class="material-symbols-outlined text-slate-300" data-icon="compare_arrows">compare_arrows</span>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-outline-variant flex justify-between items-center">
+<div class="flex gap-4">
+<div class="flex flex-col">
+<span class="font-mono text-[8px] uppercase text-slate-400">Context</span>
+<span class="font-mono text-xs font-bold text-black">Unweighted Graph</span>
+</div>
+<div class="flex flex-col">
+<span class="font-mono text-[8px] uppercase text-slate-400">Reliability</span>
+<span class="font-mono text-xs font-bold text-green-600">100%</span>
+</div>
+</div>
+<button class="text-[10px] font-mono uppercase tracking-widest font-bold text-[#002FA7] border-b-2 border-[#002FA7]">View Breakdown</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Informational Footer Asymmetry -->
+<footer class="py-12 border-t border-surface-container bg-white">
+<div class="max-w-[1280px] w-full mx-auto px-12 grid grid-cols-1 md:grid-cols-4 gap-12">
+<div class="col-span-2">
+<h4 class="font-sans font-bold text-lg uppercase tracking-tight mb-4">The Neo-Formalist Archive</h4>
+<p class="font-body text-on-surface-variant leading-relaxed max-w-md">
+                    This index is maintained as a digital artifact of high-performance computing history. Each entry is rigorously peer-reviewed by the Librarian Guide AI for complexity accuracy and implementation integrity.
+                </p>
+<div class="mt-8 flex gap-8">
+<div>
+<span class="block font-mono text-[10px] text-slate-400 uppercase">Version</span>
+<span class="font-mono text-xs font-bold">4.2.0-STABLE</span>
+</div>
+<div>
+<span class="block font-mono text-[10px] text-slate-400 uppercase">Last Sync</span>
+<span class="font-mono text-xs font-bold">2023.10.24 // 14:00 UTC</span>
+</div>
+</div>
+</div>
+<div>
+<h5 class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7] mb-6">Taxonomy</h5>
+<ul class="space-y-4 font-sans text-sm font-bold text-black uppercase tracking-tight">
+<li><a class="hover:text-[#002FA7] transition-colors" href="#">Heuristic Search</a></li>
+<li><a class="hover:text-[#002FA7] transition-colors" href="#">Stochastic Logic</a></li>
+<li><a class="hover:text-[#002FA7] transition-colors" href="#">Memory Layouts</a></li>
+<li><a class="hover:text-[#002FA7] transition-colors" href="#">Linear Systems</a></li>
+</ul>
+</div>
+<div>
+<h5 class="font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7] mb-6">Terminal</h5>
+<ul class="space-y-4 font-mono text-[10px] uppercase text-slate-500">
+<li><a class="hover:text-black transition-colors" href="#">ssh root@the-hub.io</a></li>
+<li><a class="hover:text-black transition-colors" href="#">man algorithms</a></li>
+<li><a class="hover:text-black transition-colors" href="#">grep -r "complexity"</a></li>
+<li><a class="hover:text-black transition-colors" href="#">exit(0)</a></li>
+</ul>
+</div>
+</div>
+</footer>
+</main>
+<!-- FAB -->
+<div class="fixed bottom-8 right-8 z-50">
+<button class="bg-primary-container text-white w-14 h-14 flex items-center justify-center custom-shadow hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+</div>
+<script>
+        // Simple logic to randomize some binary data in the background
+        const streams = document.querySelectorAll('.data-stream');
+        setInterval(() => {
+            streams.forEach(stream => {
+                if(Math.random() > 0.7) {
+                    let text = stream.innerText;
+                    if(text.includes('0') || text.includes('1')) {
+                        stream.innerText = text.split('').map(char => (char === '0' || char === '1') ? (Math.random() > 0.5 ? '1' : '0') : char).join('');
+                    }
+                }
+            });
+        }, 150);
+    </script>
+</body></html>

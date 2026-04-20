@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .hero-canvas-container {
+    @apply absolute inset-0 overflow-hidden z-0;
+    background: radial-gradient(circle at center, #ffffff 0%, #f7fafe 100%);
+  }
+
+  .data-stream {
+    @apply absolute font-mono text-[10px] whitespace-nowrap select-none pointer-events-none;
+    color: rgba(0, 47, 167, 0.15);
+  }
+
+  .tree-node {
+    @apply animate-node-pulse;
+  }
+
+  .tree-edge {
+    stroke-dasharray: 1000;
+    @apply animate-path-draw;
+  }
+
+  .tree-container {
+    transform-origin: center;
+    @apply animate-tree-expand;
+  }
+
+  .binary-cell {
+    @apply transition-opacity duration-500 ease-in-out;
+  }
+}
