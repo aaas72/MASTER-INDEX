@@ -1,5 +1,5 @@
-import Sidebar from "@/components/Sidebar";
-import MasterIndex from "@/components/MasterIndex";
+import { Sidebar } from "@/components/shared";
+import { MasterIndex } from "@/components/algorithms";
 
 export default function AlgorithmsPage() {
   return (

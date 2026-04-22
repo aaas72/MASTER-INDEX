@@ -1,45 +1,44 @@
 export default function VersusHub() {
   return (
-    <section className="py-24 bg-surface-container-low">
-      <div className="max-w-[1280px] w-full mx-auto px-12">
-        <div className="mb-16 text-left border-l-4 border-[#002FA7] pl-8">
-          <h3 className="font-sans font-extrabold text-4xl uppercase tracking-tighter text-black mb-2">
+    <section className="bg-surface-container-low py-24">
+      <div className="mx-auto w-full max-w-[1280px] px-12">
+        <div className="mb-16 border-l-4 border-[#002FA7] pl-8 text-left">
+          <h3 className="mb-2 font-sans text-4xl font-extrabold uppercase tracking-tighter text-black">
             Versus Hub
           </h3>
-          <p className="font-mono text-xs text-slate-500 uppercase tracking-widest">
+          <p className="font-mono text-xs uppercase tracking-widest text-slate-500">
             Head-to-head performance benchmarks in varied theoretical constraints.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Dual Card 1 */}
-          <div className="bg-surface-container-lowest border border-outline-variant p-1 flex flex-col shadow-custom">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+          <div className="flex flex-col border border-outline-variant bg-surface-container-lowest p-1 shadow-custom">
             <div className="flex h-64">
-              <div className="w-1/2 p-8 border-r border-outline-variant flex flex-col justify-between">
+              <div className="flex w-1/2 flex-col justify-between border-r border-outline-variant p-8">
                 <div>
-                  <span className="font-mono text-[10px] text-slate-400 uppercase block mb-2">
+                  <span className="mb-2 block font-mono text-[10px] uppercase text-slate-400">
                     Challenger A
                   </span>
-                  <h4 className="font-sans font-bold text-2xl text-black">
+                  <h4 className="font-sans text-2xl font-bold text-black">
                     Merge Sort
                   </h4>
                 </div>
-                <p className="text-xs font-body italic text-on-surface-variant">
+                <p className="font-body text-xs italic text-on-surface-variant">
                   Stable sorting with guaranteed logarithmic performance.
                 </p>
               </div>
-              <div className="w-1/2 p-8 bg-[#002FA7] text-white flex flex-col justify-between relative overflow-hidden">
+              <div className="relative flex w-1/2 flex-col justify-between overflow-hidden bg-[#002FA7] p-8 text-white">
                 <div>
-                  <span className="font-mono text-[10px] opacity-60 uppercase block mb-2">
+                  <span className="mb-2 block font-mono text-[10px] uppercase opacity-60">
                     Challenger B
                   </span>
-                  <h4 className="font-sans font-bold text-2xl">Quick Sort</h4>
+                  <h4 className="font-sans text-2xl font-bold">Quick Sort</h4>
                 </div>
                 <div className="absolute -right-4 -bottom-4 rotate-12 opacity-10">
                   <span className="material-symbols-outlined text-9xl">bolt</span>
                 </div>
-                <div className="z-10 flex justify-between items-end">
-                  <span className="bg-white text-[#002FA7] px-3 py-1 font-mono text-[10px] font-bold uppercase">
+                <div className="z-10 flex items-end justify-between">
+                  <span className="bg-white px-3 py-1 font-mono text-[10px] font-bold uppercase text-[#002FA7]">
                     Winner: Speed
                   </span>
                   <span className="material-symbols-outlined">
@@ -48,7 +47,7 @@ export default function VersusHub() {
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-outline-variant flex justify-between items-center">
+            <div className="flex items-center justify-between border-t border-outline-variant p-6">
               <div className="flex gap-4">
                 <div className="flex flex-col">
                   <span className="font-mono text-[8px] uppercase text-slate-400">
@@ -67,44 +66,43 @@ export default function VersusHub() {
                   </span>
                 </div>
               </div>
-              <button className="text-[10px] font-mono uppercase tracking-widest font-bold text-[#002FA7] border-b-2 border-[#002FA7]">
+              <button className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
                 View Breakdown
               </button>
             </div>
           </div>
 
-          {/* Dual Card 2 */}
-          <div className="bg-surface-container-lowest border border-outline-variant p-1 flex flex-col shadow-custom">
+          <div className="flex flex-col border border-outline-variant bg-surface-container-lowest p-1 shadow-custom">
             <div className="flex h-64">
-              <div className="w-1/2 p-8 border-r border-outline-variant flex flex-col justify-between bg-surface-container-high">
+              <div className="flex w-1/2 flex-col justify-between border-r border-outline-variant bg-surface-container-high p-8">
                 <div>
-                  <span className="font-mono text-[10px] text-slate-400 uppercase block mb-2">
+                  <span className="mb-2 block font-mono text-[10px] uppercase text-slate-400">
                     Challenger A
                   </span>
-                  <h4 className="font-sans font-bold text-2xl text-black">
+                  <h4 className="font-sans text-2xl font-bold text-black">
                     DFS
                   </h4>
                 </div>
-                <p className="text-xs font-body italic text-on-surface-variant">
+                <p className="font-body text-xs italic text-on-surface-variant">
                   Recursive traversal optimizing for depth first.
                 </p>
               </div>
-              <div className="w-1/2 p-8 flex flex-col justify-between relative">
+              <div className="relative flex w-1/2 flex-col justify-between p-8">
                 <div className="absolute top-4 right-4">
-                  <span className="px-2 py-1 bg-tertiary-fixed text-tertiary font-mono text-[8px] uppercase font-bold">
+                  <span className="bg-tertiary-fixed px-2 py-1 font-mono text-[8px] font-bold uppercase text-tertiary">
                     Recommended
                   </span>
                 </div>
                 <div>
-                  <span className="font-mono text-[10px] text-slate-400 uppercase block mb-2">
+                  <span className="mb-2 block font-mono text-[10px] uppercase text-slate-400">
                     Challenger B
                   </span>
-                  <h4 className="font-sans font-bold text-2xl text-black">
+                  <h4 className="font-sans text-2xl font-bold text-black">
                     BFS
                   </h4>
                 </div>
-                <div className="flex justify-between items-end">
-                  <span className="bg-[#002FA7] text-white px-3 py-1 font-mono text-[10px] font-bold uppercase">
+                <div className="flex items-end justify-between">
+                  <span className="bg-[#002FA7] px-3 py-1 font-mono text-[10px] font-bold uppercase text-white">
                     Winner: Shortest Path
                   </span>
                   <span className="material-symbols-outlined text-slate-300">
@@ -113,7 +111,7 @@ export default function VersusHub() {
                 </div>
               </div>
             </div>
-            <div className="p-6 border-t border-outline-variant flex justify-between items-center">
+            <div className="flex items-center justify-between border-t border-outline-variant p-6">
               <div className="flex gap-4">
                 <div className="flex flex-col">
                   <span className="font-mono text-[8px] uppercase text-slate-400">
@@ -132,7 +130,7 @@ export default function VersusHub() {
                   </span>
                 </div>
               </div>
-              <button className="text-[10px] font-mono uppercase tracking-widest font-bold text-[#002FA7] border-b-2 border-[#002FA7]">
+              <button className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
                 View Breakdown
               </button>
             </div>

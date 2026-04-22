@@ -1,8 +1,6 @@
-import Hero from "@/components/Hero";
-import MasterIndex from "@/components/MasterIndex";
-import VersusHub from "@/components/VersusHub";
-import Footer from "@/components/Footer";
-import Sidebar from "@/components/Sidebar";
+import { Hero, VersusHub } from "@/components/home";
+import { MasterIndex } from "@/components/algorithms";
+import { Footer, Sidebar } from "@/components/shared";
 
 export default function Home() {
   return (

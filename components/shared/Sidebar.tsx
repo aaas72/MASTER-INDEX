@@ -15,7 +15,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-60 bg-[#f7fafe] z-40 flex flex-col p-0 pt-20 border-r border-outline-variant/20">
+    <aside className="fixed left-0 top-0 z-40 flex h-full w-60 flex-col border-r border-outline-variant/20 bg-[#f7fafe] p-0 pt-20">
       <div className="px-6 py-8 mb-4">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-8 h-8 bg-primary-container flex items-center justify-center">

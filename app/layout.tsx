@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header";
-import Fab from "@/components/Fab";
+import { Header, Fab } from "@/components/shared";
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],

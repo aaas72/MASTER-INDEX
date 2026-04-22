@@ -1,6 +1,6 @@
 // app/archive/page.tsx
-import ArchiveSidebar from "@/components/ArchiveSidebar";
-import Sidebar from "@/components/Sidebar";
+import { ArchiveSidebar } from "@/components/archive";
+import { Sidebar } from "@/components/shared";
 
 const algorithms = [
   { name: "Dijkstra's Algorithm", cat: "Graph Theory", avg: "O(E + V log V)", worst: "O(V²)", space: "O(V)" },

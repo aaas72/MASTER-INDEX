@@ -3,22 +3,21 @@ import Link from "next/link";
 export default function MasterIndex() {
   return (
     <section className="py-12">
-      <div className="max-w-[1280px] w-full mx-auto px-12">
-        <div className="flex justify-between items-end mb-12">
+      <div className="mx-auto w-full max-w-[1280px] px-12">
+        <div className="mb-12 flex items-end justify-between">
           <div className="max-w-xl">
-            <h3 className="font-sans font-bold text-2xl uppercase tracking-tight text-black mb-2">
+            <h3 className="mb-2 font-sans text-2xl font-bold uppercase tracking-tight text-black">
               Master Index
             </h3>
-            <p className="text-on-surface-variant font-body text-lg">
-              A comprehensive ledger of computational procedures, categorized by
-              operational intent and architectural lineage.
+            <p className="font-body text-lg text-on-surface-variant">
+              A comprehensive ledger of computational procedures, categorized by operational intent and architectural lineage.
             </p>
           </div>
           <div className="flex gap-2">
-            <button className="p-2 border border-outline-variant hover:bg-surface-container transition-colors">
+            <button className="border border-outline-variant p-2 transition-colors hover:bg-surface-container">
               <span className="material-symbols-outlined text-lg">filter_list</span>
             </button>
-            <button className="p-2 border border-outline-variant hover:bg-surface-container transition-colors">
+            <button className="border border-outline-variant p-2 transition-colors hover:bg-surface-container">
               <span className="material-symbols-outlined text-lg">download</span>
             </button>
           </div>
@@ -27,40 +26,39 @@ export default function MasterIndex() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="text-left bg-surface-container-low">
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">
+              <tr className="bg-surface-container-low text-left">
+                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
                   Algorithm Name
                 </th>
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">
+                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
                   Category
                 </th>
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">
+                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
                   Time Complexity
                 </th>
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">
+                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
                   Space Complexity
                 </th>
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">
+                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
                   Status
                 </th>
-                <th className="px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500 border-none">
+                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
                   Ref
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y-0">
-              {/* Row 1 */}
-              <tr className="group hover:bg-surface-container-lowest transition-colors border-b border-surface-container-low">
+              <tr className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
                 <td className="px-6 py-8">
-                  <span className="font-sans font-bold text-lg text-black block">
+                  <span className="block font-sans text-lg font-bold text-black">
                     A* Search
                   </span>
-                  <span className="font-mono text-[10px] text-slate-400 uppercase">
+                  <span className="font-mono text-[10px] uppercase text-slate-400">
                     Pathfinding • Heuristic
                   </span>
                 </td>
                 <td className="px-6 py-8">
-                  <span className="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-mono font-bold uppercase">
+                  <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
                     Graph Theory
                   </span>
                 </td>
@@ -74,30 +72,29 @@ export default function MasterIndex() {
                 </td>
                 <td className="px-6 py-8">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500"></div>
+                    <div className="h-2 w-2 bg-green-500"></div>
                     <span className="font-mono text-[10px] uppercase tracking-tighter">
                       Code Ready
                     </span>
                   </div>
                 </td>
                 <td className="px-6 py-8">
-                  <span className="material-symbols-outlined text-slate-300 group-hover:text-[#002FA7] cursor-pointer">
+                  <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
                     arrow_outward
                   </span>
                 </td>
               </tr>
-              {/* Row 2 */}
-              <tr className="group hover:bg-surface-container-lowest transition-colors border-b border-surface-container-low">
+              <tr className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
                 <td className="px-6 py-8">
-                  <span className="font-sans font-bold text-lg text-black block">
+                  <span className="block font-sans text-lg font-bold text-black">
                     QuickSort (Dual-Pivot)
                   </span>
-                  <span className="font-mono text-[10px] text-slate-400 uppercase">
+                  <span className="font-mono text-[10px] uppercase text-slate-400">
                     Divide &amp; Conquer • Sorting
                   </span>
                 </td>
                 <td className="px-6 py-8">
-                  <span className="px-3 py-1 bg-surface-container-high text-slate-600 text-[10px] font-mono font-bold uppercase">
+                  <span className="bg-surface-container-high px-3 py-1 font-mono text-[10px] font-bold uppercase text-slate-600">
                     Base Sorts
                   </span>
                 </td>
@@ -111,32 +108,31 @@ export default function MasterIndex() {
                 </td>
                 <td className="px-6 py-8">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-purple-500"></div>
+                    <div className="h-2 w-2 bg-purple-500"></div>
                     <span className="font-mono text-[10px] uppercase tracking-tighter">
                       Simulation
                     </span>
                   </div>
                 </td>
                 <td className="px-6 py-8">
-                  <Link href="/algorithm/quick-sort">
-                    <span className="material-symbols-outlined text-slate-300 group-hover:text-[#002FA7] cursor-pointer">
+                  <Link href="/algorithms/quick-sort">
+                    <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
                       arrow_outward
                     </span>
                   </Link>
                 </td>
               </tr>
-              {/* Row 3 */}
-              <tr className="group hover:bg-surface-container-lowest transition-colors border-b border-surface-container-low">
+              <tr className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
                 <td className="px-6 py-8">
-                  <span className="font-sans font-bold text-lg text-black block">
+                  <span className="block font-sans text-lg font-bold text-black">
                     Bellman-Ford
                   </span>
-                  <span className="font-mono text-[10px] text-slate-400 uppercase">
+                  <span className="font-mono text-[10px] uppercase text-slate-400">
                     Dynamic Programming • Optimization
                   </span>
                 </td>
                 <td className="px-6 py-8">
-                  <span className="px-3 py-1 bg-primary-fixed text-primary text-[10px] font-mono font-bold uppercase">
+                  <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
                     Graph Theory
                   </span>
                 </td>
@@ -150,14 +146,14 @@ export default function MasterIndex() {
                 </td>
                 <td className="px-6 py-8">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-[#002FA7]"></div>
+                    <div className="h-2 w-2 bg-[#002FA7]"></div>
                     <span className="font-mono text-[10px] uppercase tracking-tighter">
                       Researching
                     </span>
                   </div>
                 </td>
                 <td className="px-6 py-8">
-                  <span className="material-symbols-outlined text-slate-300 group-hover:text-[#002FA7] cursor-pointer">
+                  <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
                     arrow_outward
                   </span>
                 </td>

@@ -1,4 +1,5 @@
-import Sidebar from "@/components/Sidebar";
+import { Sidebar } from "@/components/shared";
+import Link from "next/link";
 
 export default function CategoriesPage() {
   return (
@@ -80,9 +81,9 @@ export default function CategoriesPage() {
           {/* Category Grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
             {/* Card 1 */}
-            <a
+            <Link
               className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="#"
+              href="/categories/graph-theory"
             >
               <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
               <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
@@ -117,12 +118,12 @@ export default function CategoriesPage() {
                   [Primary Complexity: O(V+E)]
                 </span>
               </div>
-            </a>
+            </Link>
 
             {/* Card 2 */}
-            <a
+            <Link
               className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="#"
+              href="/categories/sorting-search"
             >
               <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
               <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
@@ -157,12 +158,12 @@ export default function CategoriesPage() {
                   [Primary Complexity: O(N log N)]
                 </span>
               </div>
-            </a>
+            </Link>
 
             {/* Card 3 */}
-            <a
+            <Link
               className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="#"
+              href="/categories/dynamic-programming"
             >
               <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
               <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
@@ -191,12 +192,12 @@ export default function CategoriesPage() {
                   [Primary Complexity: O(N^2)]
                 </span>
               </div>
-            </a>
+            </Link>
 
             {/* Card 4 */}
-            <a
+            <Link
               className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="#"
+              href="/categories/computational-geometry"
             >
               <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
               <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
@@ -232,7 +233,7 @@ export default function CategoriesPage() {
                   [Primary Complexity: O(N log N)]
                 </span>
               </div>
-            </a>
+            </Link>
           </section>
         </div>
       </main>

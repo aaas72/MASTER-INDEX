@@ -1,4 +1,4 @@
-import Sidebar from "@/components/Sidebar";
+import { Sidebar } from "@/components/shared";
 
 export default function SettingsPage() {
   return (

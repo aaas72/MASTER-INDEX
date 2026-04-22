@@ -1,12 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Sidebar from "@/components/Sidebar";
-import VersusAlgorithmSelector from "@/components/VersusAlgorithmSelector";
-import VersusHeader from "@/components/VersusHeader";
-import VersusCompetitorLeft from "@/components/VersusCompetitorLeft";
-import VersusCompetitorRight from "@/components/VersusCompetitorRight";
-import VersusCenterRadar from "@/components/VersusCenterRadar";
+import { Sidebar } from "@/components/shared";
+import {
+  VersusAlgorithmSelector,
+  VersusHeader,
+  VersusCompetitorLeft,
+  VersusCompetitorRight,
+  VersusCenterRadar,
+} from "@/components/versus";
 import algorithmsData from "@/data/algorithms.json";
 
 type VersusAlgorithm = {
