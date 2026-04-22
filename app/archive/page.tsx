@@ -1,5 +1,6 @@
 // app/archive/page.tsx
 import ArchiveSidebar from "@/components/ArchiveSidebar";
+import Sidebar from "@/components/Sidebar";
 
 const algorithms = [
   { name: "Dijkstra's Algorithm", cat: "Graph Theory", avg: "O(E + V log V)", worst: "O(V²)", space: "O(V)" },
@@ -9,28 +10,10 @@ const algorithms = [
 
 export default function ArchivePage() {
   return (
-    <div className="flex h-screen w-full overflow-hidden font-headline bg-surface">
-      <ArchiveSidebar />
-
-      <main className="flex-1 flex flex-col min-w-0 bg-surface-container-lowest overflow-y-auto">
-        {/* Header */}
-        <header className="flex justify-between items-center px-6 py-4 bg-white border-b border-outline-variant/10 sticky top-0 z-20">
-          <div className="flex items-center gap-8">
-            <div className="text-xl font-black tracking-tighter text-black">ALGORITHM ARCHIVE</div>
-            <div className="relative w-80">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-sm text-outline">search</span>
-              <input 
-                className="w-full bg-surface-container pl-10 pr-4 py-2 text-sm font-label border-0 border-b-2 border-outline-variant focus:border-primary-container focus:ring-0" 
-                placeholder="Query algorithm..." 
-              />
-            </div>
-          </div>
-          <nav className="flex gap-6 font-bold text-sm uppercase">
-            <a href="#" className="text-on-surface-variant hover:text-primary">Research</a>
-            <a href="#" className="text-primary border-b-2 border-primary">Archive</a>
-          </nav>
-        </header>
-
+    <>
+      <Sidebar />
+      <div className="flex h-screen w-full overflow-hidden font-headline bg-surface pl-60">
+        <main className="flex-1 flex flex-col min-w-0 bg-transparent overflow-y-auto">
         {/* Content Area */}
         <div className="p-8 md:p-12">
           <div className="flex justify-between items-end mb-10 pb-4 border-b border-outline-variant/20">
@@ -70,6 +53,9 @@ export default function ArchivePage() {
           </table>
         </div>
       </main>
+
+      <ArchiveSidebar />
     </div>
+    </>
   );
 }

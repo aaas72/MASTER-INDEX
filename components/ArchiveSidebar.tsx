@@ -1,7 +1,7 @@
 // components/ArchiveSidebar.tsx
 export default function ArchiveSidebar() {
   return (
-    <aside className="hidden lg:flex flex-col h-screen w-72 bg-surface-container-low border-r border-outline-variant/20 shrink-0 pt-20 px-4">
+    <aside className="hidden lg:flex flex-col h-screen w-72 bg-surface-container-low border-l border-outline-variant/20 shrink-0 pt-20 px-4">
       <div className="mb-8 px-3">
         <h2 className="font-headline font-bold text-sm tracking-widest uppercase">Index Filters</h2>
         <p className="font-label text-[10px] text-on-surface-variant">V 4.02 ARCHIVE</p>

@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <>
       <Sidebar />
-      <div className="ml-64">
+      <div className="ml-60">
         <Hero />
         <MasterIndex />
         <VersusHub />

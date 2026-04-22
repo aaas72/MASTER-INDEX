@@ -25,13 +25,13 @@ export default function Header() {
           </Link>
           <Link
             className={`transition-all duration-100 font-sans text-sm tracking-tight ${
-              pathname === "/laboratory"
+              pathname === "/versus" || pathname?.startsWith("/versus/")
                 ? "text-[#002FA7] font-bold border-b-2 border-[#002FA7]"
                 : "text-slate-500 hover:text-black"
             }`}
-            href="#"
+            href="/versus"
           >
-            LABORATORY
+            VERSUS HUB
           </Link>
           <Link
             className={`transition-all duration-100 font-sans text-sm tracking-tight ${
