@@ -7,8 +7,8 @@ export default function AlgorithmsPage() {
       <Sidebar />
       <div className="ml-60 p-0">
         <div className="p-12 pb-0">
-          <h1 className="text-4xl font-bold mb-4 font-sans uppercase">Algorithms</h1>
-          <p className="text-slate-600 font-mono mb-8">الهدف: عرض "القائمة الكاملة" بأسلوب الجدول التقني أو الأرشيف الشامل للبحث السريع.</p>
+          <h1 className="page-title-sm mb-4 uppercase">Algorithms</h1>
+          <p className="body-copy mb-8 max-w-3xl">Display the complete master list in a technical ledger or comprehensive archive format for rapid search.</p>
         </div>
         <MasterIndex />
       </div>

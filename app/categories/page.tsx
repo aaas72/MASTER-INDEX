@@ -1,7 +1,23 @@
 import { Sidebar } from "@/components/shared";
 import Link from "next/link";
+import algorithmsData from "@/data/algorithms.json";
 
 export default function CategoriesPage() {
+  const algorithms = Object.values(algorithmsData);
+  const categoriesMap = algorithms.reduce((acc, algo) => {
+    if (!acc[algo.category]) {
+      acc[algo.category] = { count: 0, algorithms: [] };
+    }
+    acc[algo.category].count++;
+    acc[algo.category].algorithms.push(algo);
+    return acc;
+  }, {} as Record<string, { count: number; algorithms: typeof algorithms }>);
+
+  const categories = Object.entries(categoriesMap).map(([name, data], index) => {
+    const slug = name.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-');
+    return { name, slug, count: data.count, index: index + 1 };
+  });
+
   return (
     <div className="font-body text-on-surface antialiased selection:bg-primary-container selection:text-white flex min-h-screen bg-surface">
       <Sidebar />
@@ -51,12 +67,12 @@ export default function CategoriesPage() {
           <section className="flex flex-col gap-6 w-full mt-2">
             <div className="flex justify-between items-end w-full border-b border-outline-variant/20 pb-8">
               <div className="flex flex-col gap-2 max-w-3xl">
-                <span className="font-mono text-xs tracking-[0.2em] text-primary uppercase">
+                <span className="page-kicker">
                   TAXONOMIC CLASSIFICATION
                 </span>
-                <h2 className="font-sans text-6xl font-black text-black tracking-tighter leading-none">
+                <h1 className="page-title uppercase">
                   Browse by Paradigm_
-                </h2>
+                </h1>
               </div>
               {/* Controls */}
               <div className="flex items-center gap-4 mb-2">
@@ -78,162 +94,42 @@ export default function CategoriesPage() {
             </div>
           </section>
 
-          {/* Category Grid */}
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
-            {/* Card 1 */}
-            <Link
-              className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="/categories/graph-theory"
-            >
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
-              <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
-                <span className="font-mono text-xs text-on-surface-variant group-hover:text-white/70">
-                  CAT_01
-                </span>
-                <span className="material-symbols-outlined text-primary group-hover:text-white text-sm">
-                  arrow_outward
-                </span>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-                <div className="w-16 h-16 border-2 border-primary group-hover:border-white flex items-center justify-center transition-colors duration-300">
-                  <svg
-                    className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-300"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                  </svg>
+            {categories.map((cat) => (
+              <Link
+                key={cat.slug}
+                className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
+                href={`/categories/${cat.slug}`}
+              >
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
+                <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
+                  <span className="font-mono text-xs text-on-surface-variant group-hover:text-white/70">
+                    CAT_0{cat.index}
+                  </span>
+                  <span className="material-symbols-outlined text-primary group-hover:text-white text-sm">
+                    arrow_outward
+                  </span>
                 </div>
-                <h3 className="font-sans font-bold text-xl text-center text-black group-hover:text-white uppercase tracking-tight">
-                  Graph Theory
-                </h3>
-              </div>
-              <div className="p-4 bg-surface-container-low group-hover:bg-primary/50 transition-colors duration-300 flex flex-col gap-1 border-t border-outline-variant/20 group-hover:border-white/20">
-                <span className="font-mono text-[10px] text-on-surface-variant group-hover:text-white/70 uppercase tracking-widest">
-                  [Count: 14 Algorithms]
-                </span>
-                <span className="font-mono text-[10px] text-primary group-hover:text-white/90 uppercase tracking-widest">
-                  [Primary Complexity: O(V+E)]
-                </span>
-              </div>
-            </Link>
-
-            {/* Card 2 */}
-            <Link
-              className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="/categories/sorting-search"
-            >
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
-              <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
-                <span className="font-mono text-xs text-on-surface-variant group-hover:text-white/70">
-                  CAT_02
-                </span>
-                <span className="material-symbols-outlined text-primary group-hover:text-white text-sm">
-                  arrow_outward
-                </span>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-                <div className="w-16 h-16 border-2 border-primary group-hover:border-white flex items-center justify-center transition-colors duration-300">
-                  <svg
-                    className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-300"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M4 22V14M12 22V8M20 22V2"></path>
-                  </svg>
-                </div>
-                <h3 className="font-sans font-bold text-xl text-center text-black group-hover:text-white uppercase tracking-tight">
-                  Sorting &amp; Search
-                </h3>
-              </div>
-              <div className="p-4 bg-surface-container-low group-hover:bg-primary/50 transition-colors duration-300 flex flex-col gap-1 border-t border-outline-variant/20 group-hover:border-white/20">
-                <span className="font-mono text-[10px] text-on-surface-variant group-hover:text-white/70 uppercase tracking-widest">
-                  [Count: 22 Algorithms]
-                </span>
-                <span className="font-mono text-[10px] text-primary group-hover:text-white/90 uppercase tracking-widest">
-                  [Primary Complexity: O(N log N)]
-                </span>
-              </div>
-            </Link>
-
-            {/* Card 3 */}
-            <Link
-              className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="/categories/dynamic-programming"
-            >
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
-              <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
-                <span className="font-mono text-xs text-on-surface-variant group-hover:text-white/70">
-                  CAT_03
-                </span>
-                <span className="material-symbols-outlined text-primary group-hover:text-white text-sm">
-                  arrow_outward
-                </span>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-                <div className="w-16 h-16 border-2 border-primary group-hover:border-white flex items-center justify-center transition-colors duration-300 p-2">
-                  <div className="w-full h-full border border-primary group-hover:border-white flex items-center justify-center p-1">
-                    <div className="w-full h-full border border-primary group-hover:border-white"></div>
+                <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
+                  <div className="w-16 h-16 border-2 border-primary group-hover:border-white flex items-center justify-center transition-colors duration-300">
+                    <span className="material-symbols-outlined text-3xl text-primary group-hover:text-white transition-colors duration-300">
+                      category
+                    </span>
                   </div>
+                  <h3 className="font-sans font-bold text-xl text-center text-black group-hover:text-white uppercase tracking-tight">
+                    {cat.name}
+                  </h3>
                 </div>
-                <h3 className="font-sans font-bold text-xl text-center text-black group-hover:text-white uppercase tracking-tight">
-                  Dynamic Programming
-                </h3>
-              </div>
-              <div className="p-4 bg-surface-container-low group-hover:bg-primary/50 transition-colors duration-300 flex flex-col gap-1 border-t border-outline-variant/20 group-hover:border-white/20">
-                <span className="font-mono text-[10px] text-on-surface-variant group-hover:text-white/70 uppercase tracking-widest">
-                  [Count: 31 Algorithms]
-                </span>
-                <span className="font-mono text-[10px] text-primary group-hover:text-white/90 uppercase tracking-widest">
-                  [Primary Complexity: O(N^2)]
-                </span>
-              </div>
-            </Link>
-
-            {/* Card 4 */}
-            <Link
-              className="group flex flex-col h-80 bg-surface-container-lowest border border-outline-variant/20 hover:bg-primary-container transition-colors duration-300 relative overflow-hidden"
-              href="/categories/computational-geometry"
-            >
-              <div className="absolute top-0 left-0 w-full h-[2px] bg-primary group-hover:bg-white transition-colors duration-300"></div>
-              <div className="flex justify-between p-4 border-b border-outline-variant/20 group-hover:border-white/20 transition-colors duration-300">
-                <span className="font-mono text-xs text-on-surface-variant group-hover:text-white/70">
-                  CAT_04
-                </span>
-                <span className="material-symbols-outlined text-primary group-hover:text-white text-sm">
-                  arrow_outward
-                </span>
-              </div>
-              <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-                <div className="w-16 h-16 border-2 border-primary group-hover:border-white flex items-center justify-center transition-colors duration-300">
-                  <svg
-                    className="w-8 h-8 text-primary group-hover:text-white transition-colors duration-300"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <circle cx="12" cy="12" r="4"></circle>
-                  </svg>
+                <div className="p-4 bg-surface-container-low group-hover:bg-primary/50 transition-colors duration-300 flex flex-col gap-1 border-t border-outline-variant/20 group-hover:border-white/20">
+                  <span className="font-mono text-[10px] text-on-surface-variant group-hover:text-white/70 uppercase tracking-widest">
+                    [Count: {cat.count.toString().padStart(2, '0')} Algorithms]
+                  </span>
+                  <span className="font-mono text-[10px] text-primary group-hover:text-white/90 uppercase tracking-widest">
+                    [System Indexed]
+                  </span>
                 </div>
-                <h3 className="font-sans font-bold text-xl text-center text-black group-hover:text-white uppercase tracking-tight">
-                  Computational Geometry
-                </h3>
-              </div>
-              <div className="p-4 bg-surface-container-low group-hover:bg-primary/50 transition-colors duration-300 flex flex-col gap-1 border-t border-outline-variant/20 group-hover:border-white/20">
-                <span className="font-mono text-[10px] text-on-surface-variant group-hover:text-white/70 uppercase tracking-widest">
-                  [Count: 08 Algorithms]
-                </span>
-                <span className="font-mono text-[10px] text-primary group-hover:text-white/90 uppercase tracking-widest">
-                  [Primary Complexity: O(N log N)]
-                </span>
-              </div>
-            </Link>
+              </Link>
+            ))}
           </section>
         </div>
       </main>

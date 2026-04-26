@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import algorithmsData from "@/data/algorithms.json";
 
 export default function Hero() {
   const streamsRef = useRef<HTMLDivElement[]>([]);
+  const totalAlgorithms = Object.keys(algorithmsData).length;
+  const totalCategories = new Set(Object.values(algorithmsData).map(a => a.category)).size;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -109,7 +112,7 @@ export default function Hero() {
 
           <div className="mt-8 flex items-center justify-between">
             <p className="font-mono text-xs uppercase tracking-widest text-slate-500">
-              Showing <span className="font-bold text-[#002FA7]">[72]</span> Algorithms across <span className="font-bold text-[#002FA7]">[8]</span> Categories
+              Showing <span className="font-bold text-[#002FA7]">[{totalAlgorithms}]</span> Algorithms across <span className="font-bold text-[#002FA7]">[{totalCategories}]</span> Categories
             </p>
             <div className="flex gap-4">
               <span className="bg-surface-container-high px-3 py-1 font-mono text-[10px] uppercase text-primary">

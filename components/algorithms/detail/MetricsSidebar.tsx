@@ -10,7 +10,7 @@ const MetricRow = ({ label, value, isMath = true }: { label: string; value: stri
         {label}
       </span>
       <span className={`font-mono text-sm font-semibold tracking-tight ${isMath ? "text-primary" : "text-on-surface"}`}>
-        {isMath && typeof value !== "boolean" ? `$ ${displayValue} $` : displayValue}
+        {displayValue}
       </span>
     </div>
   );

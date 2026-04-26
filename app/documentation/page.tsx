@@ -8,13 +8,13 @@ export default function DocumentationPage() {
         {/* Page Header */}
 
         <div className="mb-16">
-          <span className="font-mono text-xs text-slate-500 uppercase tracking-widest block mb-2">
+          <span className="page-kicker block mb-2">
             Protocol Manual
           </span>
-          <h1 className="font-sans font-extrabold text-5xl uppercase tracking-tighter text-black mb-4">
+          <h1 className="page-title mb-4 uppercase">
             Documentation
           </h1>
-          <p className="font-body text-xl text-on-surface-variant max-w-3xl leading-relaxed">
+          <p className="body-copy max-w-3xl">
             The operational framework and methodological constraints governing
             the Global Algorithm Repository. This manual dictates the rules of
             engagement, benchmarking standards, and archival protocols.
@@ -22,17 +22,17 @@ export default function DocumentationPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-12">
-          {/* Section 1: Symbology & Status (شرح الرموز) */}
+          {/* Section 1: Symbology & Status */}
           <section className="bg-surface-container-lowest border border-outline-variant p-8 shadow-custom">
             <div className="flex items-center gap-3 mb-6 border-b border-surface-container pb-4">
               <span className="material-symbols-outlined text-[#002FA7] text-2xl">
                 traffic
               </span>
-              <h2 className="font-sans font-bold text-2xl uppercase tracking-tight text-black">
+              <h2 className="section-title uppercase">
                 Ledger Symbology
               </h2>
             </div>
-            <p className="font-body text-lg text-slate-600 mb-6">
+            <p className="body-copy mb-6">
               Every entry in the index is assigned a strict operational status.
               These visual markers indicate the current stage of the algorithm's
               lifecycle within our laboratory environments.
@@ -41,11 +41,11 @@ export default function DocumentationPage() {
               <div className="bg-surface border border-outline-variant p-5 flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-green-500"></div>
-                  <span className="font-mono text-xs uppercase tracking-widest font-bold text-black">
+                  <span className="font-mono text-xs uppercase tracking-widest font-bold text-on-surface">
                     Code Ready
                   </span>
                 </div>
-                <p className="font-body text-sm text-slate-500 italic">
+                <p className="font-body text-sm text-on-surface-variant italic">
                   Fully implemented, peer-reviewed, and optimized. The code is
                   available for immediate extraction and deployment.
                 </p>
@@ -53,11 +53,11 @@ export default function DocumentationPage() {
               <div className="bg-surface border border-outline-variant p-5 flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-purple-500"></div>
-                  <span className="font-mono text-xs uppercase tracking-widest font-bold text-black">
+                  <span className="font-mono text-xs uppercase tracking-widest font-bold text-on-surface">
                     Simulation
                   </span>
                 </div>
-                <p className="font-body text-sm text-slate-500 italic">
+                <p className="font-body text-sm text-on-surface-variant italic">
                   The algorithm is currently undergoing rigorous stress testing
                   and theoretical benchmarking in the Versus Hub.
                 </p>
@@ -65,11 +65,11 @@ export default function DocumentationPage() {
               <div className="bg-surface border border-outline-variant p-5 flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 bg-[#002FA7]"></div>
-                  <span className="font-mono text-xs uppercase tracking-widest font-bold text-black">
+                  <span className="font-mono text-xs uppercase tracking-widest font-bold text-on-surface">
                     Researching
                   </span>
                 </div>
-                <p className="font-body text-sm text-slate-500 italic">
+                <p className="font-body text-sm text-on-surface-variant italic">
                   Currently under theoretical review. Mathematical proofs and
                   complexity bounds are being verified by the Librarian AI.
                 </p>
@@ -77,17 +77,17 @@ export default function DocumentationPage() {
             </div>
           </section>
 
-          {/* Section 2: Measurement Methodology (منهجية القياس) */}
+          {/* Section 2: Measurement Methodology */}
           <section className="bg-surface-container-lowest border border-outline-variant p-8 shadow-custom">
             <div className="flex items-center gap-3 mb-6 border-b border-surface-container pb-4">
               <span className="material-symbols-outlined text-[#002FA7] text-2xl">
                 science
               </span>
-              <h2 className="font-sans font-bold text-2xl uppercase tracking-tight text-black">
+              <h2 className="section-title uppercase">
                 Measurement Methodology
               </h2>
             </div>
-            <p className="font-body text-lg text-slate-600 mb-6">
+            <p className="body-copy mb-6">
               When the Versus Hub declares an algorithm "Faster" or "Optimal,"
               it relies on specific, unyielding baseline constraints.
               Performance is not anecdotal; it is mathematically verified.
@@ -98,10 +98,10 @@ export default function DocumentationPage() {
                   01
                 </span>
                 <div>
-                  <h4 className="font-sans font-bold text-black uppercase tracking-tight">
+                  <h4 className="font-sans font-bold text-on-surface uppercase tracking-tight">
                     Asymptotic Analysis (Big-O)
                   </h4>
-                  <p className="font-body text-sm text-slate-500">
+                  <p className="font-body text-sm text-on-surface-variant">
                     All algorithms are evaluated at absolute worst-case
                     boundaries unless specifically annotated as "Average Case"
                     in the ledger.
@@ -113,10 +113,10 @@ export default function DocumentationPage() {
                   02
                 </span>
                 <div>
-                  <h4 className="font-sans font-bold text-black uppercase tracking-tight">
+                  <h4 className="font-sans font-bold text-on-surface uppercase tracking-tight">
                     Hardware Abstraction
                   </h4>
-                  <p className="font-body text-sm text-slate-500">
+                  <p className="font-body text-sm text-on-surface-variant">
                     Execution latency percentages (e.g., -14.2%) are derived
                     from a standardized V8 JS Engine runtime operating within an
                     isolated Docker container allocating EXACTLY 2GB of RAM.
@@ -141,7 +141,7 @@ export default function DocumentationPage() {
             </ul>
           </section>
 
-          {/* Section 3: Contribution Guidelines (دليل المساهمة) */}
+          {/* Section 3: Contribution Guidelines */}
           <section className="bg-surface-container-lowest border border-outline-variant p-8 shadow-custom">
             <div className="flex items-center gap-3 mb-6 border-b border-surface-container pb-4">
               <span className="material-symbols-outlined text-[#002FA7] text-2xl">
@@ -190,7 +190,7 @@ export default function DocumentationPage() {
             </div>
           </section>
 
-          {/* Section 4: Terminology (المصطلحات) */}
+          {/* Section 4: Terminology */}
           <section className="bg-surface-container-lowest border border-outline-variant p-8 shadow-custom">
             <div className="flex items-center gap-3 mb-6 border-b border-surface-container pb-4">
               <span className="material-symbols-outlined text-[#002FA7] text-2xl">

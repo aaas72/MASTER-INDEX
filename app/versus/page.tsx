@@ -13,7 +13,7 @@ import algorithmsData from "@/data/algorithms.json";
 
 type VersusAlgorithm = {
   id: string;
-  title: { ar: string; en: string };
+  title: { en: string };
   category: string;
   complexity: {
     time: { best: string; average: string; worst: string };
@@ -30,7 +30,7 @@ type VersusAlgorithm = {
   }[];
 };
 
-const typedAlgorithmsData = algorithmsData as Record<string, VersusAlgorithm>;
+const typedAlgorithmsData = algorithmsData as unknown as Record<string, VersusAlgorithm>;
 
 const findLargestBenchmark = (algorithm: VersusAlgorithm) => {
   return algorithm.benchmarks.reduce((largest, current) => {
@@ -43,7 +43,7 @@ const findLargestBenchmark = (algorithm: VersusAlgorithm) => {
 
 export default function VersusHubPage() {
   const algorithmEntries = useMemo(
-    () => Object.entries(typedAlgorithmsData),
+    () => Object.entries(typedAlgorithmsData).filter(([_, algo]) => algo.benchmarks && algo.benchmarks.length > 0),
     [],
   );
 
@@ -102,7 +102,7 @@ export default function VersusHubPage() {
     <>
       <Sidebar />
       <div
-        className=" max-w-[1440px] mx-auto flex flex-col overflow-hidden font-body bg-surface pl-60"
+        className="max-w-[1440px] mx-auto flex flex-col overflow-hidden bg-surface pl-60"
         style={{
           backgroundImage:
             "linear-gradient(to right, rgba(196, 197, 214, 0.2) 1px, transparent 1px), linear-gradient(to bottom, rgba(196, 197, 214, 0.2) 1px, transparent 1px)",
@@ -112,10 +112,10 @@ export default function VersusHubPage() {
         <div className="flex flex-1 overflow-hidden">
           <main className="flex-1 p-8 relative flex flex-col h-full overflow-hidden">
             <header className="mb-8 shrink-0">
-              <h1 className="font-sans text-3xl font-bold tracking-tight text-on-surface uppercase">
+              <h1 className="page-title-sm uppercase">
                 VERSUS_HUB Calibration
               </h1>
-              <p className="font-body text-on-surface-variant mt-2 text-lg">
+              <p className="body-copy mt-2">
                 Comparative analysis of sorting methodologies under randomized
                 load conditions.
               </p>
@@ -153,7 +153,7 @@ export default function VersusHubPage() {
                 Data Source: Local Runtime | ΔSpeed = {speedDeltaPercent.toFixed(1)}%
               </span>
               <span>
-                N(max): {Math.max(leftBenchmark.input_size, rightBenchmark.input_size).toLocaleString()}
+                N(max): {Math.max(leftBenchmark.input_size, rightBenchmark.input_size).toLocaleString('en-US')}
               </span>
             </div>
           </main>

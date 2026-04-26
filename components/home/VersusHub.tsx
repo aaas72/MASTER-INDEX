@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function VersusHub() {
   return (
     <section className="bg-surface-container-low py-24">
@@ -66,9 +68,9 @@ export default function VersusHub() {
                   </span>
                 </div>
               </div>
-              <button className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
+              <Link href="/versus" className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
                 View Breakdown
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -130,9 +132,9 @@ export default function VersusHub() {
                   </span>
                 </div>
               </div>
-              <button className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
+              <Link href="/versus" className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
                 View Breakdown
-              </button>
+              </Link>
             </div>
           </div>
         </div>

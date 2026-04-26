@@ -37,7 +37,7 @@ export default function Sidebar() {
         <Link
           className={getLinkClasses("/categories")}
           href="/categories"
-          title="التصنيف الهيكلي: استكشاف المجالات بالكامل (مثل: Graph Theory)"
+          title="Structural Classification: Explore full domains (e.g. Graph Theory)"
         >
           <span className="material-symbols-outlined mr-3 text-lg">
             category
@@ -47,7 +47,7 @@ export default function Sidebar() {
         <Link
           className={getLinkClasses("/algorithms")}
           href="/algorithms"
-          title="الأرشيف الشامل: القائمة الكاملة والفلترة المتقدمة"
+          title="Comprehensive Archive: Full list and advanced filtering"
         >
           <span className="material-symbols-outlined mr-3 text-lg">
             terminal
@@ -57,7 +57,7 @@ export default function Sidebar() {
         <Link
           className={getLinkClasses("/archive")}
           href="/archive"
-          title="التوثيق التاريخي: الوصول للإصدارات السابقة والمراجع الأكاديمية"
+          title="Historical Documentation: Access previous versions and academic references"
         >
           <span className="material-symbols-outlined mr-3 text-lg">
             inventory_2
@@ -67,7 +67,7 @@ export default function Sidebar() {
         <Link
           className={`mt-auto ${getLinkClasses("/settings")}`}
           href="/settings"
-          title="تخصيص البيئة: تغيير السمة، اللغة، وإعدادات المحاكي"
+          title="Environment Customization: Change theme, language, and simulator settings"
         >
           <span className="material-symbols-outlined mr-3 text-lg">
             settings

@@ -269,10 +269,10 @@ export default function PlaygroundPage() {
       >
         <div className="mx-auto h-full w-full max-w-[1440px] space-y-5">
           <header className="px-1 py-1">
-            <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#002FA7]">
+            <p className="page-kicker">
               Computational Sandbox
             </p>
-            <h1 className="mt-2 font-sans text-3xl font-black uppercase tracking-tight text-black">
+            <h1 className="page-title-sm mt-2 uppercase">
               Interactive Algorithm Playground
             </h1>
           </header>

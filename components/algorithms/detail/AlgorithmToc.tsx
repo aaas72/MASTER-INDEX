@@ -54,10 +54,10 @@ export default function AlgorithmToc() {
 
   return (
     <nav className="relative hidden w-48 shrink-0 lg:block">
-      <div className="sticky top-24 flex flex-col gap-4 font-mono text-xs uppercase tracking-widest text-on-surface-variant">
-        <div className="mb-2 flex items-center gap-2 border-b border-outline-variant/30 pb-2">
-          <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-primary" />
-          <h3 className="font-bold text-on-surface">Contents</h3>
+      <div className="sticky top-24 flex flex-col gap-5 font-mono text-xs uppercase tracking-widest text-on-surface-variant">
+        <div className="mb-4 flex items-center gap-3 border-b border-outline-variant/20 pb-3">
+          <div className="h-2 w-2 bg-primary" />
+          <h3 className="font-bold text-on-surface tracking-[0.15em]">CONTENTS</h3>
         </div>
 
         {sections.map((section) => (
@@ -65,15 +65,12 @@ export default function AlgorithmToc() {
             key={section.id}
             href={`#${section.id}`}
             onClick={(e) => scrollToSection(e, section.id)}
-            className={`group relative border-l-2 pl-4 transition-all duration-300 ease-in-out ${
+            className={`group pl-4 transition-colors duration-200 ${
               activeSection === section.id
-                ? "translate-x-1 border-primary font-bold text-primary"
-                : "border-transparent text-on-surface-variant hover:border-outline-variant hover:text-on-surface"
+                ? "border-l-[3px] border-primary font-bold text-primary"
+                : "border-l-[3px] border-transparent text-slate-500 hover:text-black"
             }`}
           >
-            {activeSection === section.id && (
-              <span className="absolute left-[-2px] top-0 h-full w-[2px] bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.6)]" />
-            )}
             {section.label}
           </a>
         ))}

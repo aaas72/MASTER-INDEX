@@ -5,21 +5,21 @@ export default function SettingsPage() {
     <>
       <Sidebar />
       <div className="ml-60 p-12">
-        <h1 className="text-4xl font-bold mb-4 font-sans uppercase">Settings</h1>
-        <p className="text-slate-600 font-mono mb-8">الهدف: تخصيص البيئة وضبط واجهة المستخدم.</p>
+        <h1 className="page-title-sm mb-4 uppercase">Settings</h1>
+        <p className="body-copy mb-8">Objective: Environment customization and user interface adjustments.</p>
         
         <div className="space-y-6 max-w-xl">
           <div className="p-6 border border-slate-200">
-            <h2 className="font-bold mb-2">التبديل بين الوضع الليلي والنهاري</h2>
-            <p className="text-sm text-slate-500">Dark / Light Mode</p>
+            <h2 className="section-title mb-2">Toggle Dark / Light Mode</h2>
+            <p className="body-copy text-sm">System Theme</p>
           </div>
           <div className="p-6 border border-slate-200">
-            <h2 className="font-bold mb-2">لغة العرض</h2>
-            <p className="text-sm text-slate-500">العربية / الإنجليزية</p>
+            <h2 className="section-title mb-2">Display Language</h2>
+            <p className="body-copy text-sm">English</p>
           </div>
           <div className="p-6 border border-slate-200">
-            <h2 className="font-bold mb-2">إعدادات المحاكي</h2>
-            <p className="text-sm text-slate-500">السرعة، والألوان المستخدمة في הـ Visualization.</p>
+            <h2 className="section-title mb-2">Simulator Settings</h2>
+            <p className="body-copy text-sm">Speed and colors used in the Visualization.</p>
           </div>
         </div>
       </div>

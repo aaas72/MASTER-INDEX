@@ -5,21 +5,21 @@ import { Sidebar } from "@/components/shared";
 const algorithms = [
   { name: "Dijkstra's Algorithm", cat: "Graph Theory", avg: "O(E + V log V)", worst: "O(V²)", space: "O(V)" },
   { name: "A* Search Algorithm", cat: "Pathfinding", avg: "O(E)", worst: "O(b^d)", space: "O(b^d)" },
-  // ... بقية البيانات
+  // ... rest of the data
 ];
 
 export default function ArchivePage() {
   return (
     <>
       <Sidebar />
-      <div className="flex h-screen w-full overflow-hidden font-headline bg-surface pl-60">
+      <div className="flex h-screen w-full overflow-hidden bg-surface pl-60">
         <main className="flex-1 flex flex-col min-w-0 bg-transparent overflow-y-auto">
         {/* Content Area */}
         <div className="p-8 md:p-12">
           <div className="flex justify-between items-end mb-10 pb-4 border-b border-outline-variant/20">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Found 72 Algorithms</h1>
-              <p className="font-body text-on-surface-variant">Displaying cross-referenced results.</p>
+              <h1 className="page-title-sm">Found 72 Algorithms</h1>
+              <p className="body-copy">Displaying cross-referenced results.</p>
             </div>
           </div>
 

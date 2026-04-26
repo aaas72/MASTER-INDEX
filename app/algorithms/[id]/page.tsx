@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { BlockMath } from "react-katex";
+import { BarVisualizer, GraphVisualizer, LinkedListVisualizer, DpVisualizer } from "@/components/algorithms/visualizers";
 import algorithmsData from "@/data/algorithms.json";
 import { AlgorithmData } from "@/types/algorithm";
 import { AlgorithmToc, MetricsSidebar } from "@/components/algorithms/detail";
+import { generateSimulation } from "@/lib/engine/simulator";
 
 type AlgorithmKey = keyof typeof algorithmsData;
 
@@ -17,27 +20,30 @@ export default function AlgorithmDetailPage({
   params: { id: string };
 }) {
   const algorithmId = params.id as AlgorithmKey;
-  const algoData = typedAlgorithmsData[algorithmId];
+  const rawAlgoData = typedAlgorithmsData[algorithmId];
 
-  if (!algoData) {
-    return (
-      <div className="flex min-h-screen items-center justify-center p-8 text-center font-mono">
-        <div>
-          <h1 className="text-2xl font-bold">404 | Algorithm Not Found</h1>
-          <p className="mt-2 text-slate-500">
-            The requested formal procedure '{params.id}' is not indexed in the archive.
-          </p>
-        </div>
-      </div>
-    );
+  if (!rawAlgoData) {
+    notFound();
   }
 
+  // Intercept and inject dynamic simulation if available
+  const dynamicSteps = generateSimulation(algorithmId);
+  const algoData = {
+    ...rawAlgoData,
+    content: {
+      ...rawAlgoData.content,
+      logic_steps: dynamicSteps || rawAlgoData.content.logic_steps
+    }
+  };
+
   const [currentStep, setCurrentStep] = useState(0);
-  const logicStep = algoData.content.logic_steps[currentStep];
-  const arrayState = logicStep.array_state;
-  const maxValue = Math.max(...arrayState);
+  const hasLogicSteps = algoData.content.logic_steps && algoData.content.logic_steps.length > 0;
+  const logicStep = hasLogicSteps ? algoData.content.logic_steps[currentStep] : null;
+  const arrayState = logicStep && logicStep.array_state ? logicStep.array_state : [];
+  const maxValue = arrayState.length > 0 ? Math.max(...arrayState) : 1;
 
   const handleNext = () => {
+    if (!hasLogicSteps) return;
     setCurrentStep((prev) => Math.min(prev + 1, algoData.content.logic_steps.length - 1));
   };
 
@@ -67,11 +73,11 @@ export default function AlgorithmDetailPage({
                     {algoData.title.en.replace(/ /g, "_")}
                   </span>
                 </div>
-                <h1 className="mb-6 font-headline text-5xl font-extrabold tracking-tighter text-on-surface md:text-7xl">
+                <h1 className="page-title mb-6">
                   {algoData.title.en.replace(/ /g, "_")}_
                 </h1>
                 <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                  <div className="max-w-2xl text-lg leading-relaxed text-on-surface-variant md:text-xl">
+                  <div className="max-w-2xl body-copy md:text-xl">
                     <p>{algoData.content.abstract.en}</p>
                   </div>
                   <div className="flex gap-2">
@@ -86,70 +92,82 @@ export default function AlgorithmDetailPage({
               </header>
 
               <section id="visualization" className="mb-24">
-                <h2 className="mb-2 text-2xl font-bold font-headline">Dynamic Partitioning Visualization</h2>
-                <p className="mb-8 text-on-surface-variant font-body">{logicStep.description_en}</p>
-                <div className="relative mb-4 flex h-96 items-end justify-center gap-1 border border-outline-variant/20 bg-surface-container-lowest p-6">
-                  {arrayState.map((value, index) => {
-                    const heightPercentage = (value / maxValue) * 100;
-                    const isPivot = index === logicStep.pivot_index;
-                    const inPartition =
-                      logicStep.partition_range &&
-                      index >= logicStep.partition_range[0] &&
-                      index <= logicStep.partition_range[1];
-
-                    let bgColor = "bg-surface-container-high";
-                    if (isPivot) bgColor = "bg-primary-container";
-                    else if (inPartition) bgColor = "bg-secondary-container";
-
-                    return (
-                      <div
-                        key={index}
-                        className={`flex-1 ${bgColor} flex items-end justify-center transition-all duration-300 ease-in-out`}
-                        style={{ height: `${heightPercentage}%` }}
-                      >
-                        <span className="font-mono text-[10px] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                          {value}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="flex gap-2">
-                  <button onClick={handlePrev} className="border border-outline-variant/20 px-4 py-2 font-mono text-xs uppercase tracking-widest hover:border-primary-container hover:text-primary-container">
-                    Prev
-                  </button>
-                  <button onClick={handleNext} className="border border-outline-variant/20 px-4 py-2 font-mono text-xs uppercase tracking-widest hover:border-primary-container hover:text-primary-container">
-                    Next
-                  </button>
-                </div>
+                <h2 className="section-title mb-6">Computational Visualization</h2>
+                {algoData.category === "Graph Theory" ? (
+                  <GraphVisualizer
+                    algoData={algoData}
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                    handlePrev={handlePrev}
+                    handleNext={handleNext}
+                    hasLogicSteps={hasLogicSteps}
+                  />
+                ) : algoData.category === "Linked Lists" || algoData.category === "Data Structures" ? (
+                  <LinkedListVisualizer
+                    algoData={algoData}
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                    handlePrev={handlePrev}
+                    handleNext={handleNext}
+                    hasLogicSteps={hasLogicSteps}
+                  />
+                ) : algoData.category === "Dynamic Programming" || algoData.category === "Tree Search" ? (
+                  <DpVisualizer
+                    algoData={algoData}
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                    handlePrev={handlePrev}
+                    handleNext={handleNext}
+                    hasLogicSteps={hasLogicSteps}
+                  />
+                ) : (
+                  <BarVisualizer
+                    algoData={algoData}
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                    handlePrev={handlePrev}
+                    handleNext={handleNext}
+                    hasLogicSteps={hasLogicSteps}
+                  />
+                )}
               </section>
 
               <section id="proof" className="mb-24">
-                <h2 className="mb-6 text-2xl font-bold font-headline">Mathematical Proof</h2>
+                <h2 className="section-title mb-6">Mathematical Proof</h2>
                 <div className="rounded-none border border-outline-variant/20 bg-surface-container-low p-6">
-                  <BlockMath math={algoData.content.proof_latex} />
+                  <div className="math-display">
+                    <BlockMath math={algoData.content.proof_latex} />
+                  </div>
                 </div>
               </section>
 
               <section id="implementation" className="mb-24">
-                <h2 className="mb-6 text-2xl font-bold font-headline">Reference Implementation</h2>
-                <div className="border border-outline-variant/20 bg-surface-container-low p-6 font-mono text-sm">
-                  <pre>
-                    <code>{algoData.code[0].snippet}</code>
-                  </pre>
-                </div>
-                <a
-                  href={algoData.code[0].github_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 inline-block font-mono text-xs text-on-surface-variant transition-colors hover:text-primary-container"
-                >
-                  View on GitHub →
-                </a>
+                <h2 className="section-title mb-6">Reference Implementation</h2>
+                {algoData.code && algoData.code.length > 0 ? (
+                  <>
+                    <div className="border border-outline-variant/20 bg-surface-container-low p-6 font-mono text-sm">
+                      <pre>
+                        <code>{algoData.code[0].snippet}</code>
+                      </pre>
+                    </div>
+                    <a
+                      href={algoData.code[0].github_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-4 inline-block font-mono text-xs text-on-surface-variant transition-colors hover:text-primary-container"
+                    >
+                      View on GitHub →
+                    </a>
+                  </>
+                ) : (
+                  <div className="flex p-6 border border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant font-mono text-sm uppercase tracking-widest justify-center items-center h-32">
+                    Implementation pending peer review
+                  </div>
+                )}
               </section>
 
               <section id="benchmarks" className="mb-24">
-                <h2 className="mb-6 text-2xl font-bold font-headline">Performance Benchmarks</h2>
+                <h2 className="section-title mb-6">Performance Benchmarks</h2>
                 <div className="border border-outline-variant/20">
                   <table className="w-full font-mono text-sm">
                     <thead className="bg-surface-container-low text-left text-on-surface-variant">
@@ -162,7 +180,7 @@ export default function AlgorithmDetailPage({
                     <tbody className="divide-y divide-outline-variant/20">
                       {algoData.benchmarks.map((benchmark, index) => (
                         <tr key={index} className="bg-surface">
-                          <td className="p-4">{benchmark.input_size.toLocaleString()}</td>
+                          <td className="p-4">{benchmark.input_size.toLocaleString('en-US')}</td>
                           <td className="p-4 font-bold text-primary-container">{benchmark.execution_time_ms}</td>
                           <td className="p-4 text-xs text-on-surface-variant">{benchmark.environment_specs}</td>
                         </tr>

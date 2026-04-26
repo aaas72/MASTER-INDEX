@@ -1,11 +1,11 @@
 export interface AlgorithmData {
-  // 1. الهوية (Identity)
+  // 1. Identity
   id: string; // "quick-sort"
-  title: { ar: string; en: string };
+  title: { en: string };
   category: "Sorting" | "Graph" | "Searching" | "DP";
   difficulty: "Beginner" | "Intermediate" | "Advanced";
   
-  // 2. التحليل الرياضي (Mathematical Analysis)
+  // 2. Mathematical Analysis
   complexity: {
     time: { best: string; average: string; worst: string }; // $O(n \log n)$
     space: string; // $O(\log n)$
@@ -14,27 +14,26 @@ export interface AlgorithmData {
     recursive: boolean;
   };
 
-  // 3. المحتوى البحثي (Research Content)
+  // 3. Research Content
   content: {
-    abstract: { ar: string; en: string };
+    abstract: { en: string };
     logic_steps: {
     description_en: string;
-    description_ar: string;
     array_state: number[];
     pivot_index: number | null;
     partition_range: [number, number] | null;
-  }[]; // خطوات العمل لتمثيلها في الـ Visualization
-    proof_latex: string; // معادلات البرهان الرياضي
+  }[]; // Execution steps for Visualization
+    proof_latex: string; // Mathematical proof equations
   };
 
-  // 4. التنفيذ البرمجي (Implementation)
+  // 4. Implementation
   code: {
     language: "cpp" | "python" | "javascript";
     snippet: string;
     github_url?: string;
   }[];
 
-  // 5. البيانات التشغيلية (Benchmarking)
+  // 5. Benchmarking
   benchmarks: {
     input_size: number; // 10^6
     execution_time_ms: number;

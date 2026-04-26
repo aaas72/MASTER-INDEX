@@ -1,6 +1,8 @@
 import Link from "next/link";
+import algorithmsData from "@/data/algorithms.json";
 
 export default function MasterIndex() {
+  const algorithms = Object.values(algorithmsData);
   return (
     <section className="py-12">
       <div className="mx-auto w-full max-w-[1280px] px-12">
@@ -48,116 +50,46 @@ export default function MasterIndex() {
               </tr>
             </thead>
             <tbody className="divide-y-0">
-              <tr className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
-                <td className="px-6 py-8">
-                  <span className="block font-sans text-lg font-bold text-black">
-                    A* Search
-                  </span>
-                  <span className="font-mono text-[10px] uppercase text-slate-400">
-                    Pathfinding • Heuristic
-                  </span>
-                </td>
-                <td className="px-6 py-8">
-                  <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
-                    Graph Theory
-                  </span>
-                </td>
-                <td className="px-6 py-8">
-                  <code className="font-mono text-sm font-bold text-[#002FA7]">
-                    O(E log V)
-                  </code>
-                </td>
-                <td className="px-6 py-8">
-                  <code className="font-mono text-sm text-slate-600">O(V)</code>
-                </td>
-                <td className="px-6 py-8">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 bg-green-500"></div>
-                    <span className="font-mono text-[10px] uppercase tracking-tighter">
-                      Code Ready
+              {algorithms.map((algo) => (
+                <tr key={algo.id} className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
+                  <td className="px-6 py-8">
+                    <span className="block font-sans text-lg font-bold text-black">
+                      {algo.title.en}
                     </span>
-                  </div>
-                </td>
-                <td className="px-6 py-8">
-                  <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
-                    arrow_outward
-                  </span>
-                </td>
-              </tr>
-              <tr className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
-                <td className="px-6 py-8">
-                  <span className="block font-sans text-lg font-bold text-black">
-                    QuickSort (Dual-Pivot)
-                  </span>
-                  <span className="font-mono text-[10px] uppercase text-slate-400">
-                    Divide &amp; Conquer • Sorting
-                  </span>
-                </td>
-                <td className="px-6 py-8">
-                  <span className="bg-surface-container-high px-3 py-1 font-mono text-[10px] font-bold uppercase text-slate-600">
-                    Base Sorts
-                  </span>
-                </td>
-                <td className="px-6 py-8">
-                  <code className="font-mono text-sm font-bold text-[#002FA7]">
-                    O(n log n)
-                  </code>
-                </td>
-                <td className="px-6 py-8">
-                  <code className="font-mono text-sm text-slate-600">O(log n)</code>
-                </td>
-                <td className="px-6 py-8">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 bg-purple-500"></div>
-                    <span className="font-mono text-[10px] uppercase tracking-tighter">
-                      Simulation
+                    <span className="font-mono text-[10px] uppercase text-slate-400">
+                      {algo.difficulty} • {algo.category}
                     </span>
-                  </div>
-                </td>
-                <td className="px-6 py-8">
-                  <Link href="/algorithms/quick-sort">
-                    <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
-                      arrow_outward
+                  </td>
+                  <td className="px-6 py-8">
+                    <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
+                      {algo.category}
                     </span>
-                  </Link>
-                </td>
-              </tr>
-              <tr className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
-                <td className="px-6 py-8">
-                  <span className="block font-sans text-lg font-bold text-black">
-                    Bellman-Ford
-                  </span>
-                  <span className="font-mono text-[10px] uppercase text-slate-400">
-                    Dynamic Programming • Optimization
-                  </span>
-                </td>
-                <td className="px-6 py-8">
-                  <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
-                    Graph Theory
-                  </span>
-                </td>
-                <td className="px-6 py-8">
-                  <code className="font-mono text-sm font-bold text-[#002FA7]">
-                    O(VE)
-                  </code>
-                </td>
-                <td className="px-6 py-8">
-                  <code className="font-mono text-sm text-slate-600">O(V)</code>
-                </td>
-                <td className="px-6 py-8">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 bg-[#002FA7]"></div>
-                    <span className="font-mono text-[10px] uppercase tracking-tighter">
-                      Researching
-                    </span>
-                  </div>
-                </td>
-                <td className="px-6 py-8">
-                  <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
-                    arrow_outward
-                  </span>
-                </td>
-              </tr>
+                  </td>
+                  <td className="px-6 py-8">
+                    <code className="font-mono text-sm font-bold text-[#002FA7]">
+                      {algo.complexity.time.average}
+                    </code>
+                  </td>
+                  <td className="px-6 py-8">
+                    <code className="font-mono text-sm text-slate-600">{algo.complexity.space}</code>
+                  </td>
+                  <td className="px-6 py-8">
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2 w-2 ${algo.status === 'Code Ready' ? 'bg-green-500' : algo.status === 'Simulation' ? 'bg-purple-500' : 'bg-[#002FA7]'}`}></div>
+                      <span className="font-mono text-[10px] uppercase tracking-tighter">
+                        {algo.status}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-8">
+                    <Link href={`/algorithms/${algo.id}`}>
+                      <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
+                        arrow_outward
+                      </span>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

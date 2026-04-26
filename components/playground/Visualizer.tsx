@@ -11,7 +11,7 @@ export default function Visualizer() {
 
       {/* Bars Container */}
       <div className="relative aspect-video bg-white border border-outline-variant/20 shadow-sm flex items-end justify-between p-12 gap-2 overflow-hidden">
-        {/* سيتم استبدال هذه ببيانات ديناميكية لاحقاً */}
+        {/* This will be replaced with dynamic data later */}
         {[40, 65, 25, 85, 55, 45, 30, 95, 20, 60, 10, 75, 35, 50].map((height, i) => (
           <div 
             key={i}

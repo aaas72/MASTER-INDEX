@@ -4,6 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  table {
+    @apply bg-surface-container-lowest;
+  }
+}
+@layer components {
+  .page-title {
+    @apply font-sans text-5xl md:text-6xl font-extrabold tracking-tighter text-on-surface uppercase;
+  }
+  .page-title-sm {
+    @apply font-sans text-4xl md:text-5xl font-extrabold tracking-tighter text-on-surface uppercase;
+  }
+  .page-kicker {
+    @apply font-mono text-xs md:text-sm font-bold uppercase tracking-widest text-primary mb-2 block;
+  }
+  .body-copy {
+    @apply font-serif text-base md:text-lg text-on-surface-variant leading-relaxed max-w-3xl;
+  }
+  .section-title {
+    @apply font-sans text-2xl md:text-3xl font-bold tracking-tight text-on-surface uppercase;
+  }
+}
 @layer utilities {
   .playground-content-scrollbar-hidden {
     scrollbar-width: none;
