@@ -4,3 +4,6 @@ export { default as Footer } from "./Footer";
 export { default as Fab } from "./Fab";
 export { SidebarLayout, FullWidthLayout } from "./Layouts";
 export { default as LoadingOverlay } from "./LoadingOverlay";
+export { default as BrutalistTable } from "./BrutalistTable";
+export type { TableColumn } from "./BrutalistTable";
+export { default as RouteChangeListener } from "./RouteChangeListener";

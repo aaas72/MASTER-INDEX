@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Header, Footer } from "@/components/shared";
+import { Header, Footer, RouteChangeListener } from "@/components/shared";
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -43,6 +43,7 @@ export default function RootLayout({
       <body
         className={`${ibmPlexSans.variable} ${ibmPlexSerif.variable} ${jetbrainsMono.variable} font-serif bg-surface text-on-surface overflow-x-hidden`}
       >
+        <RouteChangeListener />
         <Header />
         <main className="pt-16 min-h-screen">
           {children}

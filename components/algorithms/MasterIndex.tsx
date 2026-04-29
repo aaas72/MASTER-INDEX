@@ -1,8 +1,89 @@
+"use client";
+
 import Link from "next/link";
 import algorithmsData from "@/data/algorithms.json";
+import { BrutalistTable, type TableColumn } from "@/components/shared";
+
+type Algorithm = {
+  id: string;
+  title: { en: string };
+  category: string;
+  difficulty: string;
+  complexity: {
+    time: { average: string };
+    space: string;
+  };
+  status: string;
+};
 
 export default function MasterIndex() {
-  const algorithms = Object.values(algorithmsData);
+  const algorithms = Object.values(algorithmsData) as Algorithm[];
+
+  const columns: TableColumn<Algorithm>[] = [
+    {
+      header: "Algorithm Name",
+      key: "title",
+      render: (algo) => (
+        <div>
+          <span className="block font-sans text-lg font-bold text-black">
+            {algo.title.en}
+          </span>
+          <span className="font-mono text-[10px] uppercase text-slate-400">
+            {algo.difficulty} • {algo.category}
+          </span>
+        </div>
+      )
+    },
+    {
+      header: "Category",
+      key: "category",
+      render: (algo) => (
+        <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
+          {algo.category}
+        </span>
+      )
+    },
+    {
+      header: "Time Complexity",
+      key: "time",
+      render: (algo) => (
+        <code className="font-mono text-sm font-bold text-[#002FA7]">
+          {algo.complexity.time.average}
+        </code>
+      )
+    },
+    {
+      header: "Space Complexity",
+      key: "space",
+      render: (algo) => (
+        <code className="font-mono text-sm text-slate-600">{algo.complexity.space}</code>
+      )
+    },
+    {
+      header: "Status",
+      key: "status",
+      render: (algo) => (
+        <div className="flex items-center gap-2">
+          <div className={`h-2 w-2 ${algo.status === 'Code Ready' ? 'bg-green-500' : algo.status === 'Simulation' ? 'bg-purple-500' : 'bg-[#002FA7]'}`}></div>
+          <span className="font-mono text-[10px] uppercase tracking-tighter">
+            {algo.status}
+          </span>
+        </div>
+      )
+    },
+    {
+      header: "Ref",
+      key: "id",
+      render: (algo) => (
+        <Link href={`/algorithms/${algo.id}`}>
+          <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
+            arrow_outward
+          </span>
+        </Link>
+      )
+    }
+  ];
+
   return (
     <section className="py-12">
       <div className="w-full">
@@ -25,74 +106,10 @@ export default function MasterIndex() {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="bg-surface-container-low text-left">
-                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                  Algorithm Name
-                </th>
-                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                  Category
-                </th>
-                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                  Time Complexity
-                </th>
-                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                  Space Complexity
-                </th>
-                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                  Status
-                </th>
-                <th className="border-none px-6 py-4 font-mono text-[10px] uppercase tracking-widest text-slate-500">
-                  Ref
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y-0">
-              {algorithms.map((algo) => (
-                <tr key={algo.id} className="group border-b border-surface-container-low transition-colors hover:bg-surface-container-lowest">
-                  <td className="px-6 py-8">
-                    <span className="block font-sans text-lg font-bold text-black">
-                      {algo.title.en}
-                    </span>
-                    <span className="font-mono text-[10px] uppercase text-slate-400">
-                      {algo.difficulty} • {algo.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-8">
-                    <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
-                      {algo.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-8">
-                    <code className="font-mono text-sm font-bold text-[#002FA7]">
-                      {algo.complexity.time.average}
-                    </code>
-                  </td>
-                  <td className="px-6 py-8">
-                    <code className="font-mono text-sm text-slate-600">{algo.complexity.space}</code>
-                  </td>
-                  <td className="px-6 py-8">
-                    <div className="flex items-center gap-2">
-                      <div className={`h-2 w-2 ${algo.status === 'Code Ready' ? 'bg-green-500' : algo.status === 'Simulation' ? 'bg-purple-500' : 'bg-[#002FA7]'}`}></div>
-                      <span className="font-mono text-[10px] uppercase tracking-tighter">
-                        {algo.status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-8">
-                    <Link href={`/algorithms/${algo.id}`}>
-                      <span className="material-symbols-outlined cursor-pointer text-slate-300 group-hover:text-[#002FA7]">
-                        arrow_outward
-                      </span>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <BrutalistTable 
+          columns={columns}
+          data={algorithms}
+        />
       </div>
     </section>
   );

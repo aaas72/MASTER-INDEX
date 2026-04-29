@@ -6,9 +6,13 @@ import React from "react";
  * LoadingOverlay: A global loading state component using the brutalist 
  * blue gradient square animation.
  */
-export default function LoadingOverlay() {
+export default function LoadingOverlay({ fullScreen = false }: { fullScreen?: boolean }) {
+  const containerClasses = fullScreen 
+    ? "fixed inset-0 z-[10000] bg-surface/95 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in duration-300 ease-out"
+    : "flex flex-col items-center justify-center min-h-[60vh] w-full bg-transparent animate-in fade-in duration-300";
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] w-full bg-transparent">
+    <div className={containerClasses}>
       <div className="flex items-center gap-4 mb-8">
         {[0, 1, 2, 3, 4, 5].map((i) => (
           <div 
