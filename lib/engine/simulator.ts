@@ -10,10 +10,10 @@ export type LogicStep = {
  * Returns an array of execution steps for visualization.
  * If the algorithm is not yet supported by the engine, returns null to fallback to static mock data.
  */
-export function generateSimulation(algorithmId: string): LogicStep[] | null {
+export function generateSimulation(algorithmId: string, initialData?: number[]): LogicStep[] | null {
   if (algorithmId === "quick-sort") {
     // A classic random-looking array for sorting demonstration
-    return simulateQuickSort([12, 4, 8, 3, 10, 2, 7, 5, 9, 6]);
+    return simulateQuickSort(initialData || [12, 4, 8, 3, 10, 2, 7, 5, 9, 6]);
   }
   
   if (algorithmId === "dijkstra") {
@@ -30,7 +30,7 @@ export function generateSimulation(algorithmId: string): LogicStep[] | null {
   }
 
   if (algorithmId === "merge-sort") {
-    return simulateMergeSort([12, 4, 8, 3, 10, 2, 7, 5, 9, 6]);
+    return simulateMergeSort(initialData || [12, 4, 8, 3, 10, 2, 7, 5, 9, 6]);
   }
 
   if (algorithmId === "binary-search") {

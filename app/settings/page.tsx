@@ -2,9 +2,9 @@ import { Sidebar } from "@/components/shared";
 
 export default function SettingsPage() {
   return (
-    <>
+    <div className="flex w-full min-h-screen">
       <Sidebar />
-      <div className="ml-60 p-12">
+      <div className="flex-1 p-12 min-w-0">
         <h1 className="page-title-sm mb-4 uppercase">Settings</h1>
         <p className="body-copy mb-8">Objective: Environment customization and user interface adjustments.</p>
         
@@ -23,6 +23,6 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

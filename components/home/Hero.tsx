@@ -81,7 +81,7 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="mx-auto w-full max-w-[1280px] px-12">
+      <div className="w-full">
         <div className="relative z-10 w-full max-w-3xl text-left">
           <span className="mb-4 block font-mono text-xs uppercase tracking-[0.3em] text-[#002FA7]">
             The Librarian Guide

@@ -1,7 +1,7 @@
 export default function Footer() {
   return (
-    <footer className="border-t border-surface-container bg-white py-12">
-      <div className="mx-auto grid w-full max-w-[1280px] grid-cols-1 gap-12 px-12 md:grid-cols-4">
+    <footer className="border-t border-surface-container bg-white py-12 w-full">
+      <div className="grid w-full grid-cols-1 gap-12 px-12 md:grid-cols-4">
         <div className="col-span-2">
           <h4 className="mb-4 font-sans text-lg font-bold uppercase tracking-tight">
             The Neo-Formalist Archive

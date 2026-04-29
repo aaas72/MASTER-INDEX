@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans, IBM_Plex_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Header, Fab } from "@/components/shared";
+import { Header, Footer } from "@/components/shared";
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -47,7 +47,7 @@ export default function RootLayout({
         <main className="pt-16 min-h-screen">
           {children}
         </main>
-        <Fab />
+        <Footer />
       </body>
     </html>
   );

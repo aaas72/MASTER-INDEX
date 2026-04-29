@@ -18,7 +18,7 @@ const MetricRow = ({ label, value, isMath = true }: { label: string; value: stri
 
 export default function MetricsSidebar({ algoData }: { algoData: AlgorithmData }) {
   return (
-    <aside className="hidden w-80 shrink-0 border-l border-outline-variant/20 bg-surface/50 backdrop-blur-sm lg:block">
+    <aside className="hidden w-full shrink-0 border-l border-outline-variant/20 bg-surface/50 backdrop-blur-sm lg:block">
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden p-5">
         <div className="mb-10 pt-4">
           <div className="mb-1 flex items-center gap-2">

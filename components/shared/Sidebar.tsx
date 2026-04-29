@@ -15,44 +15,28 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-full w-60 flex-col border-r border-outline-variant/20 bg-[#f7fafe] p-0 pt-20">
-      <div className="px-6 py-8 mb-4">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-8 h-8 bg-primary-container flex items-center justify-center">
-            <span className="material-symbols-outlined text-white text-sm">
-              terminal
-            </span>
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg font-bold text-black uppercase font-sans">
-              MASTER INDEX
-            </span>
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-slate-500">
-              LIBRARIAN GUIDE
-            </span>
-          </div>
-        </div>
-      </div>
+    <aside className="sticky top-16 z-40 flex h-[calc(100vh-4rem)] w-48 shrink-0 flex-col border-r border-outline-variant/20 bg-[#f7fafe] p-0">
+
       <nav className="flex-grow flex flex-col">
         <Link
           className={getLinkClasses("/categories")}
           href="/categories"
-          title="Structural Classification: Explore full domains (e.g. Graph Theory)"
+          title="Taxonomic Classification: Explore full domains (e.g. Graph Theory)"
         >
           <span className="material-symbols-outlined mr-3 text-lg">
             category
           </span>
-          <span className="text-xs uppercase tracking-widest">Categories</span>
+          <span className="text-xs uppercase tracking-widest">Taxonomy</span>
         </Link>
         <Link
           className={getLinkClasses("/algorithms")}
           href="/algorithms"
-          title="Comprehensive Archive: Full list and advanced filtering"
+          title="Full Ledger: Comprehensive archive of all procedures"
         >
           <span className="material-symbols-outlined mr-3 text-lg">
             terminal
           </span>
-          <span className="text-xs uppercase tracking-widest">Algorithms</span>
+          <span className="text-xs uppercase tracking-widest">Master Index</span>
         </Link>
         <Link
           className={getLinkClasses("/archive")}
@@ -75,11 +59,7 @@ export default function Sidebar() {
           <span className="text-xs uppercase tracking-widest">Settings</span>
         </Link>
       </nav>
-      <div className="p-6">
-        <button className="w-full border border-[#002FA7] text-[#002FA7] py-3 text-xs font-mono uppercase tracking-widest hover:bg-[#002FA7] hover:text-white transition-all">
-          New Entry
-        </button>
-      </div>
+
     </aside>
   );
 }

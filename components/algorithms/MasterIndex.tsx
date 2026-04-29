@@ -5,7 +5,7 @@ export default function MasterIndex() {
   const algorithms = Object.values(algorithmsData);
   return (
     <section className="py-12">
-      <div className="mx-auto w-full max-w-[1280px] px-12">
+      <div className="w-full">
         <div className="mb-12 flex items-end justify-between">
           <div className="max-w-xl">
             <h3 className="mb-2 font-sans text-2xl font-bold uppercase tracking-tight text-black">

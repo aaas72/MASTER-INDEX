@@ -20,8 +20,8 @@ export interface AlgorithmData {
     logic_steps: {
     description_en: string;
     array_state: number[];
-    pivot_index: number | null;
-    partition_range: [number, number] | null;
+    pivot_index?: number | null;
+    partition_range?: [number, number] | null;
   }[]; // Execution steps for Visualization
     proof_latex: string; // Mathematical proof equations
   };

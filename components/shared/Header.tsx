@@ -7,10 +7,22 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed top-0 z-50 flex w-full items-center justify-between border-b border-outline-variant/20 bg-surface/95 px-6 py-4 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-outline-variant/20 bg-surface/95 px-6 py-4 backdrop-blur-xl">
       <div className="flex items-center gap-8">
-        <Link href="/" className="font-sans text-2xl font-bold uppercase tracking-tighter text-on-surface">
-          THE HUB
+        <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+          <div className="w-8 h-8 bg-[#002FA7] flex items-center justify-center">
+            <span className="material-symbols-outlined text-white text-sm">
+              terminal
+            </span>
+          </div>
+          <div className="flex flex-col leading-none">
+            <span className="text-lg font-bold text-black uppercase font-sans tracking-tight">
+              MASTER INDEX
+            </span>
+            <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-slate-500">
+              LIBRARIAN GUIDE
+            </span>
+          </div>
         </Link>
         <nav className="hidden gap-6 md:flex">
           <Link
@@ -21,7 +33,7 @@ export default function Header() {
             }`}
             href="/"
           >
-            INDEX
+            OVERVIEW
           </Link>
           <Link
             className={`font-mono text-xs uppercase tracking-widest transition-all duration-100 ${

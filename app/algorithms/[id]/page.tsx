@@ -27,7 +27,9 @@ export default function AlgorithmDetailPage({
   }
 
   // Intercept and inject dynamic simulation if available
-  const dynamicSteps = generateSimulation(algorithmId);
+  // Extract initial array state if it exists in the first step of mock data
+  const initialData = rawAlgoData.content.logic_steps?.[0]?.array_state;
+  const dynamicSteps = generateSimulation(algorithmId, initialData);
   const algoData = {
     ...rawAlgoData,
     content: {
@@ -53,11 +55,15 @@ export default function AlgorithmDetailPage({
 
   return (
     <div className="bg-surface">
-      <div className="relative min-h-screen lg:grid lg:grid-cols-[auto_20rem]">
-        <main className="flex w-full max-w-[1200px] flex-col px-6 pb-24 pt-8 lg:mx-auto lg:px-12">
-          <div className="flex gap-12">
-            <AlgorithmToc />
+      <div className="relative min-h-screen">
+        <main className="mx-auto flex w-full max-w-[1440px] flex-col px-6 pb-24 pt-8 lg:px-12">
+          <div className="flex flex-col lg:flex-row gap-12">
+            {/* Left: Table of Contents */}
+            <div className="hidden lg:block w-48 shrink-0">
+              <AlgorithmToc />
+            </div>
 
+            {/* Center: Main Content */}
             <div className="min-w-0 flex-1">
               <header className="mb-12 border-b border-outline-variant/30 pb-4">
                 <div className="mb-6 flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant">
@@ -70,11 +76,11 @@ export default function AlgorithmDetailPage({
                   </Link>
                   <span className="text-outline">/</span>
                   <span className="font-bold text-primary-container">
-                    {algoData.title.en.replace(/ /g, "_")}
+                    {algoData.title.en}
                   </span>
                 </div>
                 <h1 className="page-title mb-6">
-                  {algoData.title.en.replace(/ /g, "_")}_
+                  {algoData.title.en}
                 </h1>
                 <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                   <div className="max-w-2xl body-copy md:text-xl">
@@ -93,7 +99,7 @@ export default function AlgorithmDetailPage({
 
               <section id="visualization" className="mb-24">
                 <h2 className="section-title mb-6">Computational Visualization</h2>
-                {algoData.category === "Graph Theory" ? (
+                {algoData.category === "Graph" ? (
                   <GraphVisualizer
                     algoData={algoData}
                     currentStep={currentStep}
@@ -102,7 +108,7 @@ export default function AlgorithmDetailPage({
                     handleNext={handleNext}
                     hasLogicSteps={hasLogicSteps}
                   />
-                ) : algoData.category === "Linked Lists" || algoData.category === "Data Structures" ? (
+                ) : algoData.category === "Searching" ? (
                   <LinkedListVisualizer
                     algoData={algoData}
                     currentStep={currentStep}
@@ -111,7 +117,7 @@ export default function AlgorithmDetailPage({
                     handleNext={handleNext}
                     hasLogicSteps={hasLogicSteps}
                   />
-                ) : algoData.category === "Dynamic Programming" || algoData.category === "Tree Search" ? (
+                ) : algoData.category === "DP" ? (
                   <DpVisualizer
                     algoData={algoData}
                     currentStep={currentStep}
@@ -190,10 +196,13 @@ export default function AlgorithmDetailPage({
                 </div>
               </section>
             </div>
+
+            {/* Right: Metrics Sidebar */}
+            <div className="hidden lg:block w-80 shrink-0">
+              <MetricsSidebar algoData={algoData} />
+            </div>
           </div>
         </main>
-
-        <MetricsSidebar algoData={algoData} />
       </div>
     </div>
   );

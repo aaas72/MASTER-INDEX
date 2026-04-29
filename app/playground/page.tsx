@@ -112,8 +112,8 @@ export default function PlaygroundPage() {
         setNodes((prevNodes) => {
           const updated = prevNodes.map((node, idx) => ({
             ...node,
-            x: clamp(node.x + (idx % 2 === 0 ? 7 : -6), 48, 640),
-            y: clamp(node.y + (idx % 2 === 0 ? -5 : 6), 48, 360),
+            x: clamp(node.x + (idx % 2 === 0 ? 7 : -6), 40, 600),
+            y: clamp(node.y + (idx % 2 === 0 ? -5 : 6), 40, 320),
           }));
           return updated;
         });
@@ -267,7 +267,7 @@ export default function PlaygroundPage() {
           bottom: `${consoleHeight}px`,
         }}
       >
-        <div className="mx-auto h-full w-full max-w-[1440px] space-y-5">
+        <div className="mx-auto h-full w-full max-w-5xl space-y-5">
           <header className="px-1 py-1">
             <p className="page-kicker">
               Computational Sandbox
@@ -277,13 +277,13 @@ export default function PlaygroundPage() {
             </h1>
           </header>
 
-          <section className="relative bg-white p-4 sm:p-6">
+          <section className="relative mx-auto max-w-2xl p-4 sm:p-6">
             <div
               ref={stageRef}
               onPointerMove={onNodePointerMove}
               onPointerUp={() => setDraggingNodeId(null)}
               onPointerLeave={() => setDraggingNodeId(null)}
-              className="relative h-[520px] overflow-hidden bg-white"
+              className="relative h-[400px] overflow-hidden"
             >
               {!isGraphMode && (
                 <div className="absolute inset-x-4 bottom-4 top-4 flex items-end gap-2">
