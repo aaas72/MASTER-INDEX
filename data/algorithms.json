@@ -256,7 +256,7 @@
     "code": [
       {
         "language": "javascript",
-        "snippet": "function quickSort(arr) {\n  if (arr.length <= 1) return arr;\n  let pivot = arr[arr.length - 1];\n  let left = [], right = [];\n  for (let i = 0; i < arr.length - 1; i++) {\n    if (arr[i] < pivot) left.push(arr[i]);\n    else right.push(arr[i]);\n  }\n  return [...quickSort(left), pivot, ...quickSort(right)];\n}",
+        "snippet": "1: quickSort(array, low, high):\n2:   if low < high:\n3:     pi = partition(array, low, high)\n4:     quickSort(array, low, pi - 1)\n5:     quickSort(array, pi + 1, high)\n\n7: partition(array, low, high):\n8:   pivot = array[high]\n9:   i = low - 1\n10:  for j from low to high - 1:\n11:    if array[j] < pivot:\n12:      i++, swap(array[i], array[j])\n13:  swap(array[i + 1], array[high])\n14:  return i + 1",
         "github_url": "https://github.com/algo-archive/quick-sort"
       }
     ],

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type NodePoint = {
   id: string;
@@ -9,19 +10,34 @@ type NodePoint = {
   y: number;
 };
 
+type Edge = {
+  from: string;
+  to: string;
+  weight?: number;
+};
+
 const ALGORITHM_OPTIONS = [
   "QUICK_SORT_TERMINAL",
   "MERGE_SORT_PIPELINE",
+  "BUBBLE_SORT_LEGACY",
   "GRAPH_BFS_NODEMAP",
 ];
 
-const DEFAULT_ARRAY = [45, 12, 89, 34, 67, 23, 91, 56];
+const DEFAULT_ARRAY = [45, 12, 89, 34, 67, 23, 91, 56, 78, 10];
 const DEFAULT_NODES: NodePoint[] = [
-  { id: "n1", label: "N1", x: 120, y: 90 },
-  { id: "n2", label: "N2", x: 280, y: 140 },
-  { id: "n3", label: "N3", x: 440, y: 95 },
-  { id: "n4", label: "N4", x: 210, y: 280 },
-  { id: "n5", label: "N5", x: 390, y: 300 },
+  { id: "n1", label: "N1", x: 1500, y: 1400 },
+  { id: "n2", label: "N2", x: 1700, y: 1450 },
+  { id: "n3", label: "N3", x: 1900, y: 1420 },
+  { id: "n4", label: "N4", x: 1600, y: 1650 },
+  { id: "n5", label: "N5", x: 1850, y: 1680 },
+];
+
+const DEFAULT_EDGES: Edge[] = [
+  { from: "n1", to: "n2" },
+  { from: "n2", to: "n3" },
+  { from: "n1", to: "n4" },
+  { from: "n4", to: "n5" },
+  { from: "n3", to: "n5" },
 ];
 
 const parseInputArray = (rawInput: string, fallbackSize: number) => {
@@ -44,354 +60,440 @@ const clamp = (value: number, min: number, max: number) =>
   Math.min(max, Math.max(min, value));
 
 export default function PlaygroundPage() {
-  const SIDEBAR_WIDTH = 280;
-  const CONSOLE_HEADER_HEIGHT = 48;
-  const CONSOLE_BODY_HEIGHT = 176;
+  const SIDEBAR_WIDTH = 240;
+  const CONSOLE_HEADER_HEIGHT = 40;
+  const CONSOLE_BODY_HEIGHT = 160;
+  
+  const CANVAS_WIDTH = 4000;
+  const CANVAS_HEIGHT = 4000;
 
   const [algorithm, setAlgorithm] = useState(ALGORITHM_OPTIONS[0]);
   const [speed, setSpeed] = useState(420);
-  const [dataSize, setDataSize] = useState(12);
-  const [inputValue, setInputValue] = useState("[45, 12, 89, 34, 67, 23, 91, 56]");
+  const [dataSize, setDataSize] = useState(10);
+  const [inputValue, setInputValue] = useState("[45, 12, 89, 34, 67, 23, 91, 56, 78, 10]");
   const [bars, setBars] = useState<number[]>(DEFAULT_ARRAY);
   const [nodes, setNodes] = useState<NodePoint[]>(DEFAULT_NODES);
-  const [logs, setLogs] = useState<string[]>([
-    "LOG: SANDBOX BOOTSTRAP COMPLETE.",
-    "LOG: READY FOR CUSTOM INPUT.",
-  ]);
-  const [iteration, setIteration] = useState(0);
+  const [edges, setEdges] = useState<Edge[]>(DEFAULT_EDGES);
+  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  
+  const [opsCount, setOpsCount] = useState({ comparisons: 0, swaps: 0, steps: 0 });
+  const [isComplete, setIsComplete] = useState(false);
+  
+  const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(1);
+  const [logs, setLogs] = useState<string[]>(["LOG: SYSTEM_READY."]);
   const [isRunning, setIsRunning] = useState(false);
-  const [isConsoleOpen, setIsConsoleOpen] = useState(true);
-  const [draggedBarIndex, setDraggedBarIndex] = useState<number | null>(null);
+  const [isDrawingMode, setIsDrawingMode] = useState(false);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
-  const stageRef = useRef<HTMLDivElement | null>(null);
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLDivElement | null>(null);
 
   const isGraphMode = useMemo(() => algorithm.includes("GRAPH"), [algorithm]);
 
-  const pushLog = (message: string) => {
+  const pushLog = useCallback((message: string) => {
     const timestamp = new Date().toLocaleTimeString("en-GB", { hour12: false });
     setLogs((prev) => [`[${timestamp}] ${message}`, ...prev].slice(0, 120));
-  };
+  }, []);
+
+  useEffect(() => {
+    if (viewportRef.current) {
+        viewportRef.current.scrollLeft = (CANVAS_WIDTH - viewportRef.current.clientWidth) / 2;
+        viewportRef.current.scrollTop = (CANVAS_HEIGHT - viewportRef.current.clientHeight) / 2;
+    }
+  }, []);
+
+  useEffect(() => {
+    zoomRef.current = zoom;
+  }, [zoom]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+
+    const handleWheel = (event: WheelEvent) => {
+      if (event.ctrlKey) {
+        event.preventDefault();
+        
+        const delta = event.deltaY > 0 ? 0.90 : 1.10;
+        const currentZoom = zoomRef.current;
+        const nextZoom = clamp(currentZoom * delta, 0.4, 4);
+        
+        if (nextZoom === currentZoom) return;
+
+        const rect = viewport.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        // The magic "Zoom to Cursor" math
+        const zoomRatio = nextZoom / currentZoom;
+        viewport.scrollLeft = (viewport.scrollLeft + mouseX) * zoomRatio - mouseX;
+        viewport.scrollTop = (viewport.scrollTop + mouseY) * zoomRatio - mouseY;
+
+        setZoom(nextZoom);
+      }
+    };
+
+    viewport.addEventListener("wheel", handleWheel, { passive: false });
+    return () => viewport.removeEventListener("wheel", handleWheel);
+  }, []);
 
   const regenerateData = () => {
     const nextBars = parseInputArray(inputValue, dataSize);
     setBars(nextBars);
-    setNodes(
-      DEFAULT_NODES.map((node, index) => ({
-        ...node,
-        x: 120 + ((index * 140) % 420),
-        y: 90 + ((index * 75) % 250),
-      })),
-    );
-    setIteration(0);
-    pushLog(`LOG: INPUT MATRIX NORMALIZED TO ${nextBars.length} VALUES.`);
+    setOpsCount({ comparisons: 0, swaps: 0, steps: 0 });
+    setIsComplete(false);
+    pushLog(`LOG: DATA_REGEN.`);
   };
 
   const resetAll = () => {
     setIsRunning(false);
     setBars(DEFAULT_ARRAY);
     setNodes(DEFAULT_NODES);
-    setIteration(0);
-    setInputValue("[45, 12, 89, 34, 67, 23, 91, 56]");
-    setLogs([
-      "LOG: RESET_STEP INVOKED.",
-      "LOG: SANDBOX RETURNED TO BASELINE.",
-    ]);
+    setEdges(DEFAULT_EDGES);
+    setZoom(1);
+    setOpsCount({ comparisons: 0, swaps: 0, steps: 0 });
+    setIsComplete(false);
+    setInputValue("[45, 12, 89, 34, 67, 23, 91, 56, 78, 10]");
+    pushLog("LOG: WORKSPACE_RESET.");
+  };
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const runBubbleSort = async (arr: number[]) => {
+    const n = arr.length;
+    let tempArr = [...arr];
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+        if (!isRunning) return;
+        setOpsCount(prev => ({ ...prev, comparisons: prev.comparisons + 1, steps: prev.steps + 1 }));
+        if (tempArr[j] > tempArr[j + 1]) {
+          [tempArr[j], tempArr[j + 1]] = [tempArr[j + 1], tempArr[j]];
+          setBars([...tempArr]);
+          setOpsCount(prev => ({ ...prev, swaps: prev.swaps + 1 }));
+          await sleep(speed);
+        }
+      }
+    }
+    if (isRunning) {
+      setIsRunning(false);
+      setIsComplete(true);
+      pushLog("LOG: BUBBLE_SORT_COMPLETE.");
+    }
+  };
+
+  const runQuickSort = async (arr: number[], low: number, high: number) => {
+    if (low < high) {
+      const pi = await partition(arr, low, high);
+      if (isRunning) {
+        await runQuickSort(arr, low, pi - 1);
+        await runQuickSort(arr, pi + 1, high);
+      }
+    }
+    if (low === 0 && high === arr.length - 1 && isRunning) {
+      setIsRunning(false);
+      setIsComplete(true);
+      pushLog("LOG: QUICK_SORT_COMPLETE.");
+    }
+  };
+
+  const partition = async (arr: number[], low: number, high: number) => {
+    const pivot = arr[high];
+    let i = low - 1;
+    for (let j = low; j < high; j++) {
+      if (!isRunning) return low;
+      setOpsCount(prev => ({ ...prev, comparisons: prev.comparisons + 1, steps: prev.steps + 1 }));
+      if (arr[j] < pivot) {
+        i++;
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+        setBars([...arr]);
+        setOpsCount(prev => ({ ...prev, swaps: prev.swaps + 1 }));
+        await sleep(speed);
+      }
+    }
+    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+    setBars([...arr]);
+    setOpsCount(prev => ({ ...prev, swaps: prev.swaps + 1 }));
+    await sleep(speed);
+    return i + 1;
   };
 
   useEffect(() => {
-    if (!isRunning) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      setIteration((prev) => prev + 1);
-
-      if (isGraphMode) {
-        setNodes((prevNodes) => {
-          const updated = prevNodes.map((node, idx) => ({
-            ...node,
-            x: clamp(node.x + (idx % 2 === 0 ? 7 : -6), 40, 600),
-            y: clamp(node.y + (idx % 2 === 0 ? -5 : 6), 40, 320),
-          }));
-          return updated;
-        });
-        pushLog("LOG: NODE FORCES REBALANCED IN GRAPH FIELD.");
-      } else {
-        setBars((prevBars) => {
-          if (prevBars.length < 2) {
-            return prevBars;
-          }
-
-          const next = [...prevBars];
-          const a = Math.floor(Math.random() * next.length);
-          const b = Math.floor(Math.random() * next.length);
-          [next[a], next[b]] = [next[b], next[a]];
-          pushLog(`LOG: SWAPPING INDEX ${a} <-> ${b}.`);
-          return next;
-        });
+    if (isRunning) {
+      setIsComplete(false);
+      if (algorithm === "BUBBLE_SORT_LEGACY") {
+        runBubbleSort(bars);
+      } else if (algorithm === "QUICK_SORT_TERMINAL") {
+        runQuickSort([...bars], 0, bars.length - 1);
       }
-    }, speed);
-
-    return () => window.clearInterval(interval);
-  }, [isGraphMode, isRunning, speed]);
-
-  const onNodePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (!draggingNodeId || !stageRef.current) {
-      return;
     }
+  }, [isRunning]);
 
-    const stageRect = stageRef.current.getBoundingClientRect();
-    const nextX = clamp(event.clientX - stageRect.left - dragOffset.x, 24, stageRect.width - 24);
-    const nextY = clamp(event.clientY - stageRect.top - dragOffset.y, 24, stageRect.height - 24);
-
-    setNodes((prev) =>
-      prev.map((node) =>
-        node.id === draggingNodeId
-          ? {
-              ...node,
-              x: nextX,
-              y: nextY,
-            }
-          : node,
-      ),
-    );
+  const onStageClick = (event: React.MouseEvent) => {
+    if (!isDrawingMode || !canvasRef.current || draggingNodeId) return;
+    const target = event.target as HTMLElement;
+    if (target.closest('.node-button')) return;
+    const canvasRect = canvasRef.current.getBoundingClientRect();
+    const x = (event.clientX - canvasRect.left) / zoom;
+    const y = (event.clientY - canvasRect.top) / zoom;
+    setNodes([...nodes, { id: `n${Date.now()}`, label: `N${nodes.length + 1}`, x, y }]);
   };
 
-  const consoleHeight = isConsoleOpen
-    ? CONSOLE_HEADER_HEIGHT + CONSOLE_BODY_HEIGHT
-    : CONSOLE_HEADER_HEIGHT;
+  const onNodeClick = (nodeId: string) => {
+    if (!isDrawingMode) return;
+    if (selectedNodeId === null) setSelectedNodeId(nodeId);
+    else if (selectedNodeId === nodeId) setSelectedNodeId(null);
+    else {
+      const exists = edges.some(e => (e.from === selectedNodeId && e.to === nodeId) || (e.from === nodeId && e.to === selectedNodeId));
+      if (!exists) setEdges([...edges, { from: selectedNodeId, to: nodeId }]);
+      setSelectedNodeId(null);
+    }
+  };
+
+  const deleteNode = (nodeId: string) => {
+    setNodes(nodes.filter(n => n.id !== nodeId));
+    setEdges(edges.filter(e => e.from !== nodeId && e.to !== nodeId));
+  };
+
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!canvasRef.current) return;
+    const canvasRect = canvasRef.current.getBoundingClientRect();
+    const x = (event.clientX - canvasRect.left) / zoom;
+    const y = (event.clientY - canvasRect.top) / zoom;
+    setMousePos({ x, y });
+    if (draggingNodeId && !isDrawingMode) {
+      const nextX = x - dragOffset.x;
+      const nextY = y - dragOffset.y;
+      setNodes((prev) => prev.map((node) => node.id === draggingNodeId ? { ...node, x: nextX, y: nextY } : node));
+    }
+  };
+
+  const exportToJson = () => {
+    const data = { bars, nodes, edges, algorithm };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `playground-data-${Date.now()}.json`;
+    a.click();
+  };
+
+  const consoleHeight = isConsoleOpen ? CONSOLE_HEADER_HEIGHT + CONSOLE_BODY_HEIGHT : CONSOLE_HEADER_HEIGHT;
+  const currentSidebarWidth = isSidebarOpen ? SIDEBAR_WIDTH : 0;
+  const selectedNode = useMemo(() => nodes.find(n => n.id === selectedNodeId), [nodes, selectedNodeId]);
 
   return (
-    <div
-      dir="ltr"
-      className="min-h-screen bg-[#F7FAFE] text-left"
-      style={{
-        backgroundImage:
-          "radial-gradient(circle, rgba(196,197,214,0.55) 1px, transparent 1px)",
-        backgroundSize: "20px 20px",
-      }}
+    <div 
+      dir="ltr" 
+      className="min-h-screen bg-[#F7FAFE] text-left overflow-hidden font-mono"
     >
-      <aside
-        className="playground-sidebar-scroll fixed bottom-0 left-0 top-16 overflow-y-auto bg-white border-r border-[#C4C5D6] px-4 py-6"
+      <style jsx global>{`
+        .custom-slim-scrollbar::-webkit-scrollbar {
+          width: 3px;
+          height: 3px;
+        }
+        .custom-slim-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-slim-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(0, 47, 167, 0.2);
+          border-radius: 10px;
+        }
+        .custom-slim-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(0, 47, 167, 0.5);
+        }
+        .custom-slim-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 47, 167, 0.2) transparent;
+        }
+        .blueprint-grid {
+          background-image: radial-gradient(circle, rgba(15, 23, 42, 0.45) 0.8px, transparent 1px);
+          background-size: 24px 24px;
+        }
+      `}</style>
+      
+      <aside 
+        className={`fixed bottom-0 left-0 top-16 bg-white border-r border-[#C4C5D6] shadow-sm z-40 transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`} 
         style={{ width: `${SIDEBAR_WIDTH}px` }}
       >
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">
-              Input Panel
-            </label>
-            <textarea
-              value={inputValue}
-              onChange={(event) => setInputValue(event.target.value)}
-              className="h-24 w-full resize-none border border-[#C4C5D6] bg-[#F7FAFE] px-3 py-2 font-mono text-sm text-black outline-none transition-all hover:border-[#002FA7] hover:shadow-[0_0_0_1px_rgba(0,47,167,0.25)] focus:border-[#002FA7]"
-              placeholder="[45, 12, 89, 34]"
-            />
+        <div className="h-full flex flex-col p-4 space-y-6 overflow-y-auto custom-slim-scrollbar pb-20">
+          <div className="space-y-1.5">
+            <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Input_Matrix</label>
+            <textarea value={inputValue} onChange={(e) => setInputValue(e.target.value)} className="h-20 w-full resize-none border border-[#C4C5D6] bg-[#F7FAFE] px-2 py-2 text-[10px] text-black outline-none focus:border-[#002FA7]" />
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">
-              <span>Execution Speed</span>
-              <span className="font-bold text-[#002FA7]">{speed}ms</span>
-            </div>
-            <input
-              type="range"
-              min={80}
-              max={1200}
-              step={20}
-              value={speed}
-              onChange={(event) => setSpeed(Number(event.target.value))}
-              className="w-full cursor-pointer accent-[#002FA7]"
-            />
-          </div>
-
-          <div className="space-y-3">
-            <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">
-              <span>Data Size</span>
-              <span className="font-bold text-[#002FA7]">n={dataSize}</span>
-            </div>
-            <input
-              type="range"
-              min={4}
-              max={32}
-              step={1}
-              value={dataSize}
-              onChange={(event) => setDataSize(Number(event.target.value))}
-              className="w-full cursor-pointer accent-[#002FA7]"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="font-mono text-[10px] uppercase tracking-[0.2em] text-slate-600">
-              Algorithm Selector
-            </label>
-            <select
-              value={algorithm}
-              onChange={(event) => setAlgorithm(event.target.value)}
-              className="w-full border border-[#C4C5D6] bg-[#0A1022] px-3 py-3 font-mono text-xs tracking-[0.14em] text-[#DBE7FF] outline-none transition-all hover:border-[#002FA7] hover:shadow-[0_0_0_1px_rgba(0,47,167,0.25)] focus:border-[#002FA7]"
-            >
-              {ALGORITHM_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="space-y-3 pt-4">
-            <button
-              onClick={() => {
-                regenerateData();
-                setIsRunning(true);
-                pushLog("LOG: RUN_SIMULATION DISPATCHED.");
-              }}
-              className="w-full border border-[#002FA7] bg-[#002FA7] py-3 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-white transition-all hover:border-[#1B55E0] hover:bg-[#0D3DB3] hover:shadow-[0_0_0_1px_rgba(0,47,167,0.35)]"
-            >
-              RUN_SIMULATION
+            <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Canvas_Tools</label>
+            <button onClick={() => setIsDrawingMode(!isDrawingMode)} className={`w-full py-2.5 text-[9px] border flex items-center justify-center gap-2 transition-all font-bold tracking-widest ${isDrawingMode ? 'bg-[#002FA7] text-white border-[#002FA7]' : 'bg-white text-[#002FA7] border-[#C4C5D6] hover:border-[#002FA7]'}`}>
+              <span className="material-symbols-outlined text-[16px]">{isDrawingMode ? 'gesture' : 'edit_square'}</span>
+              {isDrawingMode ? 'STOP_DRAWING' : 'START_DRAWING'}
             </button>
-            <button
-              onClick={resetAll}
-              className="w-full border border-[#C4C5D6] bg-white py-3 font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-[#002FA7] transition-all hover:border-[#002FA7] hover:shadow-[0_0_0_1px_rgba(0,47,167,0.25)]"
-            >
-              RESET_STEP
-            </button>
+          </div>
+
+          <div className="space-y-4">
+             <div className="space-y-1.5">
+               <div className="flex justify-between text-[8px] uppercase text-slate-400 font-bold tracking-widest">
+                 <span>Speed_Factor</span>
+                 <span className="text-[#002FA7]">{speed}ms</span>
+               </div>
+               <input type="range" min={40} max={800} step={20} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-full h-1 bg-slate-200 appearance-none accent-[#002FA7] cursor-pointer" />
+             </div>
+
+             <div className="space-y-1.5">
+               <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Algorithm_Engine</label>
+               <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="w-full border border-[#C4C5D6] bg-[#0A1022] px-2 py-2.5 text-[9px] font-bold tracking-widest text-[#DBE7FF] outline-none cursor-pointer">
+                 {ALGORITHM_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+               </select>
+             </div>
+          </div>
+
+          <div className="space-y-2 pt-2 border-t border-slate-100">
+             <div className="flex justify-between items-center text-[9px]">
+                <span className="text-slate-400 uppercase tracking-tighter">View_Scale</span>
+                <span className="text-primary font-bold">{Math.round(zoom * 100)}%</span>
+             </div>
+             <button onClick={() => setZoom(1)} className="w-full py-1.5 border border-slate-200 text-[8px] font-bold uppercase hover:bg-slate-50 transition-colors">Normalize_View</button>
+          </div>
+
+          <div className="space-y-2 pt-4 border-t border-slate-100">
+            <button onClick={() => { regenerateData(); setIsRunning(true); }} className="w-full bg-[#002FA7] py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white hover:bg-[#0D3DB3] shadow-lg shadow-primary/20 transition-all">EXECUTE_RUN</button>
+            <div className="grid grid-cols-2 gap-2">
+              <button onClick={resetAll} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors">RESET</button>
+              <button onClick={exportToJson} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors">JSON</button>
+            </div>
           </div>
         </div>
+
+        <button 
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className={`absolute top-1/2 -right-6 -translate-y-1/2 w-6 h-12 bg-white border border-[#C4C5D6] border-l-0 rounded-r-md flex items-center justify-center text-[#002FA7] shadow-sm hover:bg-slate-50 z-50`}
+        >
+          <span className="material-symbols-outlined text-[18px]">
+            {isSidebarOpen ? 'chevron_left' : 'chevron_right'}
+          </span>
+        </button>
       </aside>
 
-      <main
-        className="playground-content-scrollbar-hidden fixed right-0 top-16 overflow-y-auto px-6 py-6"
-        style={{
-          left: `${SIDEBAR_WIDTH}px`,
-          bottom: `${consoleHeight}px`,
-        }}
+      <main 
+        ref={viewportRef}
+        className="fixed right-0 top-16 overflow-auto transition-all duration-300 ease-in-out custom-slim-scrollbar" 
+        style={{ left: `${currentSidebarWidth}px`, bottom: `${consoleHeight}px` }}
       >
-        <div className="mx-auto h-full w-full max-w-5xl space-y-5">
-          <header className="px-1 py-1">
-            <p className="page-kicker">
-              Computational Sandbox
-            </p>
-            <h1 className="page-title-sm mt-2 uppercase">
-              Interactive Algorithm Playground
-            </h1>
-          </header>
-
-          <section className="relative mx-auto max-w-2xl p-4 sm:p-6">
-            <div
-              ref={stageRef}
-              onPointerMove={onNodePointerMove}
-              onPointerUp={() => setDraggingNodeId(null)}
-              onPointerLeave={() => setDraggingNodeId(null)}
-              className="relative h-[400px] overflow-hidden"
-            >
-              {!isGraphMode && (
-                <div className="absolute inset-x-4 bottom-4 top-4 flex items-end gap-2">
-                  {bars.map((value, index) => {
-                    const max = Math.max(...bars, 1);
-                    const height = `${Math.max((value / max) * 100, 8)}%`;
-
-                    return (
-                      <button
-                        key={`${value}-${index}`}
-                        draggable
-                        onDragStart={() => setDraggedBarIndex(index)}
-                        onDragOver={(event) => event.preventDefault()}
-                        onDrop={() => {
-                          if (draggedBarIndex === null || draggedBarIndex === index) {
-                            return;
-                          }
-                          setBars((prev) => {
-                            const copy = [...prev];
-                            const [moving] = copy.splice(draggedBarIndex, 1);
-                            copy.splice(index, 0, moving);
-                            return copy;
-                          });
-                          pushLog(`LOG: MANUAL BAR REORDER ${draggedBarIndex} -> ${index}.`);
-                          setDraggedBarIndex(null);
-                        }}
-                        className="group relative flex-1 border border-[#C4C5D6] bg-[#DCE6FF] transition-all hover:border-[#002FA7] hover:shadow-[0_0_0_1px_rgba(0,47,167,0.25)]"
-                        style={{ height }}
-                      >
-                        <span className="absolute -top-5 left-1/2 -translate-x-1/2 font-mono text-[10px] font-bold text-[#002FA7] opacity-0 transition-opacity group-hover:opacity-100">
-                          {value}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-
-              {isGraphMode && (
-                <>
-                  <svg className="absolute inset-0 h-full w-full" aria-hidden="true">
-                    <line x1={nodes[0]?.x} y1={nodes[0]?.y} x2={nodes[1]?.x} y2={nodes[1]?.y} stroke="#9CB0E6" strokeWidth="1" />
-                    <line x1={nodes[1]?.x} y1={nodes[1]?.y} x2={nodes[2]?.x} y2={nodes[2]?.y} stroke="#9CB0E6" strokeWidth="1" />
-                    <line x1={nodes[0]?.x} y1={nodes[0]?.y} x2={nodes[3]?.x} y2={nodes[3]?.y} stroke="#9CB0E6" strokeWidth="1" />
-                    <line x1={nodes[3]?.x} y1={nodes[3]?.y} x2={nodes[4]?.x} y2={nodes[4]?.y} stroke="#9CB0E6" strokeWidth="1" />
-                    <line x1={nodes[2]?.x} y1={nodes[2]?.y} x2={nodes[4]?.x} y2={nodes[4]?.y} stroke="#9CB0E6" strokeWidth="1" />
-                  </svg>
-                  {nodes.map((node) => (
-                    <button
-                      key={node.id}
-                      onPointerDown={(event) => {
-                        const rect = (event.currentTarget as HTMLButtonElement).getBoundingClientRect();
-                        setDraggingNodeId(node.id);
-                        setDragOffset({
-                          x: event.clientX - rect.left,
-                          y: event.clientY - rect.top,
-                        });
-                        pushLog(`LOG: DRAGGING ${node.label}.`);
-                      }}
-                      className="absolute h-12 w-12 -translate-x-1/2 -translate-y-1/2 border border-[#002FA7] bg-white font-mono text-[11px] font-bold text-[#002FA7] transition-all hover:shadow-[0_0_0_1px_rgba(0,47,167,0.35)]"
-                      style={{ left: node.x, top: node.y }}
-                    >
-                      {node.label}
-                    </button>
-                  ))}
-                </>
-              )}
-
-              <div className="absolute right-4 top-4 border border-[#C4C5D6] bg-white/65 px-3 py-2 backdrop-blur-md">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-slate-600">
-                  STATUS: {isRunning ? "EXECUTING..." : "IDLE"}
-                </p>
-                <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[#002FA7]">
-                  ITERATION_COUNT: {String(iteration).padStart(4, "0")}
-                </p>
+        <div 
+          ref={canvasRef}
+          onClick={onStageClick} 
+          onPointerMove={onPointerMove} 
+          onPointerUp={() => setDraggingNodeId(null)} 
+          className="relative origin-top-left will-change-transform blueprint-grid" 
+          style={{ 
+            width: `${CANVAS_WIDTH}px`, 
+            height: `${CANVAS_HEIGHT}px`,
+            transform: `scale(${zoom})`
+          }}
+        >
+          <section className={`relative w-full h-full ${isDrawingMode ? 'cursor-none' : 'cursor-default'}`}>
+            {isDrawingMode && (
+              <div className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-primary/40 rounded-full pointer-events-none z-50 flex items-center justify-center bg-primary/5" style={{ left: mousePos.x, top: mousePos.y }}>
+                <span className="material-symbols-outlined text-primary/40 text-[10px]">add</span>
               </div>
-            </div>
+            )}
+
+            {isGraphMode && (
+              <svg className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden="true">
+                {selectedNode && isDrawingMode && <line x1={selectedNode.x} y1={selectedNode.y} x2={mousePos.x} y2={mousePos.y} stroke="#002FA7" strokeWidth={2/zoom} strokeDasharray="4 4" className="animate-[dash_1s_linear_infinite]" />}
+                {edges.map((edge, idx) => {
+                  const fromNode = nodes.find(n => n.id === edge.from);
+                  const toNode = nodes.find(n => n.id === edge.to);
+                  if (!fromNode || !toNode) return null;
+                  return <motion.line initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} key={`${edge.from}-${edge.to}-${idx}`} x1={fromNode.x} y1={fromNode.y} x2={toNode.x} y2={toNode.y} stroke="#002FA7" strokeWidth={1.5/zoom} strokeOpacity="0.5" />;
+                })}
+              </svg>
+            )}
+
+            {!isGraphMode && (
+              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-end gap-2 w-[500px] h-[300px]">
+                {bars.map((value, index) => {
+                  const max = Math.max(...bars, 1);
+                  const height = `${Math.max((value / max) * 100, 8)}%`;
+                  return (
+                    <div key={`${value}-${index}`} className="group relative flex-1 border border-[#C4C5D6] bg-[#DCE6FF] transition-all" style={{ height }}>
+                      <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-bold text-[#002FA7] opacity-100 whitespace-nowrap">{value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {isGraphMode && nodes.map((node) => {
+              const isSelected = selectedNodeId === node.id;
+              return (
+                <motion.button layoutId={node.id} key={node.id} onDoubleClick={() => isDrawingMode && deleteNode(node.id)} onPointerDown={(event) => {
+                  if (isDrawingMode) onNodeClick(node.id);
+                  else {
+                    const rect = (event.currentTarget as HTMLButtonElement).getBoundingClientRect();
+                    setDraggingNodeId(node.id);
+                    setDragOffset({ x: (event.clientX - rect.left) / zoom, y: (event.clientY - rect.top) / zoom });
+                  }
+                }} className={`node-button absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 border text-[9px] font-bold transition-all shadow-md z-20 flex items-center justify-center ${isSelected ? 'bg-[#002FA7] text-white border-[#002FA7] scale-110 z-30' : 'bg-white text-[#002FA7] border-[#002FA7] hover:bg-[#F0F4FF]'}`} style={{ left: node.x, top: node.y }}>
+                  {node.label}
+                </motion.button>
+              );
+            })}
           </section>
+        </div>
+
+        <div className="fixed top-20 right-8 z-30">
+            <motion.div drag dragMomentum={false} className="cursor-grab active:cursor-grabbing">
+              <div className="bg-[#0A1022] border border-[#002FA7]/40 shadow-2xl backdrop-blur-md select-none min-w-[180px] overflow-hidden">
+                  <div className="px-4 py-3 border-b border-primary/20 flex justify-between items-center">
+                    <p className="text-[8px] text-[#8FA8DF] uppercase tracking-[0.2em]">Metrics.v2</p>
+                    <span className="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
+                  </div>
+                  <div className="px-4 py-3 grid grid-cols-2 gap-x-6 gap-y-1 bg-[#0A1022]/50">
+                    <div>
+                        <p className="text-[7px] text-slate-500 uppercase">Cmp</p>
+                        <p className="text-lg font-bold text-white tabular-nums">{opsCount.comparisons}</p>
+                    </div>
+                    <div>
+                        <p className="text-[7px] text-slate-500 uppercase">Swp</p>
+                        <p className="text-lg font-bold text-primary tabular-nums brightness-125">{opsCount.swaps}</p>
+                    </div>
+                  </div>
+                  <AnimatePresence>
+                    {isComplete && (
+                        <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-[#002FA7] border-t border-white/10">
+                          <div className="px-4 py-2 flex items-center gap-2">
+                              <span className="material-symbols-outlined text-[14px] text-white">check_circle</span>
+                              <span className="text-[8px] font-bold text-white uppercase tracking-wider">Execution Complete</span>
+                          </div>
+                        </motion.div>
+                    )}
+                  </AnimatePresence>
+              </div>
+            </motion.div>
         </div>
       </main>
 
-      <section
-        className="fixed bottom-0 right-0 z-20 border-l border-t border-[#C4C5D6] bg-white"
-        style={{ left: `${SIDEBAR_WIDTH}px` }}
+      <section 
+        className={`fixed bottom-0 right-0 z-50 border-l border-[#C4C5D6] bg-[#0B1226] transition-all duration-300 ease-in-out`} 
+        style={{ left: `${currentSidebarWidth}px` }}
       >
-        <button
-          onClick={() => setIsConsoleOpen((prev) => !prev)}
-          className="flex h-12 w-full items-center justify-between bg-[#0B1226] px-4 text-left transition-all hover:shadow-[0_0_0_1px_rgba(0,47,167,0.2)]"
-        >
-          <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#D5E2FF]">
-            Technical Console
-          </span>
-          <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#8FA8DF]">
-            {isConsoleOpen ? "COLLAPSE" : "EXPAND"}
-          </span>
+        <button onClick={() => setIsConsoleOpen((prev) => !prev)} className="flex h-10 w-full items-center justify-between px-4 text-left hover:bg-slate-900 border-t border-[#C4C5D6]/20">
+          <div className="flex items-center gap-3">
+             <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+             <span className="text-[9px] uppercase tracking-[0.2em] text-[#D5E2FF]">TERMINAL_STDOUT</span>
+          </div>
+          <span className="text-[8px] uppercase text-[#8FA8DF]">{isConsoleOpen ? "COLLAPSE" : "EXPAND"}</span>
         </button>
-
         {isConsoleOpen && (
-          <div
-            className="overflow-y-auto bg-[#0B1226] px-4 py-3 font-mono text-[12px] leading-relaxed text-[#D5E2FF]"
-            style={{ height: `${CONSOLE_BODY_HEIGHT}px` }}
-          >
-            {logs.map((entry, index) => (
-              <p key={`${entry}-${index}`} className="whitespace-pre-wrap break-words">
-                {entry}
-              </p>
-            ))}
-            <p className="mt-1 animate-pulse text-[#7FA2FF]">_</p>
+          <div className="overflow-y-auto px-4 py-3 text-[10px] leading-relaxed text-[#D5E2FF] custom-slim-scrollbar" style={{ height: `${CONSOLE_BODY_HEIGHT}px` }}>
+            {logs.map((entry, index) => <p key={`${entry}-${index}`} className="mb-1 opacity-80 border-l border-primary/20 pl-2">{entry}</p>)}
           </div>
         )}
       </section>

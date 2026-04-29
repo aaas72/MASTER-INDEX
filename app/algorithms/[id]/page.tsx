@@ -7,7 +7,7 @@ import { BlockMath } from "react-katex";
 import { BarVisualizer, GraphVisualizer, LinkedListVisualizer, DpVisualizer } from "@/components/algorithms/visualizers";
 import algorithmsData from "@/data/algorithms.json";
 import { AlgorithmData } from "@/types/algorithm";
-import { AlgorithmToc, MetricsSidebar } from "@/components/algorithms/detail";
+import { AlgorithmToc, MetricsSidebar, CodeVisualizer } from "@/components/algorithms/detail";
 import { generateSimulation } from "@/lib/engine/simulator";
 
 type AlgorithmKey = keyof typeof algorithmsData;
@@ -151,18 +151,17 @@ export default function AlgorithmDetailPage({
                 <h2 className="section-title mb-6">Reference Implementation</h2>
                 {algoData.code && algoData.code.length > 0 ? (
                   <>
-                    <div className="border border-outline-variant/20 bg-surface-container-low p-6 font-mono text-sm">
-                      <pre>
-                        <code>{algoData.code[0].snippet}</code>
-                      </pre>
-                    </div>
+                    <CodeVisualizer 
+                      code={algoData.code[0].snippet} 
+                      activeLine={logicStep?.active_line} 
+                    />
                     <a
                       href={algoData.code[0].github_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="mt-4 inline-block font-mono text-xs text-on-surface-variant transition-colors hover:text-primary-container"
+                      className="mt-6 inline-block font-mono text-[10px] uppercase tracking-widest text-on-surface-variant transition-colors hover:text-primary-container border-b border-outline-variant/30 pb-1"
                     >
-                      View on GitHub →
+                      View Source Archive →
                     </a>
                   </>
                 ) : (
