@@ -55,7 +55,7 @@ export default function LinkedListVisualizer({
         <div className="flex items-center">
           <div className="w-32 h-32 bg-white border border-black flex flex-col items-center justify-center relative shadow-sm">
             <span className="absolute top-2 left-2 font-mono text-[8px] text-outline">0x4F2A</span>
-            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">idx:0</span>
+            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">i:0</span>
             <span className="font-sans text-4xl font-bold">12</span>
             <div className="absolute bottom-0 right-0 w-8 h-8 bg-surface-container-high border-l border-t border-black flex items-center justify-center">
               <span className="material-symbols-outlined text-xs">link</span>
@@ -71,7 +71,7 @@ export default function LinkedListVisualizer({
         <div className="flex items-center">
           <div className="w-32 h-32 bg-white border border-black flex flex-col items-center justify-center relative shadow-sm">
             <span className="absolute top-2 left-2 font-mono text-[8px] text-outline">0x7B9C</span>
-            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">idx:1</span>
+            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">i:1</span>
             <span className="font-sans text-4xl font-bold">45</span>
             <div className="absolute bottom-0 right-0 w-8 h-8 bg-surface-container-high border-l border-t border-black flex items-center justify-center">
               <span className="material-symbols-outlined text-xs">link</span>
@@ -87,7 +87,7 @@ export default function LinkedListVisualizer({
         <div className="flex items-center opacity-30 border-2 border-dashed border-primary">
           <div className="w-32 h-32 bg-white flex flex-col items-center justify-center relative">
             <span className="absolute top-2 left-2 font-mono text-[8px] text-primary">NEW_ALLOC</span>
-            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">idx:2</span>
+            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">i:2</span>
             <span className="font-sans text-4xl font-bold text-primary">89</span>
             <div className="absolute bottom-0 right-0 w-8 h-8 bg-primary-fixed-dim border-l border-t border-primary flex items-center justify-center">
               <span className="material-symbols-outlined text-xs text-primary">add</span>
@@ -103,7 +103,7 @@ export default function LinkedListVisualizer({
         <div className="flex items-center">
           <div className="w-32 h-32 bg-white border border-black flex flex-col items-center justify-center relative shadow-sm">
             <span className="absolute top-2 left-2 font-mono text-[8px] text-outline">0x2D1F</span>
-            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">idx:3</span>
+            <span className="absolute bottom-2 left-2 font-mono text-[8px] text-primary">i:3</span>
             <span className="font-sans text-4xl font-bold">07</span>
             <div className="absolute bottom-0 right-0 w-8 h-8 bg-black flex items-center justify-center">
               <span className="font-mono text-[10px] text-white">NULL</span>
@@ -118,9 +118,8 @@ export default function LinkedListVisualizer({
           Prev
         </button>
         <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
-        <button className="flex items-center gap-2 px-6 py-2 bg-primary-container text-on-primary font-mono text-[10px] uppercase tracking-widest hover:bg-primary transition-all active:scale-95">
+        <button className="flex items-center justify-center w-10 h-10 bg-primary-container text-on-primary font-mono hover:bg-primary transition-all active:scale-95" title="Auto-Play">
           <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: "'FILL' 1"}}>play_arrow</span>
-          Auto-Play
         </button>
         <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
         <button onClick={handleNext} className="flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-widest hover:bg-surface-container-low transition-colors group">

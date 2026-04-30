@@ -56,30 +56,30 @@ export default function DpVisualizer({
               <g transform="translate(200,40)">
                 <rect className="fill-primary-container" height="40" width="40" x="-20" y="-20"></rect>
                 <text className="font-mono text-[12px] fill-white font-bold" dy=".3em" textAnchor="middle">F(6)</text>
-                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">idx:0</text>
+                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">i:0</text>
               </g>
               {/* Active Branch (F5) */}
               <g transform="translate(120,100)">
                 <rect className="fill-primary-container" height="40" width="40" x="-20" y="-20"></rect>
                 <text className="font-mono text-[12px] fill-white font-bold" dy=".3em" textAnchor="middle">F(5)</text>
-                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">idx:1</text>
+                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">i:1</text>
               </g>
               {/* Cached Branch (F4) */}
               <g transform="translate(280,100)">
                 <rect className="fill-secondary-container stroke-primary-container/20 stroke-2" height="40" width="40" x="-20" y="-20"></rect>
                 <text className="font-mono text-[12px] fill-primary-fixed-dim font-bold" dy=".3em" textAnchor="middle">F(4)</text>
-                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">idx:2</text>
+                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">i:2</text>
               </g>
               {/* Deep Leaf */}
               <g transform="translate(80,160)">
                 <rect className="fill-primary-container" height="40" width="40" x="-20" y="-20"></rect>
                 <text className="font-mono text-[12px] fill-white font-bold" dy=".3em" textAnchor="middle">F(4)</text>
-                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">idx:3</text>
+                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">i:3</text>
               </g>
               <g transform="translate(160,160)">
                 <rect className="fill-surface-container-high" height="40" width="40" x="-20" y="-20"></rect>
                 <text className="font-mono text-[12px] fill-outline font-bold" dy=".3em" textAnchor="middle">F(3)</text>
-                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">idx:4</text>
+                <text className="font-mono text-[8px] fill-outline" dy="3.5em" textAnchor="middle">i:4</text>
               </g>
             </svg>
             {/* Overlay Legend */}
@@ -157,9 +157,8 @@ export default function DpVisualizer({
             Prev
           </button>
           <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
-          <button className="flex items-center gap-2 px-6 py-2 bg-primary-container text-on-primary font-mono text-[10px] uppercase tracking-widest hover:bg-primary transition-all active:scale-95">
+          <button className="flex items-center justify-center w-10 h-10 bg-primary-container text-on-primary font-mono hover:bg-primary transition-all active:scale-95" title="Auto-Play">
             <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: "'FILL' 1"}}>play_arrow</span>
-            Auto-Play
           </button>
           <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
           <button onClick={handleNext} className="flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-widest hover:bg-surface-container-low transition-colors group">

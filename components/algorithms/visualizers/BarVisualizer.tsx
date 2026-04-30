@@ -84,7 +84,7 @@ export default function BarVisualizer({
                     {value}
                   </span>
                   <span className="absolute bottom-2 font-mono text-[8px] opacity-60 mix-blend-luminosity">
-                    idx:{index}
+                    i:{index}
                   </span>
                 </motion.div>
               );
@@ -99,9 +99,8 @@ export default function BarVisualizer({
                 Prev
               </button>
               <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
-              <button className="flex items-center gap-2 px-6 py-2 bg-primary-container text-on-primary font-mono text-[10px] uppercase tracking-widest hover:bg-primary transition-all active:scale-95">
+              <button className="flex items-center justify-center w-10 h-10 bg-primary-container text-on-primary font-mono hover:bg-primary transition-all active:scale-95" title="Auto-Play">
                 <span className="material-symbols-outlined text-sm">play_arrow</span>
-                Auto-Play
               </button>
               <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
               <button onClick={handleNext} className="flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-widest hover:bg-surface-container-low transition-colors group">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useDragControls, useMotionValue } from "framer-motion";
 
 type NodePoint = {
   id: string;
@@ -87,10 +87,17 @@ export default function PlaygroundPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  
+  // High-performance MotionValues for cursor and preview lines
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
   
   const [draggingNodeId, setDraggingNodeId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  
+  const barsDragControls = useDragControls();
+  const [isLongPressingBars, setIsLongPressingBars] = useState(false);
+  const barsLongPressTimer = useRef<NodeJS.Timeout | null>(null);
 
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLDivElement | null>(null);
@@ -162,6 +169,28 @@ export default function PlaygroundPage() {
     setIsComplete(false);
     setInputValue("[45, 12, 89, 34, 67, 23, 91, 56, 78, 10]");
     pushLog("LOG: WORKSPACE_RESET.");
+  };
+
+  const handleBarsPointerDown = (e: React.PointerEvent) => {
+    if (isGraphMode) return;
+    
+    // Immediate drag on Right Click
+    if (e.button === 2) {
+      setIsLongPressingBars(true);
+      barsDragControls.start(e);
+      return;
+    }
+
+    barsLongPressTimer.current = setTimeout(() => {
+      setIsLongPressingBars(true);
+      barsDragControls.start(e);
+      pushLog("LOG: SIMULATOR_MOVE_ENABLED.");
+    }, 500);
+  };
+
+  const handleBarsPointerUp = () => {
+    if (barsLongPressTimer.current) clearTimeout(barsLongPressTimer.current);
+    setIsLongPressingBars(false);
   };
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -266,7 +295,11 @@ export default function PlaygroundPage() {
     const canvasRect = canvasRef.current.getBoundingClientRect();
     const x = (event.clientX - canvasRect.left) / zoom;
     const y = (event.clientY - canvasRect.top) / zoom;
-    setMousePos({ x, y });
+    
+    // Update MotionValues directly (no re-render)
+    mouseX.set(x);
+    mouseY.set(y);
+
     if (draggingNodeId && !isDrawingMode) {
       const nextX = x - dragOffset.x;
       const nextY = y - dragOffset.y;
@@ -323,20 +356,36 @@ export default function PlaygroundPage() {
         style={{ width: `${SIDEBAR_WIDTH}px` }}
       >
         <div className="h-full flex flex-col p-4 space-y-6 overflow-y-auto custom-slim-scrollbar pb-20">
+          {/* 1. Algorithm Selection */}
           <div className="space-y-1.5">
-            <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Input_Matrix</label>
-            <textarea value={inputValue} onChange={(e) => setInputValue(e.target.value)} className="h-20 w-full resize-none border border-[#C4C5D6] bg-[#F7FAFE] px-2 py-2 text-[10px] text-black outline-none focus:border-[#002FA7]" />
+            <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Algorithm_Engine</label>
+            <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="w-full border border-[#C4C5D6] bg-[#0A1022] px-2 py-2.5 text-[9px] font-bold tracking-widest text-[#DBE7FF] outline-none cursor-pointer rounded-sm">
+              {ALGORITHM_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+            </select>
           </div>
 
+          {/* 2. Data Input */}
+          <div className="space-y-1.5">
+            <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Input_Matrix</label>
+            <textarea 
+              value={inputValue} 
+              onChange={(e) => setInputValue(e.target.value)} 
+              placeholder="e.g. [1, 2, 3]"
+              className="h-20 w-full resize-none border border-[#C4C5D6] bg-[#F7FAFE] px-2 py-2 text-[10px] text-black outline-none focus:border-[#002FA7] rounded-sm" 
+            />
+          </div>
+
+          {/* 3. Interaction Tools */}
           <div className="space-y-3">
             <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Canvas_Tools</label>
-            <button onClick={() => setIsDrawingMode(!isDrawingMode)} className={`w-full py-2.5 text-[9px] border flex items-center justify-center gap-2 transition-all font-bold tracking-widest ${isDrawingMode ? 'bg-[#002FA7] text-white border-[#002FA7]' : 'bg-white text-[#002FA7] border-[#C4C5D6] hover:border-[#002FA7]'}`}>
+            <button onClick={() => setIsDrawingMode(!isDrawingMode)} className={`w-full py-2.5 text-[9px] border flex items-center justify-center gap-2 transition-all font-bold tracking-widest rounded-sm ${isDrawingMode ? 'bg-[#002FA7] text-white border-[#002FA7]' : 'bg-white text-[#002FA7] border-[#C4C5D6] hover:border-[#002FA7]'}`}>
               <span className="material-symbols-outlined text-[16px]">{isDrawingMode ? 'gesture' : 'edit_square'}</span>
               {isDrawingMode ? 'STOP_DRAWING' : 'START_DRAWING'}
             </button>
           </div>
 
-          <div className="space-y-4">
+          {/* 4. Performance & View */}
+          <div className="space-y-4 pt-2 border-t border-slate-100">
              <div className="space-y-1.5">
                <div className="flex justify-between text-[8px] uppercase text-slate-400 font-bold tracking-widest">
                  <span>Speed_Factor</span>
@@ -345,27 +394,21 @@ export default function PlaygroundPage() {
                <input type="range" min={40} max={800} step={20} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} className="w-full h-1 bg-slate-200 appearance-none accent-[#002FA7] cursor-pointer" />
              </div>
 
-             <div className="space-y-1.5">
-               <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Algorithm_Engine</label>
-               <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="w-full border border-[#C4C5D6] bg-[#0A1022] px-2 py-2.5 text-[9px] font-bold tracking-widest text-[#DBE7FF] outline-none cursor-pointer">
-                 {ALGORITHM_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
-               </select>
+             <div className="space-y-2 pt-2">
+                <div className="flex justify-between items-center text-[9px]">
+                   <span className="text-slate-400 uppercase tracking-tighter">View_Scale</span>
+                   <span className="text-primary font-bold">{Math.round(zoom * 100)}%</span>
+                </div>
+                <button onClick={() => setZoom(1)} className="w-full py-1.5 border border-slate-200 text-[8px] font-bold uppercase hover:bg-slate-50 transition-colors rounded-sm">Normalize_View</button>
              </div>
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-slate-100">
-             <div className="flex justify-between items-center text-[9px]">
-                <span className="text-slate-400 uppercase tracking-tighter">View_Scale</span>
-                <span className="text-primary font-bold">{Math.round(zoom * 100)}%</span>
-             </div>
-             <button onClick={() => setZoom(1)} className="w-full py-1.5 border border-slate-200 text-[8px] font-bold uppercase hover:bg-slate-50 transition-colors">Normalize_View</button>
-          </div>
-
+          {/* 5. Execution Controls */}
           <div className="space-y-2 pt-4 border-t border-slate-100">
-            <button onClick={() => { regenerateData(); setIsRunning(true); }} className="w-full bg-[#002FA7] py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white hover:bg-[#0D3DB3] shadow-lg shadow-primary/20 transition-all">EXECUTE_RUN</button>
+            <button onClick={() => { regenerateData(); setIsRunning(true); }} className="w-full bg-[#002FA7] py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white hover:bg-[#0D3DB3] shadow-lg shadow-primary/20 transition-all rounded-sm">EXECUTE_RUN</button>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={resetAll} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors">RESET</button>
-              <button onClick={exportToJson} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors">JSON</button>
+              <button onClick={resetAll} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors rounded-sm">RESET</button>
+              <button onClick={exportToJson} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors rounded-sm">JSON</button>
             </div>
           </div>
         </div>
@@ -399,14 +442,28 @@ export default function PlaygroundPage() {
         >
           <section className={`relative w-full h-full ${isDrawingMode ? 'cursor-none' : 'cursor-default'}`}>
             {isDrawingMode && (
-              <div className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-primary/40 rounded-full pointer-events-none z-50 flex items-center justify-center bg-primary/5" style={{ left: mousePos.x, top: mousePos.y }}>
-                <span className="material-symbols-outlined text-primary/40 text-[10px]">add</span>
-              </div>
+              <motion.div 
+                style={{ x: mouseX, y: mouseY }}
+                className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-[#002FA7]/40 rounded-full pointer-events-none z-50 flex items-center justify-center bg-[#002FA7]/5 will-change-transform"
+              >
+                <span className="material-symbols-outlined text-[#002FA7]/40 text-[10px]">add</span>
+              </motion.div>
             )}
 
             {isGraphMode && (
               <svg className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden="true">
-                {selectedNode && isDrawingMode && <line x1={selectedNode.x} y1={selectedNode.y} x2={mousePos.x} y2={mousePos.y} stroke="#002FA7" strokeWidth={2/zoom} strokeDasharray="4 4" className="animate-[dash_1s_linear_infinite]" />}
+                {selectedNode && isDrawingMode && (
+                  <motion.line 
+                    x1={selectedNode.x} 
+                    y1={selectedNode.y} 
+                    x2={mouseX} 
+                    y2={mouseY} 
+                    stroke="#002FA7" 
+                    strokeWidth={2/zoom} 
+                    strokeDasharray="4 4" 
+                    className="animate-[dash_1s_linear_infinite]" 
+                  />
+                )}
                 {edges.map((edge, idx) => {
                   const fromNode = nodes.find(n => n.id === edge.from);
                   const toNode = nodes.find(n => n.id === edge.to);
@@ -417,17 +474,26 @@ export default function PlaygroundPage() {
             )}
 
             {!isGraphMode && (
-              <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-end gap-2 w-[500px] h-[300px]">
+              <motion.div 
+                drag 
+                dragListener={false}
+                dragControls={barsDragControls}
+                dragMomentum={false}
+                onPointerDown={handleBarsPointerDown}
+                onPointerUp={handleBarsPointerUp}
+                onContextMenu={(e) => e.preventDefault()}
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-end gap-2 w-[500px] h-[300px] will-change-transform ${isLongPressingBars ? 'cursor-grabbing opacity-80' : 'cursor-grab'}`}
+              >
                 {bars.map((value, index) => {
                   const max = Math.max(...bars, 1);
                   const height = `${Math.max((value / max) * 100, 8)}%`;
                   return (
-                    <div key={`${value}-${index}`} className="group relative flex-1 border border-[#C4C5D6] bg-[#DCE6FF] transition-all" style={{ height }}>
+                    <div key={`${value}-${index}`} className={`group relative flex-1 border border-[#C4C5D6] bg-[#DCE6FF] ${isLongPressingBars ? '' : 'transition-all'}`} style={{ height }}>
                       <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-bold text-[#002FA7] opacity-100 whitespace-nowrap">{value}</span>
                     </div>
                   );
                 })}
-              </div>
+              </motion.div>
             )}
 
             {isGraphMode && nodes.map((node) => {
@@ -440,7 +506,7 @@ export default function PlaygroundPage() {
                     setDraggingNodeId(node.id);
                     setDragOffset({ x: (event.clientX - rect.left) / zoom, y: (event.clientY - rect.top) / zoom });
                   }
-                }} className={`node-button absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 border text-[9px] font-bold transition-all shadow-md z-20 flex items-center justify-center ${isSelected ? 'bg-[#002FA7] text-white border-[#002FA7] scale-110 z-30' : 'bg-white text-[#002FA7] border-[#002FA7] hover:bg-[#F0F4FF]'}`} style={{ left: node.x, top: node.y }}>
+                }} className={`node-button absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 border text-[9px] font-bold transition-all shadow-md z-20 flex items-center justify-center will-change-transform ${isSelected ? 'bg-[#002FA7] text-white border-[#002FA7] scale-110 z-30' : 'bg-white text-[#002FA7] border-[#002FA7] hover:bg-[#F0F4FF]'}`} style={{ left: node.x, top: node.y }}>
                   {node.label}
                 </motion.button>
               );

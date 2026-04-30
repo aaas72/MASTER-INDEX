@@ -136,7 +136,7 @@ export default function GraphVisualizer({
                     {node.label}
                   </text>
                   <text className="font-mono text-xs fill-slate-500" textAnchor="middle" x={node.x} y={node.y - 64}>
-                    idx:{i}
+                    i:{i}
                   </text>
                   <rect x={node.x + 24} y={node.y + 24} width="64" height="32" fill="#f1f4f8" stroke="#002FA7" strokeWidth="1.5" rx="8" />
                   <text className="font-mono text-xl fill-primary font-bold" textAnchor="middle" x={node.x + 56} y={node.y + 47}>
@@ -167,9 +167,8 @@ export default function GraphVisualizer({
                 Prev
               </button>
               <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
-              <button className="flex items-center gap-2 px-6 py-2 bg-primary-container text-on-primary font-mono text-[10px] uppercase tracking-widest hover:bg-primary transition-all active:scale-95">
+              <button className="flex items-center justify-center w-10 h-10 bg-primary-container text-on-primary font-mono hover:bg-primary transition-all active:scale-95" title="Auto-Play">
                 <span className="material-symbols-outlined text-sm" style={{fontVariationSettings: "'FILL' 1"}}>play_arrow</span>
-                Auto-Play
               </button>
               <div className="w-px h-6 bg-outline-variant/30 mx-1"></div>
               <button onClick={handleNext} className="flex items-center gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-widest hover:bg-surface-container-low transition-colors group">

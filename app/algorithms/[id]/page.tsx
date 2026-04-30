@@ -82,15 +82,15 @@ export default function AlgorithmDetailPage({
                 <h1 className="page-title mb-6">
                   {algoData.title.en}
                 </h1>
-                <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                  <div className="max-w-2xl body-copy md:text-xl">
+                <div className="flex flex-col gap-4">
+                  <div className="body-copy text-sm md:text-base opacity-80 leading-relaxed">
                     <p>{algoData.content.abstract.en}</p>
                   </div>
                   <div className="flex gap-2">
-                    <span className="bg-primary-fixed px-3 py-1 font-mono text-xs uppercase tracking-widest text-on-primary-fixed">
+                    <span className="bg-primary-fixed/80 px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] text-on-primary-fixed">
                       Category: {algoData.category}
                     </span>
-                    <span className="bg-surface-container-high px-3 py-1 font-mono text-xs uppercase tracking-widest text-on-surface">
+                    <span className="bg-surface-container-high px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.15em] text-on-surface">
                       {algoData.difficulty}
                     </span>
                   </div>
