@@ -13,7 +13,7 @@ import { DataVisualizer } from "@/components/visualizer";
 import algorithmsData from "@/data/algorithms.json";
 import { runRealBenchmark, type BenchmarkResult } from "@/utils/benchmark-engine";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, ChevronRight, RotateCcw } from "lucide-react";
+import { Play, Pause, ChevronRight, RotateCcw, Terminal } from "lucide-react";
 
 // --- Types & Interfaces ---
 type VersusAlgorithm = {
@@ -54,24 +54,15 @@ export default function VersusHubPage() {
   const [isPaused, setIsPausedState] = useState(false);
   const [isManualStep, setIsManualStepState] = useState(false);
 
-  // IMPROVED CONTROL LOGIC
   const togglePause = (val?: boolean) => {
     const next = val !== undefined ? val : !isPausedRef.current;
     isPausedRef.current = next;
     setIsPausedState(next);
-    
-    // If we are playing (next is false), we MUST disable manual stepping to allow auto-flow
-    if (!next) {
-      isManualStepRef.current = false;
-      setIsManualStepState(false);
-    }
-    
-    // Release any waiting promises to let the loop proceed
+    if (!next) { isManualStepRef.current = false; setIsManualStepState(false); }
     handleNextStep();
   };
 
   const handleManualStepTrigger = () => {
-    // Ensure we are in manual mode and paused for the next step
     isManualStepRef.current = true;
     setIsManualStepState(true);
     isPausedRef.current = true;
@@ -106,13 +97,11 @@ export default function VersusHubPage() {
 
   // --- SYNC GATEWAY HELPER ---
   const waitStep = async (ms: number) => {
-    // If manually stepping OR paused, push a resolver and wait
     if (isManualStepRef.current || isPausedRef.current) {
       return new Promise<void>(resolve => {
         stepResolversRef.current.push(resolve);
       });
     }
-    // Otherwise, just a standard delay
     await new Promise(resolve => setTimeout(resolve, ms));
   };
 
@@ -131,7 +120,7 @@ export default function VersusHubPage() {
             for (let j = 0; j < arr.length - i - 1; j++) {
               setActiveLine(j);
               const needsSwap = arr[j] > arr[j + 1];
-              details((prev: SimDetails) => ({ ...prev, msg: `Comp: ${arr[j]} & ${arr[j+1]}`, narrative: needsSwap ? `Target > Next. Swapping.` : `Validated.` }));
+              details((prev: SimDetails) => ({ ...prev, msg: `Comp: ${arr[j]} & ${arr[j+1]}`, narrative: needsSwap ? `Target > Found. Swapping.` : `Validated.` }));
               if (needsSwap) { [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]]; setBars([...arr]); }
               await waitStep(200);
             }
@@ -144,7 +133,7 @@ export default function VersusHubPage() {
             for (let j = low; j < high; j++) {
               setActiveLine(j);
               const isSmaller = a[j] < pivot;
-              details((prev: SimDetails) => ({ ...prev, msg: `Scan ${a[j]}`, narrative: isSmaller ? `${a[j]} < Pivot.` : `${a[j]} >= Pivot.` }));
+              details((prev: SimDetails) => ({ ...prev, msg: `Scan ${a[j]}`, narrative: isSmaller ? `${a[j]} < Pivot. Shifting left.` : `${a[j]} >= Pivot.` }));
               if (isSmaller) { i++; [a[i], a[j]] = [a[j], a[i]]; setBars([...a]); }
               await waitStep(200);
             }
@@ -175,7 +164,7 @@ export default function VersusHubPage() {
             let mid = Math.floor((low + high) / 2); setActiveLine(mid);
             detailsSetter((prev: SimDetails) => ({ ...prev, low, high, mid, msg: `Mid: ${data[mid]}`, narrative: `Checking ${data[mid]} vs ${targetNum}.` }));
             await waitStep(1000);
-            if (data[mid] === targetNum) { detailsSetter((prev: SimDetails) => ({ ...prev, msg: "FOUND!", narrative: "Exact match identified." })); break; }
+            if (data[mid] === targetNum) { detailsSetter((prev: SimDetails) => ({ ...prev, msg: "FOUND!", narrative: "Match identified." })); break; }
             if (data[mid] < targetNum) {
               const oldLow = low; low = mid + 1;
               detailsSetter((prev: SimDetails) => ({ ...prev, low, excluded: [...prev.excluded, [oldLow, mid]], msg: "Too Low", narrative: "Pruning left half." }));
@@ -213,7 +202,7 @@ export default function VersusHubPage() {
       runSim: async (algoId: string, data: any, setters: any, detailsSetter: any, target: string) => {
         const { setTree } = setters;
         const targetNum = parseInt(target);
-        detailsSetter({ low: -1, mid: -1, high: -1, excluded: [], msg: "Tree Scan", narrative: "Scanning hierarchy." });
+        detailsSetter({ low: -1, mid: -1, high: -1, excluded: [], msg: "Tree Scan", narrative: "Navigating binary tree." });
         const searchNode = async (node: any) => {
           node.state = "active"; setTree({ ...data });
           const nodeVal = parseInt(node.value);
@@ -251,7 +240,7 @@ export default function VersusHubPage() {
       runSim: async (algoId: string, data: any, setters: any, detailsSetter: any) => {
         const { setPoints, setHull } = setters;
         const pts = [...data.points];
-        detailsSetter({ low: -1, mid: -1, high: -1, excluded: [], msg: "Spatial Analysis", narrative: "Scanning 2D space." });
+        detailsSetter({ low: -1, mid: -1, high: -1, excluded: [], msg: "Spatial Analysis", narrative: "Scanning spatial coordinates." });
         const hull: any[] = [];
         for (let i = 0; i < pts.length; i++) {
           pts[i].state = "active"; detailsSetter((prev: SimDetails) => ({ ...prev, msg: `Node ${i}`, narrative: `Processing Point ${i}.` }));
@@ -273,7 +262,7 @@ export default function VersusHubPage() {
       runSim: async (algoId: string, data: any, setters: any, detailsSetter: any, target: string) => {
         const { setNodes, setActiveLine } = setters;
         const nodes = [...data.nodes];
-        detailsSetter({ low: -1, mid: -1, high: -1, excluded: [], msg: "Graph Scan", narrative: "Discovering network." });
+        detailsSetter({ low: -1, mid: -1, high: -1, excluded: [], msg: "Graph Scan", narrative: "Discovering topology." });
         for (let i = 0; i < nodes.length; i++) {
           nodes[i] = { ...nodes[i], state: "visited" as const };
           setNodes([...nodes]); setActiveLine(i);
@@ -383,13 +372,26 @@ export default function VersusHubPage() {
         />
       </div>
 
-      {/* --- LIVE NARRATION PANEL (During Race) --- */}
+      {/* --- PERSISTENT OPERATION LOG (BOTTOM RIGHT) --- */}
       <AnimatePresence>
-        {isVisualSim && !showResults && (
-          <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-white border-2 border-primary shadow-[8px_8px_0px_#DCE6FF] p-4 flex items-center gap-8 min-w-[450px]">
-             <div className="flex flex-col gap-1 flex-1">
-               <span className="font-mono text-[9px] text-primary/60 uppercase tracking-widest font-black">Current_Step_Logic</span>
-               <p className="font-mono text-xs text-primary font-bold leading-relaxed">{leftSimDetails.narrative || rightSimDetails.narrative || "Executing..."}</p>
+        {(isVisualSim || isAnalysisMode) && (
+          <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="fixed bottom-6 right-6 z-[100] w-[300px] bg-white/80 backdrop-blur-md border-2 border-primary shadow-[12px_12px_0px_rgba(30,58,138,0.1)] overflow-hidden">
+             <div className="bg-primary text-white p-2 px-4 flex items-center gap-2">
+                <Terminal size={14} />
+                <span className="font-mono text-[9px] font-black uppercase tracking-widest">Operation_Log_Stream</span>
+             </div>
+             <div className="p-4 flex flex-col gap-1">
+                <span className="font-mono text-[8px] text-primary/40 uppercase font-black">Active_Logic_Vector</span>
+                <p className="font-mono text-xs text-primary font-black leading-relaxed">
+                   {leftSimDetails.narrative || rightSimDetails.narrative || "System Idle."}
+                </p>
+             </div>
+             <div className="bg-primary/5 p-2 px-4 border-t border-primary/10 flex justify-between items-center">
+                <span className="font-mono text-[8px] text-primary/60 font-bold uppercase">Status_Normal</span>
+                <div className="flex gap-1">
+                  <div className="w-1 h-1 bg-primary rounded-full animate-pulse" />
+                  <div className="w-1 h-1 bg-primary/40 rounded-full" />
+                </div>
              </div>
           </motion.div>
         )}
@@ -407,7 +409,7 @@ export default function VersusHubPage() {
                       </div>
                       <div className="flex flex-col">
                         <span className="font-mono text-[10px] font-black text-primary uppercase leading-none">ANALYSIS_LABORATORY</span>
-                        <span className="font-mono text-[8px] text-primary/60 uppercase font-bold">Step-by-Step Logic Inspection</span>
+                        <span className="font-mono text-[8px] text-primary/60 uppercase font-bold">Inspection Scope Active</span>
                       </div>
                    </div>
                    {!isAnalysisMode ? (
@@ -449,10 +451,6 @@ export default function VersusHubPage() {
                             {renderVisualizer('right', 160)}
                           </div>
                        </div>
-                    </div>
-                    <div className="bg-primary/5 p-3 px-6 border-t border-primary/10">
-                       <span className="font-mono text-[8px] text-primary/60 uppercase font-black block mb-1">Analytical_Logic_Stream</span>
-                       <p className="font-mono text-xs text-primary font-bold">{leftSimDetails.narrative || rightSimDetails.narrative || "Ready."}</p>
                     </div>
                   </motion.div>
                 )}
