@@ -24,8 +24,8 @@ export function SidebarLayout({ children, className = "" }: { children: React.Re
  */
 export function FullWidthLayout({ children, className = "" }: { children: React.ReactNode, className?: string }) {
   return (
-    <div className="w-full min-h-screen pt-16 bg-surface">
-      <main className={`w-full p-6 md:p-10 lg:p-12 ${className}`}>
+    <div className="w-full min-h-screen bg-surface">
+      <main className={`w-full px-6 pt-4 pb-8 md:px-10 lg:px-12 ${className}`}>
         <div className="max-w-[1440px] mx-auto w-full h-full">
           {children}
         </div>
