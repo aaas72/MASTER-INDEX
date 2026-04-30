@@ -1,7 +1,8 @@
 export default function Footer() {
   return (
-    <footer className="border-t border-surface-container bg-white py-12 w-full">
-      <div className="grid w-full grid-cols-1 gap-12 px-12 md:grid-cols-4">
+    <footer className="border-t border-slate-100 bg-white py-20 w-full">
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+        <div className="grid w-full grid-cols-1 gap-16 md:grid-cols-4">
         <div className="col-span-2">
           <h4 className="mb-4 font-sans text-base font-bold uppercase tracking-tight">
             The Neo-Formalist Archive
@@ -54,6 +55,7 @@ export default function Footer() {
           </ul>
         </div>
       </div>
-    </footer>
-  );
+    </div>
+  </footer>
+);
 }

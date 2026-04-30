@@ -2,11 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
+import IntelligenceHub from "./IntelligenceHub";
 
 export default function Header() {
   const pathname = usePathname();
+  const [isHubOpen, setIsHubOpen] = useState(false);
 
   return (
+    <>
     <header className="fixed top-0 left-0 z-50 flex w-full items-center justify-between border-b border-outline-variant/20 bg-surface/95 px-6 py-4 backdrop-blur-xl">
       <div className="flex items-center gap-8">
         <Link href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
@@ -78,16 +82,15 @@ export default function Header() {
             type="text"
           />
         </div>
-        <span className="material-symbols-outlined cursor-pointer p-2 text-on-surface-variant transition-colors duration-150 hover:bg-[#f1f4f8] hover:text-on-surface">
-          account_circle
-        </span>
-        <span className="material-symbols-outlined cursor-pointer p-2 text-on-surface-variant transition-colors duration-150 hover:bg-[#f1f4f8] hover:text-on-surface">
+        <button 
+          onClick={() => setIsHubOpen(true)}
+          className="material-symbols-outlined cursor-pointer p-2 text-on-surface-variant transition-colors duration-150 hover:bg-[#f1f4f8] hover:text-on-surface no-underline bg-transparent border-none"
+        >
           help_outline
-        </span>
-        <button className="bg-primary-container px-4 py-2 font-mono text-xs font-bold uppercase tracking-widest text-white transition-all hover:opacity-80">
-          Query
         </button>
       </div>
     </header>
+    <IntelligenceHub isOpen={isHubOpen} onClose={() => setIsHubOpen(false)} />
+    </>
   );
 }

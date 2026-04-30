@@ -8,7 +8,7 @@ import React from "react";
  */
 export default function LoadingOverlay({ fullScreen = false }: { fullScreen?: boolean }) {
   const containerClasses = fullScreen 
-    ? "fixed inset-0 z-[10000] bg-surface/95 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in duration-300 ease-out"
+    ? "fixed inset-x-0 bottom-0 top-[73px] z-[40] bg-surface/95 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in duration-300 ease-out"
     : "flex flex-col items-center justify-center min-h-[60vh] w-full bg-transparent animate-in fade-in duration-300";
 
   return (
