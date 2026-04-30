@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, useEffect, useRef } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { FullWidthLayout } from "@/components/shared";
 import {
   VersusAlgorithmSelector,
@@ -13,7 +14,7 @@ import { DataVisualizer } from "@/components/visualizer";
 import algorithmsData from "@/data/algorithms.json";
 import { runRealBenchmark, type BenchmarkResult } from "@/utils/benchmark-engine";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, ChevronRight, RotateCcw, Terminal } from "lucide-react";
+import { Play, Pause, ChevronRight, RotateCcw, Terminal, Zap, Share2, Check } from "lucide-react";
 
 // --- Types & Interfaces ---
 type VersusAlgorithm = {
@@ -120,7 +121,7 @@ export default function VersusHubPage() {
             for (let j = 0; j < arr.length - i - 1; j++) {
               setActiveLine(j);
               const needsSwap = arr[j] > arr[j + 1];
-              details((prev: SimDetails) => ({ ...prev, msg: `Comp: ${arr[j]} & ${arr[j+1]}`, narrative: needsSwap ? `Target > Found. Swapping.` : `Validated.` }));
+              details((prev: SimDetails) => ({ ...prev, msg: `Comp: ${arr[j]} & ${arr[j + 1]}`, narrative: needsSwap ? `Target > Found. Swapping.` : `Validated.` }));
               if (needsSwap) { [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]]; setBars([...arr]); }
               await waitStep(200);
             }
@@ -134,7 +135,7 @@ export default function VersusHubPage() {
               setActiveLine(j);
               const isSmaller = a[j] < pivot;
               details((prev: SimDetails) => ({ ...prev, msg: `Scan ${a[j]}`, narrative: isSmaller ? `${a[j]} < Pivot. Shifting left.` : `${a[j]} >= Pivot.` }));
-              if (isSmaller) { i++; [a[i], a[j]] = [a[j], a[i]]; setBars([...a]); }
+              if (isSmaller) { i++;[a[i], a[j]] = [a[j], a[i]]; setBars([...a]); }
               await waitStep(200);
             }
             [a[i + 1], a[high]] = [a[high], a[i + 1]];
@@ -230,10 +231,12 @@ export default function VersusHubPage() {
       generateData: (custom: string) => {
         if (custom) {
           const pairs = custom.split(';').map(p => p.trim()).filter(p => p !== "");
-          return { points: pairs.map((pair, i) => {
-            const [x, y] = pair.split(',').map(s => parseInt(s.trim()));
-            return { id: `p${i}`, x: isNaN(x) ? 50 : x, y: isNaN(y) ? 50 : y, state: "default" as const };
-          })};
+          return {
+            points: pairs.map((pair, i) => {
+              const [x, y] = pair.split(',').map(s => parseInt(s.trim()));
+              return { id: `p${i}`, x: isNaN(x) ? 50 : x, y: isNaN(y) ? 50 : y, state: "default" as const };
+            })
+          };
         }
         return { points: Array.from({ length: 10 }, (_, i) => ({ id: `p${i}`, x: 50 + Math.random() * 350, y: 50 + Math.random() * 180, state: "default" as const })) };
       },
@@ -246,7 +249,7 @@ export default function VersusHubPage() {
           pts[i].state = "active"; detailsSetter((prev: SimDetails) => ({ ...prev, msg: `Node ${i}`, narrative: `Processing Point ${i}.` }));
           setPoints([...pts]); await waitStep(600);
           if (i > 0) {
-            hull.push({ from: pts[i-1], to: pts[i] });
+            hull.push({ from: pts[i - 1], to: pts[i] });
             detailsSetter((prev: SimDetails) => ({ ...prev, msg: "Linking", narrative: "Establishing vector." }));
             setHull([...hull]);
           }
@@ -376,23 +379,23 @@ export default function VersusHubPage() {
       <AnimatePresence>
         {(isVisualSim || isAnalysisMode) && (
           <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="fixed bottom-6 right-6 z-[100] w-[300px] bg-white/80 backdrop-blur-md border-2 border-primary shadow-[12px_12px_0px_rgba(30,58,138,0.1)] overflow-hidden">
-             <div className="bg-primary text-white p-2 px-4 flex items-center gap-2">
-                <Terminal size={14} />
-                <span className="font-mono text-[9px] font-black uppercase tracking-widest">Operation_Log_Stream</span>
-             </div>
-             <div className="p-4 flex flex-col gap-1">
-                <span className="font-mono text-[8px] text-primary/40 uppercase font-black">Active_Logic_Vector</span>
-                <p className="font-mono text-xs text-primary font-black leading-relaxed">
-                   {leftSimDetails.narrative || rightSimDetails.narrative || "System Idle."}
-                </p>
-             </div>
-             <div className="bg-primary/5 p-2 px-4 border-t border-primary/10 flex justify-between items-center">
-                <span className="font-mono text-[8px] text-primary/60 font-bold uppercase">Status_Normal</span>
-                <div className="flex gap-1">
-                  <div className="w-1 h-1 bg-primary rounded-full animate-pulse" />
-                  <div className="w-1 h-1 bg-primary/40 rounded-full" />
-                </div>
-             </div>
+            <div className="bg-primary text-white p-2 px-4 flex items-center gap-2">
+              <Terminal size={14} />
+              <span className="font-mono text-[9px] font-black uppercase tracking-widest">Operation_Log_Stream</span>
+            </div>
+            <div className="p-4 flex flex-col gap-1">
+              <span className="font-mono text-[8px] text-primary/40 uppercase font-black">Active_Logic_Vector</span>
+              <p className="font-mono text-xs text-primary font-black leading-relaxed">
+                {leftSimDetails.narrative || rightSimDetails.narrative || "System Idle."}
+              </p>
+            </div>
+            <div className="bg-primary/5 p-2 px-4 border-t border-primary/10 flex justify-between items-center">
+              <span className="font-mono text-[8px] text-primary/60 font-bold uppercase">Status_Normal</span>
+              <div className="flex gap-1">
+                <div className="w-1 h-1 bg-primary rounded-full animate-pulse" />
+                <div className="w-1 h-1 bg-primary/40 rounded-full" />
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -400,60 +403,60 @@ export default function VersusHubPage() {
       <div className="mt-8 flex-1 flex flex-col gap-6 relative min-h-0 pb-32">
         {showResults ? (
           <div className="flex-1 flex flex-col animate-in fade-in zoom-in-95 duration-300">
-            
-            <div className="bg-surface-container border-2 border-primary shadow-lg overflow-hidden mb-6">
-                <div className="p-4 flex items-center justify-between border-b-2 border-primary/20 bg-primary/5">
-                   <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-primary flex items-center justify-center text-white shadow-sm">
-                        <RotateCcw size={16} />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-mono text-[10px] font-black text-primary uppercase leading-none">ANALYSIS_LABORATORY</span>
-                        <span className="font-mono text-[8px] text-primary/60 uppercase font-bold">Inspection Scope Active</span>
-                      </div>
-                   </div>
-                   {!isAnalysisMode ? (
-                      <button onClick={() => handleExecute(true)} className="bg-primary text-white px-6 py-2 font-mono text-[10px] uppercase font-bold hover:bg-primary/90 transition-all shadow-[4px_4px_0px_#DCE6FF] flex items-center gap-2">
-                        <Play size={12} fill="currentColor" /> ACTIVATE_ANALYSIS
-                      </button>
-                    ) : (
-                      <div className="flex items-center gap-3 bg-white border-2 border-primary p-1 px-3 shadow-sm">
-                         <button onClick={() => togglePause()} className="w-8 h-8 flex items-center justify-center bg-primary text-white hover:scale-105 transition-transform">
-                           {isPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
-                         </button>
-                         <button onClick={handleManualStepTrigger} disabled={!isPaused && !isManualStep} className={`w-8 h-8 flex items-center justify-center border-2 border-primary text-primary hover:bg-primary/5 transition-colors ${(isPaused || isManualStep) ? 'opacity-100' : 'opacity-20'}`}>
-                           <ChevronRight size={20} strokeWidth={3} />
-                         </button>
-                         <div className="h-5 w-[1px] bg-primary/20 mx-1" />
-                         <button onClick={() => { setIsAnalysisMode(false); togglePause(false); }} className="font-mono text-[9px] text-primary font-black hover:underline uppercase">EXIT_LAB</button>
-                      </div>
-                    )}
-                </div>
 
-                {isAnalysisMode && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="border-b-2 border-primary/10">
-                    <div className="grid grid-cols-2 divide-x-2 divide-primary/10 bg-white">
-                       <div className="p-4 flex flex-col gap-2">
-                          <div className="flex items-center justify-between">
-                            <span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[leftAlgorithmId].title.en}</span>
-                            <span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{leftSimDetails.msg}</span>
-                          </div>
-                          <div className="h-[180px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">
-                            {renderVisualizer('left', 160)}
-                          </div>
-                       </div>
-                       <div className="p-4 flex flex-col gap-2">
-                          <div className="flex items-center justify-between">
-                            <span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[rightAlgorithmId].title.en}</span>
-                            <span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{rightSimDetails.msg}</span>
-                          </div>
-                          <div className="h-[180px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">
-                            {renderVisualizer('right', 160)}
-                          </div>
-                       </div>
-                    </div>
-                  </motion.div>
+            <div className="bg-surface-container border-2 border-primary shadow-lg overflow-hidden mb-6">
+              <div className="p-4 flex items-center justify-between border-b-2 border-primary/20 bg-primary/5">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-primary flex items-center justify-center text-white shadow-sm">
+                    <RotateCcw size={16} />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="font-mono text-[10px] font-black text-primary uppercase leading-none">ANALYSIS_LABORATORY</span>
+                    <span className="font-mono text-[8px] text-primary/60 uppercase font-bold">Inspection Scope Active</span>
+                  </div>
+                </div>
+                {!isAnalysisMode ? (
+                  <button onClick={() => handleExecute(true)} className="bg-primary text-white px-6 py-2 font-mono text-[10px] uppercase font-bold hover:bg-primary/90 transition-all shadow-[4px_4px_0px_#DCE6FF] flex items-center gap-2">
+                    <Play size={12} fill="currentColor" /> ACTIVATE_ANALYSIS
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-3 bg-white border-2 border-primary p-1 px-3 shadow-sm">
+                    <button onClick={() => togglePause()} className="w-8 h-8 flex items-center justify-center bg-primary text-white hover:scale-105 transition-transform">
+                      {isPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}
+                    </button>
+                    <button onClick={handleManualStepTrigger} disabled={!isPaused && !isManualStep} className={`w-8 h-8 flex items-center justify-center border-2 border-primary text-primary hover:bg-primary/5 transition-colors ${(isPaused || isManualStep) ? 'opacity-100' : 'opacity-20'}`}>
+                      <ChevronRight size={20} strokeWidth={3} />
+                    </button>
+                    <div className="h-5 w-[1px] bg-primary/20 mx-1" />
+                    <button onClick={() => { setIsAnalysisMode(false); togglePause(false); }} className="font-mono text-[9px] text-primary font-black hover:underline uppercase">EXIT_LAB</button>
+                  </div>
                 )}
+              </div>
+
+              {isAnalysisMode && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="border-b-2 border-primary/10">
+                  <div className="grid grid-cols-2 divide-x-2 divide-primary/10 bg-white">
+                    <div className="p-4 flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[leftAlgorithmId].title.en}</span>
+                        <span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{leftSimDetails.msg}</span>
+                      </div>
+                      <div className="h-[180px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">
+                        {renderVisualizer('left', 160)}
+                      </div>
+                    </div>
+                    <div className="p-4 flex flex-col gap-2">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[rightAlgorithmId].title.en}</span>
+                        <span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{rightSimDetails.msg}</span>
+                      </div>
+                      <div className="h-[180px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">
+                        {renderVisualizer('right', 160)}
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 border-2 border-outline-variant/30 bg-surface-container-lowest overflow-hidden shrink-0">
@@ -467,28 +470,28 @@ export default function VersusHubPage() {
           </div>
         ) : isExecuting || isVisualSim ? (
           <div className="flex-1 flex flex-col items-center justify-center bg-surface-container-low/20 backdrop-blur-sm relative overflow-hidden min-h-[400px]">
-             {isVisualSim && (
-               <div className="w-full h-full grid grid-cols-2 gap-12 p-8">
-                  <div className="flex flex-col gap-4">
-                     <div className="flex items-center justify-between">
-                        <p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[leftAlgorithmId].title.en}</p>
-                        <span className="font-mono text-[9px] bg-primary text-white px-2 py-0.5">{leftSimDetails.msg}</span>
-                     </div>
-                     <div className="flex-1 border border-outline-variant/20 bg-white relative overflow-hidden h-[300px] flex items-center justify-center">
-                        {renderVisualizer('left', 280)}
-                     </div>
+            {isVisualSim && (
+              <div className="w-full h-full grid grid-cols-2 gap-12 p-8">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[leftAlgorithmId].title.en}</p>
+                    <span className="font-mono text-[9px] bg-primary text-white px-2 py-0.5">{leftSimDetails.msg}</span>
                   </div>
-                  <div className="flex flex-col gap-4">
-                     <div className="flex items-center justify-between">
-                        <p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[rightAlgorithmId].title.en}</p>
-                        <span className="font-mono text-[9px] bg-primary text-white px-2 py-0.5">{rightSimDetails.msg}</span>
-                     </div>
-                     <div className="flex-1 border border-outline-variant/20 bg-white relative overflow-hidden h-[300px] flex items-center justify-center">
-                        {renderVisualizer('right', 280)}
-                     </div>
+                  <div className="flex-1 border border-outline-variant/20 bg-white relative overflow-hidden h-[300px] flex items-center justify-center">
+                    {renderVisualizer('left', 280)}
                   </div>
-               </div>
-             )}
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center justify-between">
+                    <p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[rightAlgorithmId].title.en}</p>
+                    <span className="font-mono text-[9px] bg-primary text-white px-2 py-0.5">{rightSimDetails.msg}</span>
+                  </div>
+                  <div className="flex-1 border border-outline-variant/20 bg-white relative overflow-hidden h-[300px] flex items-center justify-center">
+                    {renderVisualizer('right', 280)}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center bg-surface-container-low/30 border-2 border-outline-variant/5 min-h-[300px]">
