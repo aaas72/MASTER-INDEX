@@ -2,6 +2,10 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence, useDragControls, useMotionValue } from "framer-motion";
+import CodePanel from "@/components/playground/CodePanel";
+import HistorySlider from "@/components/playground/HistorySlider";
+import { DataVisualizer } from "@/components/visualizer";
+import algorithmsData from "@/data/algorithms.json";
 
 type NodePoint = {
   id: string;
@@ -16,12 +20,16 @@ type Edge = {
   weight?: number;
 };
 
-const ALGORITHM_OPTIONS = [
-  "QUICK_SORT_TERMINAL",
-  "MERGE_SORT_PIPELINE",
-  "BUBBLE_SORT_LEGACY",
-  "GRAPH_BFS_NODEMAP",
-];
+type Snapshot = {
+  bars: number[];
+  nodes: NodePoint[];
+  edges: Edge[];
+  opsCount: { comparisons: number; swaps: number; steps: number };
+  activeLine: number;
+  log: string;
+};
+
+const ALGORITHM_OPTIONS = Object.keys(algorithmsData);
 
 const DEFAULT_ARRAY = [45, 12, 89, 34, 67, 23, 91, 56, 78, 10];
 const DEFAULT_NODES: NodePoint[] = [
@@ -88,6 +96,10 @@ export default function PlaygroundPage() {
   const [isDrawingMode, setIsDrawingMode] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   
+  const [history, setHistory] = useState<Snapshot[]>([]);
+  const [currentStepIndex, setCurrentStepIndex] = useState(-1);
+  const [activeLine, setActiveLine] = useState(-1);
+  
   // High-performance MotionValues for cursor and preview lines
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -106,8 +118,36 @@ export default function PlaygroundPage() {
 
   const pushLog = useCallback((message: string) => {
     const timestamp = new Date().toLocaleTimeString("en-GB", { hour12: false });
-    setLogs((prev) => [`[${timestamp}] ${message}`, ...prev].slice(0, 120));
+    const formattedLog = `[${timestamp}] ${message}`;
+    setLogs((prev) => [formattedLog, ...prev].slice(0, 120));
+    return formattedLog;
   }, []);
+
+  const takeSnapshot = useCallback((line: number, currentBars: number[], currentNodes: NodePoint[], currentEdges: Edge[], currentOps: { comparisons: number; swaps: number; steps: number }, logMsg?: string) => {
+    const log = logMsg ? pushLog(logMsg) : (logs[0] || "");
+    const newSnapshot: Snapshot = {
+      bars: [...currentBars],
+      nodes: JSON.parse(JSON.stringify(currentNodes)),
+      edges: JSON.parse(JSON.stringify(currentEdges)),
+      opsCount: { ...currentOps },
+      activeLine: line,
+      log
+    };
+    setHistory(prev => [...prev, newSnapshot]);
+    setCurrentStepIndex(prev => prev + 1);
+    setActiveLine(line);
+  }, [logs, pushLog]);
+
+  const goToStep = (index: number) => {
+    if (index < 0 || index >= history.length) return;
+    const snap = history[index];
+    setBars(snap.bars);
+    setNodes(snap.nodes);
+    setEdges(snap.edges);
+    setOpsCount(snap.opsCount);
+    setActiveLine(snap.activeLine);
+    setCurrentStepIndex(index);
+  };
 
   useEffect(() => {
     if (viewportRef.current) {
@@ -156,6 +196,9 @@ export default function PlaygroundPage() {
     setBars(nextBars);
     setOpsCount({ comparisons: 0, swaps: 0, steps: 0 });
     setIsComplete(false);
+    setHistory([]);
+    setCurrentStepIndex(-1);
+    setActiveLine(-1);
     pushLog(`LOG: DATA_REGEN.`);
   };
 
@@ -167,9 +210,23 @@ export default function PlaygroundPage() {
     setZoom(1);
     setOpsCount({ comparisons: 0, swaps: 0, steps: 0 });
     setIsComplete(false);
+    setHistory([]);
+    setCurrentStepIndex(-1);
+    setActiveLine(-1);
     setInputValue("[45, 12, 89, 34, 67, 23, 91, 56, 78, 10]");
     pushLog("LOG: WORKSPACE_RESET.");
   };
+
+  const currentAlgoData = useMemo(() => {
+    const idMap: Record<string, string> = {
+      "QUICK_SORT_TERMINAL": "quick-sort",
+      "BUBBLE_SORT_LEGACY": "bubble-sort",
+      "MERGE_SORT_PIPELINE": "merge-sort",
+      "GRAPH_BFS_NODEMAP": "bfs"
+    };
+    const id = idMap[algorithm];
+    return (algorithmsData as any)[id];
+  }, [algorithm]);
 
   const handleBarsPointerDown = (e: React.PointerEvent) => {
     if (isGraphMode) return;
@@ -198,14 +255,26 @@ export default function PlaygroundPage() {
   const runBubbleSort = async (arr: number[]) => {
     const n = arr.length;
     let tempArr = [...arr];
+    let ops = { comparisons: 0, swaps: 0, steps: 0 };
+    
+    // Initial State
+    takeSnapshot(1, tempArr, nodes, edges, ops, "LOG: BUBBLE_SORT_INIT.");
+
     for (let i = 0; i < n; i++) {
       for (let j = 0; j < n - i - 1; j++) {
         if (!isRunning) return;
-        setOpsCount(prev => ({ ...prev, comparisons: prev.comparisons + 1, steps: prev.steps + 1 }));
+        
+        ops = { ...ops, comparisons: ops.comparisons + 1, steps: ops.steps + 1 };
+        setOpsCount(ops);
+        takeSnapshot(5, tempArr, nodes, edges, ops, `CMP: ${tempArr[j]} <> ${tempArr[j+1]}`);
+        await sleep(speed);
+
         if (tempArr[j] > tempArr[j + 1]) {
           [tempArr[j], tempArr[j + 1]] = [tempArr[j + 1], tempArr[j]];
+          ops = { ...ops, swaps: ops.swaps + 1 };
           setBars([...tempArr]);
-          setOpsCount(prev => ({ ...prev, swaps: prev.swaps + 1 }));
+          setOpsCount(ops);
+          takeSnapshot(6, tempArr, nodes, edges, ops, `SWP: ${tempArr[j]} <=> ${tempArr[j+1]}`);
           await sleep(speed);
         }
       }
@@ -213,16 +282,16 @@ export default function PlaygroundPage() {
     if (isRunning) {
       setIsRunning(false);
       setIsComplete(true);
-      pushLog("LOG: BUBBLE_SORT_COMPLETE.");
+      takeSnapshot(-1, tempArr, nodes, edges, ops, "LOG: BUBBLE_SORT_COMPLETE.");
     }
   };
 
-  const runQuickSort = async (arr: number[], low: number, high: number) => {
+  const runQuickSort = async (arr: number[], low: number, high: number, currentOps = { comparisons: 0, swaps: 0, steps: 0 }) => {
     if (low < high) {
-      const pi = await partition(arr, low, high);
+      const { pi, nextOps } = await partition(arr, low, high, currentOps);
       if (isRunning) {
-        await runQuickSort(arr, low, pi - 1);
-        await runQuickSort(arr, pi + 1, high);
+        await runQuickSort(arr, low, pi - 1, nextOps);
+        await runQuickSort(arr, pi + 1, high, nextOps);
       }
     }
     if (low === 0 && high === arr.length - 1 && isRunning) {
@@ -232,25 +301,35 @@ export default function PlaygroundPage() {
     }
   };
 
-  const partition = async (arr: number[], low: number, high: number) => {
+  const partition = async (arr: number[], low: number, high: number, ops: { comparisons: number; swaps: number; steps: number }) => {
     const pivot = arr[high];
+    takeSnapshot(8, arr, nodes, edges, ops, `PIVOT_SELECTED: ${pivot}`);
     let i = low - 1;
     for (let j = low; j < high; j++) {
-      if (!isRunning) return low;
-      setOpsCount(prev => ({ ...prev, comparisons: prev.comparisons + 1, steps: prev.steps + 1 }));
+      if (!isRunning) return { pi: low, nextOps: ops };
+      
+      ops = { ...ops, comparisons: ops.comparisons + 1, steps: ops.steps + 1 };
+      setOpsCount(ops);
+      takeSnapshot(11, arr, nodes, edges, ops, `CMP: ${arr[j]} < ${pivot}`);
+      await sleep(speed);
+
       if (arr[j] < pivot) {
         i++;
         [arr[i], arr[j]] = [arr[j], arr[i]];
+        ops = { ...ops, swaps: ops.swaps + 1 };
         setBars([...arr]);
-        setOpsCount(prev => ({ ...prev, swaps: prev.swaps + 1 }));
+        setOpsCount(ops);
+        takeSnapshot(12, arr, nodes, edges, ops, `SWP: ${arr[i]} <=> ${arr[j]}`);
         await sleep(speed);
       }
     }
     [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+    ops = { ...ops, swaps: ops.swaps + 1 };
     setBars([...arr]);
-    setOpsCount(prev => ({ ...prev, swaps: prev.swaps + 1 }));
+    setOpsCount(ops);
+    takeSnapshot(13, arr, nodes, edges, ops, `PARTITION_FINAL_SWAP`);
     await sleep(speed);
-    return i + 1;
+    return { pi: i + 1, nextOps: ops };
   };
 
   useEffect(() => {
@@ -356,11 +435,15 @@ export default function PlaygroundPage() {
         style={{ width: `${SIDEBAR_WIDTH}px` }}
       >
         <div className="h-full flex flex-col p-4 space-y-6 overflow-y-auto custom-slim-scrollbar pb-20">
-          {/* 1. Algorithm Selection */}
           <div className="space-y-1.5">
             <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Algorithm_Engine</label>
             <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="w-full border border-[#C4C5D6] bg-[#0A1022] px-2 py-2.5 text-[9px] font-bold tracking-widest text-[#DBE7FF] outline-none cursor-pointer rounded-sm">
-              {ALGORITHM_OPTIONS.map((o) => <option key={o} value={o}>{o}</option>)}
+              {ALGORITHM_OPTIONS.map((id) => (
+                <option key={id} value={id}>
+                  {/* @ts-ignore */}
+                  {algorithmsData[id]?.title?.en || id}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -425,96 +508,19 @@ export default function PlaygroundPage() {
 
       <main 
         ref={viewportRef}
-        className="fixed right-0 top-16 overflow-auto transition-all duration-300 ease-in-out custom-slim-scrollbar" 
+        className="fixed right-0 top-16 overflow-hidden transition-all duration-300 ease-in-out" 
         style={{ left: `${currentSidebarWidth}px`, bottom: `${consoleHeight}px` }}
       >
-        <div 
-          ref={canvasRef}
-          onClick={onStageClick} 
-          onPointerMove={onPointerMove} 
-          onPointerUp={() => setDraggingNodeId(null)} 
-          className="relative origin-top-left will-change-transform blueprint-grid" 
-          style={{ 
-            width: `${CANVAS_WIDTH}px`, 
-            height: `${CANVAS_HEIGHT}px`,
-            transform: `scale(${zoom})`
-          }}
-        >
-          <section className={`relative w-full h-full ${isDrawingMode ? 'cursor-none' : 'cursor-default'}`}>
-            {isDrawingMode && (
-              <motion.div 
-                style={{ x: mouseX, y: mouseY }}
-                className="absolute h-6 w-6 -translate-x-1/2 -translate-y-1/2 border-2 border-dashed border-[#002FA7]/40 rounded-full pointer-events-none z-50 flex items-center justify-center bg-[#002FA7]/5 will-change-transform"
-              >
-                <span className="material-symbols-outlined text-[#002FA7]/40 text-[10px]">add</span>
-              </motion.div>
-            )}
+        <DataVisualizer.InfiniteCanvas gridSize={30} initialZoom={zoom}>
+          {isGraphMode ? (
+            <DataVisualizer.Graph nodes={nodes} edges={edges} width={1200} height={800} />
+          ) : (
+            <DataVisualizer.Bars data={bars} activeIndices={[activeLine]} width={800} height={400} />
+          )}
+        </DataVisualizer.InfiniteCanvas>
 
-            {isGraphMode && (
-              <svg className="absolute inset-0 h-full w-full pointer-events-none" aria-hidden="true">
-                {selectedNode && isDrawingMode && (
-                  <motion.line 
-                    x1={selectedNode.x} 
-                    y1={selectedNode.y} 
-                    x2={mouseX} 
-                    y2={mouseY} 
-                    stroke="#002FA7" 
-                    strokeWidth={2/zoom} 
-                    strokeDasharray="4 4" 
-                    className="animate-[dash_1s_linear_infinite]" 
-                  />
-                )}
-                {edges.map((edge, idx) => {
-                  const fromNode = nodes.find(n => n.id === edge.from);
-                  const toNode = nodes.find(n => n.id === edge.to);
-                  if (!fromNode || !toNode) return null;
-                  return <motion.line initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} key={`${edge.from}-${edge.to}-${idx}`} x1={fromNode.x} y1={fromNode.y} x2={toNode.x} y2={toNode.y} stroke="#002FA7" strokeWidth={1.5/zoom} strokeOpacity="0.5" />;
-                })}
-              </svg>
-            )}
-
-            {!isGraphMode && (
-              <motion.div 
-                drag 
-                dragListener={false}
-                dragControls={barsDragControls}
-                dragMomentum={false}
-                onPointerDown={handleBarsPointerDown}
-                onPointerUp={handleBarsPointerUp}
-                onContextMenu={(e) => e.preventDefault()}
-                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-end gap-2 w-[500px] h-[300px] will-change-transform ${isLongPressingBars ? 'cursor-grabbing opacity-80' : 'cursor-grab'}`}
-              >
-                {bars.map((value, index) => {
-                  const max = Math.max(...bars, 1);
-                  const height = `${Math.max((value / max) * 100, 8)}%`;
-                  return (
-                    <div key={`${value}-${index}`} className={`group relative flex-1 border border-[#C4C5D6] bg-[#DCE6FF] ${isLongPressingBars ? '' : 'transition-all'}`} style={{ height }}>
-                      <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] font-bold text-[#002FA7] opacity-100 whitespace-nowrap">{value}</span>
-                    </div>
-                  );
-                })}
-              </motion.div>
-            )}
-
-            {isGraphMode && nodes.map((node) => {
-              const isSelected = selectedNodeId === node.id;
-              return (
-                <motion.button layoutId={node.id} key={node.id} onDoubleClick={() => isDrawingMode && deleteNode(node.id)} onPointerDown={(event) => {
-                  if (isDrawingMode) onNodeClick(node.id);
-                  else {
-                    const rect = (event.currentTarget as HTMLButtonElement).getBoundingClientRect();
-                    setDraggingNodeId(node.id);
-                    setDragOffset({ x: (event.clientX - rect.left) / zoom, y: (event.clientY - rect.top) / zoom });
-                  }
-                }} className={`node-button absolute h-8 w-8 -translate-x-1/2 -translate-y-1/2 border text-[9px] font-bold transition-all shadow-md z-20 flex items-center justify-center will-change-transform ${isSelected ? 'bg-[#002FA7] text-white border-[#002FA7] scale-110 z-30' : 'bg-white text-[#002FA7] border-[#002FA7] hover:bg-[#F0F4FF]'}`} style={{ left: node.x, top: node.y }}>
-                  {node.label}
-                </motion.button>
-              );
-            })}
-          </section>
-        </div>
-
-        <div className="fixed top-20 right-8 z-30">
+        <div className="fixed top-20 right-8 z-30 flex flex-col gap-4 items-end">
+            {/* Metrics Widget */}
             <motion.div drag dragMomentum={false} className="cursor-grab active:cursor-grabbing">
               <div className="bg-[#0A1022] border border-[#002FA7]/40 shadow-2xl backdrop-blur-md select-none min-w-[180px] overflow-hidden">
                   <div className="px-4 py-3 border-b border-primary/20 flex justify-between items-center">
@@ -543,6 +549,34 @@ export default function PlaygroundPage() {
                   </AnimatePresence>
               </div>
             </motion.div>
+
+            {/* Code Panel */}
+            {currentAlgoData && currentAlgoData.code && currentAlgoData.code[0] && (
+              <div className="w-[320px] h-[360px] shadow-2xl">
+                <CodePanel 
+                  code={currentAlgoData.code[0].snippet} 
+                  activeLine={activeLine} 
+                  language={currentAlgoData.code[0].language}
+                />
+              </div>
+            )}
+        </div>
+
+        {/* History Slider - Absolute Bottom Above Console */}
+        <div 
+          className="fixed z-40 transition-all duration-300 ease-in-out" 
+          style={{ 
+            left: `${currentSidebarWidth + 24}px`, 
+            right: "24px", 
+            bottom: `${consoleHeight + 24}px` 
+          }}
+        >
+          <HistorySlider 
+            currentStep={currentStepIndex} 
+            totalSteps={history.length} 
+            onStepChange={goToStep} 
+            isRunning={isRunning}
+          />
         </div>
       </main>
 

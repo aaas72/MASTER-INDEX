@@ -1,28 +1,34 @@
 import { BlockMath } from "react-katex";
 
 type VersusAlgorithm = {
-	title: { en: string };
+	title: { ar: string; en: string };
 	category: string;
 	complexity: {
-		time: { best: string; average: string; worst: string };
+		time: any; // Can be string or { average, worst }
 		space: string;
-		stable: boolean;
-		in_place: boolean;
+		stable?: boolean;
+		in_place?: boolean;
 	};
-	content: { proof_latex: string };
+	content?: { proof_latex: string };
 };
 
 type VersusCompetitorRightProps = {
 	algorithm: VersusAlgorithm;
 	isWinner: boolean;
+	visualizer?: React.ReactNode;
+	summaryPoints?: string[];
 };
 
-const toMathNotation = (value: string) =>
-	value.replaceAll("log", "\\log ").replaceAll("^2", "^{2}");
+const toMathNotation = (value: any) => {
+	if (!value || typeof value !== 'string') return "";
+	return value.replaceAll("log", "\\log ").replaceAll("^2", "^{2}");
+};
 
 export default function VersusCompetitorRight({
 	algorithm,
 	isWinner,
+	visualizer,
+	summaryPoints,
 }: VersusCompetitorRightProps) {
 	return (
 		<section className="flex-1 p-8 flex flex-col  bg-surface-container-low">
@@ -59,39 +65,39 @@ export default function VersusCompetitorRight({
 					Complexity Matrix
 				</h3>
 				<div className="grid grid-cols-2 gap-4">
-					<div className="bg-surface-container-lowest p-6 border border-outline-variant/20 flex flex-col justify-center items-center">
+					<div className="bg-surface-container-lowest p-6 flex flex-col justify-center items-center">
 						<span className="font-mono text-xs text-on-surface-variant uppercase mb-2">
-							Average Time
+							Time Complexity
 						</span>
 						<div className="font-mono text-on-surface text-lg">
-							<BlockMath math={toMathNotation(algorithm.complexity.time.average)} />
+							<BlockMath math={toMathNotation(typeof algorithm.complexity.time === 'string' ? algorithm.complexity.time : algorithm.complexity.time?.average)} />
 						</div>
 					</div>
-					<div className="bg-surface-container-lowest p-6 border border-outline-variant/20 flex flex-col justify-center items-center">
-						<span className="font-mono text-xs text-on-surface-variant uppercase mb-2">
-							Worst Time
-						</span>
-						<div className="font-mono text-primary text-lg">
-							<BlockMath math={toMathNotation(algorithm.complexity.time.worst)} />
-						</div>
-					</div>
-					<div className="bg-surface-container-lowest p-6 border border-outline-variant/20 flex flex-col justify-center items-center col-span-2">
+					<div className="bg-surface-container-lowest p-6 flex flex-col justify-center items-center">
 						<span className="font-mono text-xs text-on-surface-variant uppercase mb-2">
 							Space Complexity
 						</span>
-						<div className="font-mono text-error text-lg">
+						<div className="font-mono text-primary text-lg">
 							<BlockMath math={toMathNotation(algorithm.complexity.space)} />
+						</div>
+					</div>
+					<div className="bg-surface-container-lowest p-6 flex flex-col justify-center items-center col-span-2">
+						<span className="font-mono text-xs text-on-surface-variant uppercase mb-2">
+							Stability Status
+						</span>
+						<div className="font-mono text-error text-sm font-bold uppercase tracking-widest">
+							{algorithm.complexity.stable ? "STABLE_COMPILATION" : "UNSTABLE_LOGIC"}
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div className="mb-12 bg-surface-container-lowest border border-outline-variant/20 px-4 py-5">
+			<div className="mb-12 bg-surface-container-lowest px-4 py-5">
 				<h3 className="font-mono text-sm font-bold uppercase tracking-wider mb-3 text-left">
 					Mathematical Signal
 				</h3>
 				<div className="font-mono text-sm text-on-surface overflow-x-auto">
-					<BlockMath math={algorithm.content.proof_latex} />
+					<BlockMath math={algorithm.content?.proof_latex || "O(f(n)) \\rightarrow \\Omega(g(n))"} />
 				</div>
 			</div>
 
@@ -101,7 +107,7 @@ export default function VersusCompetitorRight({
 					Architecture Specs
 				</h3>
 				<ul className="space-y-3 font-mono text-sm">
-					<li className="flex items-center justify-between p-3 bg-surface-container-lowest border border-outline-variant/20">
+					<li className="flex items-center justify-between p-3 bg-surface-container-lowest">
 						<span className="text-on-surface">Stable</span>
 						<div className="flex items-center gap-2">
 							<span className="w-2 h-2 rounded-none bg-[#002FA7] block"></span>
@@ -110,7 +116,7 @@ export default function VersusCompetitorRight({
 							</span>
 						</div>
 					</li>
-					<li className="flex items-center justify-between p-3 bg-surface-container-lowest border border-outline-variant/20">
+					<li className="flex items-center justify-between p-3 bg-surface-container-lowest">
 						<span className="text-on-surface">In-Place</span>
 						<div className="flex items-center gap-2">
 							<span className="w-2 h-2 rounded-none bg-error block"></span>
@@ -119,7 +125,7 @@ export default function VersusCompetitorRight({
 							</span>
 						</div>
 					</li>
-					<li className="flex items-center justify-between p-3 bg-surface-container-lowest border border-outline-variant/20">
+					<li className="flex items-center justify-between p-3 bg-surface-container-lowest">
 						<span className="text-on-surface">Method</span>
 						<span className="text-on-surface-variant font-bold uppercase text-xs">
 							{algorithm.category}
@@ -127,6 +133,36 @@ export default function VersusCompetitorRight({
 					</li>
 				</ul>
 			</div>
+
+			{/* Final State Snapshot */}
+			{visualizer && (
+				<div className="mt-12">
+					<h3 className="font-mono text-sm font-bold uppercase tracking-wider mb-4 border-b-2 border-outline-variant/30 pb-2">
+						Final_Runtime_Snapshot
+					</h3>
+					<div className="bg-white shadow-inner overflow-hidden flex items-center justify-center min-h-[250px] w-full">
+						<div className="w-full h-full">
+							{visualizer}
+						</div>
+					</div>
+					{summaryPoints && summaryPoints.length > 0 && (
+						<div className="mt-6 p-4 bg-primary/5 border-l-4 border-l-primary">
+							<h4 className="font-mono text-[10px] font-bold text-primary uppercase mb-3 flex items-center gap-2">
+								<span className="w-1.5 h-1.5 bg-primary"></span>
+								Strategic_Insight_Nodes
+							</h4>
+							<ul className="space-y-2">
+								{summaryPoints.map((point, idx) => (
+									<li key={idx} className="flex gap-2 items-start font-mono text-[10px] text-on-surface-variant leading-relaxed">
+										<span className="text-primary mt-1 text-[8px]">▶</span>
+										<span>{point}</span>
+									</li>
+								))}
+							</ul>
+						</div>
+					)}
+				</div>
+			)}
 		</section>
 	);
 }

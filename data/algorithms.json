@@ -1,625 +1,72 @@
 {
-  "quick-sort": {
-    "id": "quick-sort",
-    "title": {
-      "en": "Quick Sort"
-    },
+  "bubble-sort": {
+    "title": { "ar": "الفرز الفقاعي", "en": "Bubble Sort" },
     "category": "Sorting",
-    "difficulty": "Intermediate",
-    "complexity": {
-      "time": {
-        "best": "O(n log n)",
-        "average": "O(n log n)",
-        "worst": "O(n^2)"
-      },
-      "space": "O(log n)",
-      "stable": false,
-      "in_place": true,
-      "recursive": true
-    },
-    "content": {
-      "abstract": {
-        "en": "Quick Sort is a highly efficient, comparison-based sorting algorithm that uses a divide-and-conquer strategy. It works by selecting a 'pivot' element from the array and partitioning the other elements into two sub-arrays, according to whether they are less than or greater than the pivot. The sub-arrays are then sorted recursively."
-      },
-      "logic_steps": [
-        {
-          "description_en": "Initial unsorted array.",
-          "array_state": [
-            8,
-            3,
-            11,
-            5,
-            1,
-            9,
-            4,
-            7,
-            10,
-            2,
-            6
-          ],
-          "pivot_index": null,
-          "partition_range": [
-            0,
-            10
-          ]
-        },
-        {
-          "description_en": "Partition array around pivot (6). Elements < 6 go left, > 6 go right.",
-          "array_state": [
-            3,
-            5,
-            1,
-            4,
-            2,
-            6,
-            8,
-            11,
-            9,
-            7,
-            10
-          ],
-          "pivot_index": 5,
-          "partition_range": [
-            0,
-            10
-          ]
-        },
-        {
-          "description_en": "Recursively sort the left sub-array [0..4].",
-          "array_state": [
-            3,
-            5,
-            1,
-            4,
-            2,
-            6,
-            8,
-            11,
-            9,
-            7,
-            10
-          ],
-          "pivot_index": null,
-          "partition_range": [
-            0,
-            4
-          ]
-        },
-        {
-          "description_en": "Partition left sub-array around pivot (2).",
-          "array_state": [
-            1,
-            2,
-            3,
-            5,
-            4,
-            6,
-            8,
-            11,
-            9,
-            7,
-            10
-          ],
-          "pivot_index": 1,
-          "partition_range": [
-            0,
-            4
-          ]
-        },
-        {
-          "description_en": "Base case reached for left of 2. Recursively sort right of 2 [2..4].",
-          "array_state": [
-            1,
-            2,
-            3,
-            5,
-            4,
-            6,
-            8,
-            11,
-            9,
-            7,
-            10
-          ],
-          "pivot_index": null,
-          "partition_range": [
-            2,
-            4
-          ]
-        },
-        {
-          "description_en": "Partition [3, 5, 4] around pivot (4).",
-          "array_state": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            8,
-            11,
-            9,
-            7,
-            10
-          ],
-          "pivot_index": 3,
-          "partition_range": [
-            2,
-            4
-          ]
-        },
-        {
-          "description_en": "Left sub-array is fully sorted. Recursively sort right sub-array [6..10].",
-          "array_state": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            8,
-            11,
-            9,
-            7,
-            10
-          ],
-          "pivot_index": null,
-          "partition_range": [
-            6,
-            10
-          ]
-        },
-        {
-          "description_en": "Partition right sub-array around pivot (10).",
-          "array_state": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            8,
-            9,
-            7,
-            10,
-            11
-          ],
-          "pivot_index": 9,
-          "partition_range": [
-            6,
-            10
-          ]
-        },
-        {
-          "description_en": "Recursively sort left of 10: [6..8].",
-          "array_state": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            8,
-            9,
-            7,
-            10,
-            11
-          ],
-          "pivot_index": null,
-          "partition_range": [
-            6,
-            8
-          ]
-        },
-        {
-          "description_en": "Partition [8, 9, 7] around pivot (7).",
-          "array_state": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11
-          ],
-          "pivot_index": 6,
-          "partition_range": [
-            6,
-            8
-          ]
-        },
-        {
-          "description_en": "Final sorted array.",
-          "array_state": [
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11
-          ],
-          "pivot_index": null,
-          "partition_range": null
-        }
-      ],
-      "proof_latex": "T(n) = 2T(n/2) + \\Theta(n)"
-    },
-    "code": [
-      {
-        "language": "javascript",
-        "snippet": "1: quickSort(array, low, high):\n2:   if low < high:\n3:     pi = partition(array, low, high)\n4:     quickSort(array, low, pi - 1)\n5:     quickSort(array, pi + 1, high)\n\n7: partition(array, low, high):\n8:   pivot = array[high]\n9:   i = low - 1\n10:  for j from low to high - 1:\n11:    if array[j] < pivot:\n12:      i++, swap(array[i], array[j])\n13:  swap(array[i + 1], array[high])\n14:  return i + 1",
-        "github_url": "https://github.com/algo-archive/quick-sort"
-      }
-    ],
-    "benchmarks": [
-      {
-        "input_size": 1000,
-        "execution_time_ms": 2,
-        "environment_specs": "V8 Engine / Node 18"
-      },
-      {
-        "input_size": 100000,
-        "execution_time_ms": 45,
-        "environment_specs": "V8 Engine / Node 18"
-      }
-    ],
-    "status": "Simulation"
+    "complexity": { "time": "O(n^2)", "space": "O(1)" },
+    "description": { "ar": "خوارزمية فرز بسيطة تقارن العناصر المتجاورة.", "en": "A simple sorting algorithm that compares adjacent elements." },
+    "code": "function bubbleSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j+1]] = [arr[j+1], arr[j]];\n      }\n    }\n  }\n  return arr;\n}"
   },
-  "a-star": {
-    "id": "a-star",
-    "title": {
-      "en": "A* Search"
-    },
-    "category": "Graph Theory",
-    "difficulty": "Advanced",
-    "complexity": {
-      "time": {
-        "best": "O(E)",
-        "average": "O(E log V)",
-        "worst": "O(E log V)"
-      },
-      "space": "O(V)",
-      "stable": true,
-      "in_place": false,
-      "recursive": false
-    },
-    "content": {
-      "abstract": {
-        "en": "A* is a powerful graph traversal and path search algorithm used extensively in artificial intelligence and games. It finds the shortest path between a starting node and a goal node by combining the cost to reach a node (g-score) with a heuristic estimate of the remaining distance to the goal (h-score), making it both optimal and efficient."
-      },
-      "logic_steps": [
-        {
-          "description_en": "Initialize open set and closed set.",
-          "array_state": [
-            10,
-            20,
-            15,
-            30
-          ],
-          "pivot_index": 0,
-          "partition_range": [
-            0,
-            3
-          ]
-        },
-        {
-          "description_en": "Evaluate neighbors of start node.",
-          "array_state": [
-            12,
-            18,
-            15,
-            30
-          ],
-          "pivot_index": 1,
-          "partition_range": [
-            0,
-            3
-          ]
-        },
-        {
-          "description_en": "Goal node reached.",
-          "array_state": [
-            12,
-            18,
-            15,
-            25
-          ],
-          "pivot_index": 3,
-          "partition_range": null
-        }
-      ],
-      "proof_latex": "f(n) = g(n) + h(n)"
-    },
-    "code": [
-      {
-        "language": "python",
-        "snippet": "def a_star(start, goal):\n    open_set = {start}\n    # Implementation details...\n    return path",
-        "github_url": "https://github.com/algo-archive/a-star"
-      }
-    ],
-    "benchmarks": [
-      {
-        "input_size": 500,
-        "execution_time_ms": 12,
-        "environment_specs": "Python 3.10"
-      }
-    ],
-    "status": "Code Ready"
-  },
-  "bellman-ford": {
-    "id": "bellman-ford",
-    "title": {
-      "en": "Bellman-Ford"
-    },
-    "category": "Graph Theory",
-    "difficulty": "Advanced",
-    "complexity": {
-      "time": {
-        "best": "O(V E)",
-        "average": "O(V E)",
-        "worst": "O(V E)"
-      },
-      "space": "O(V)",
-      "stable": true,
-      "in_place": true,
-      "recursive": false
-    },
-    "content": {
-      "abstract": {
-        "en": "Computes shortest paths from a single source vertex to all of the other vertices in a weighted digraph."
-      },
-      "logic_steps": [],
-      "proof_latex": "d(v) \\le d(u) + w(u,v)"
-    },
-    "code": [],
-    "benchmarks": [],
-    "status": "Researching"
+  "quick-sort": {
+    "title": { "ar": "الفرز السريع", "en": "Quick Sort" },
+    "category": "Sorting",
+    "complexity": { "time": "O(n log n)", "space": "O(log n)" },
+    "description": { "ar": "خوارزمية فرز تعتمد على مبدأ 'فرق تسد'.", "en": "A divide-and-conquer sorting algorithm." },
+    "code": "function quickSort(arr) {\n  if (arr.length <= 1) return arr;\n  const pivot = arr[arr.length - 1];\n  const left = [];\n  const right = [];\n  for (let i = 0; i < arr.length - 1; i++) {\n    if (arr[i] < pivot) left.push(arr[i]);\n    else right.push(arr[i]);\n  }\n  return [...quickSort(left), pivot, ...quickSort(right)];\n}"
   },
   "merge-sort": {
-    "id": "merge-sort",
-    "title": {
-      "en": "Merge Sort"
-    },
+    "title": { "ar": "الفرز بالدمج", "en": "Merge Sort" },
     "category": "Sorting",
-    "difficulty": "Intermediate",
-    "complexity": {
-      "time": {
-        "best": "O(n log n)",
-        "average": "O(n log n)",
-        "worst": "O(n log n)"
-      },
-      "space": "O(n)",
-      "stable": true,
-      "in_place": false,
-      "recursive": true
-    },
-    "content": {
-      "abstract": {
-        "en": "An efficient, general-purpose, and comparison-based sorting algorithm."
-      },
-      "logic_steps": [],
-      "proof_latex": "T(n) = 2T(n/2) + O(n)"
-    },
-    "code": [],
-    "benchmarks": [],
-    "status": "Code Ready"
+    "complexity": { "time": "O(n log n)", "space": "O(n)" },
+    "description": { "ar": "خوارزمية فرز مستقرة تقسم المصفوفة ثم تدمجها.", "en": "A stable sorting algorithm that divides and merges." },
+    "code": "function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n  return merge(left, right);\n}"
+  },
+  "linear-search": {
+    "title": { "ar": "البحث الخطي", "en": "Linear Search" },
+    "category": "Search",
+    "complexity": { "time": "O(n)", "space": "O(1)" },
+    "description": { "ar": "يبحث عن عنصر من خلال فحص كل العناصر بالتسلسل.", "en": "Finds an element by checking each item sequentially." },
+    "code": "function linearSearch(arr, target) {\n  for (let i = 0; i < arr.length; i++) {\n    if (arr[i] === target) return i;\n  }\n  return -1;\n}"
   },
   "binary-search": {
-    "id": "binary-search",
-    "title": {
-      "en": "Binary Search"
-    },
+    "title": { "ar": "البحث الثنائي", "en": "Binary Search" },
     "category": "Search",
-    "difficulty": "Beginner",
-    "complexity": {
-      "time": {
-        "best": "O(1)",
-        "average": "O(log n)",
-        "worst": "O(log n)"
-      },
-      "space": "O(1)",
-      "stable": false,
-      "in_place": true,
-      "recursive": false
-    },
-    "content": {
-      "abstract": {
-        "en": "Search a sorted array by repeatedly dividing the search interval in half."
-      },
-      "logic_steps": [],
-      "proof_latex": "T(n) = T(n/2) + O(1)"
-    },
-    "code": [],
-    "benchmarks": [],
-    "status": "Code Ready"
-  },
-  "dijkstra": {
-    "id": "dijkstra",
-    "title": {
-      "en": "Dijkstra's Algorithm"
-    },
-    "category": "Graph Theory",
-    "difficulty": "Advanced",
-    "complexity": {
-      "time": {
-        "best": "O(E + V log V)",
-        "average": "O(E + V log V)",
-        "worst": "O(E + V log V)"
-      },
-      "space": "O(V)",
-      "stable": true,
-      "in_place": false,
-      "recursive": false
-    },
-    "content": {
-      "abstract": {
-        "en": "An algorithm for finding the shortest paths between nodes in a graph."
-      },
-      "logic_steps": [
-        {
-          "description_en": "Set distance to start node to 0.",
-          "array_state": [
-            0,
-            99,
-            99,
-            99
-          ],
-          "pivot_index": 0,
-          "partition_range": null
-        },
-        {
-          "description_en": "Update distances of neighbors.",
-          "array_state": [
-            0,
-            5,
-            2,
-            99
-          ],
-          "pivot_index": 2,
-          "partition_range": null
-        }
-      ],
-      "proof_latex": "d(v) = \\min_{u \\in V} (d(u) + w(u,v))"
-    },
-    "code": [
-      {
-        "language": "cpp",
-        "snippet": "void dijkstra(int start) {\n    // Priority queue implementation\n}",
-        "github_url": "https://github.com/algo-archive/dijkstra"
-      }
-    ],
-    "benchmarks": [
-      {
-        "input_size": 10000,
-        "execution_time_ms": 35,
-        "environment_specs": "GCC 11 / O3"
-      }
-    ],
-    "status": "Simulation"
+    "complexity": { "time": "O(log n)", "space": "O(1)" },
+    "description": { "ar": "يبحث في مصفوفة مرتبة عن طريق تقسيم النطاق إلى النصف.", "en": "Finds an element in a sorted array by halving the range." },
+    "code": "function binarySearch(arr, target) {\n  let low = 0, high = arr.length - 1;\n  while (low <= high) {\n    let mid = Math.floor((low + high) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) low = mid + 1;\n    else high = mid - 1;\n  }\n  return -1;\n}"
   },
   "bfs": {
-    "id": "bfs",
-    "title": {
-      "en": "Breadth-First Search"
-    },
-    "category": "Graph Theory",
-    "difficulty": "Beginner",
-    "complexity": {
-      "time": {
-        "best": "O(V + E)",
-        "average": "O(V + E)",
-        "worst": "O(V + E)"
-      },
-      "space": "O(V)",
-      "stable": true,
-      "in_place": false,
-      "recursive": false
-    },
-    "content": {
-      "abstract": {
-        "en": "An algorithm for traversing or searching tree or graph data structures."
-      },
-      "logic_steps": [],
-      "proof_latex": "T(V, E) = O(V + E)"
-    },
-    "code": [],
-    "benchmarks": [],
-    "status": "Code Ready"
+    "title": { "ar": "البحث بالعرض", "en": "Breadth-First Search" },
+    "category": "Graphs",
+    "complexity": { "time": "O(V + E)", "space": "O(V)" },
+    "description": { "ar": "يستكشف العقد حسب مستواها في الجراف.", "en": "Explores nodes level by level." },
+    "code": "function bfs(graph, start) {\n  const queue = [start];\n  const visited = new Set();\n  while (queue.length) {\n    const node = queue.shift();\n    if (!visited.has(node)) {\n      visited.add(node);\n      queue.push(...graph[node]);\n    }\n  }\n}"
   },
   "dfs": {
-    "id": "dfs",
-    "title": {
-      "en": "Depth-First Search"
-    },
-    "category": "Graph Theory",
-    "difficulty": "Beginner",
-    "complexity": {
-      "time": {
-        "best": "O(V + E)",
-        "average": "O(V + E)",
-        "worst": "O(V + E)"
-      },
-      "space": "O(V)",
-      "stable": true,
-      "in_place": false,
-      "recursive": true
-    },
-    "content": {
-      "abstract": {
-        "en": "An algorithm for traversing or searching tree or graph data structures."
-      },
-      "logic_steps": [],
-      "proof_latex": "T(V, E) = O(V + E)"
-    },
-    "code": [],
-    "benchmarks": [],
-    "status": "Code Ready"
+    "title": { "ar": "البحث بالعمق", "en": "Depth-First Search" },
+    "category": "Graphs",
+    "complexity": { "time": "O(V + E)", "space": "O(V)" },
+    "description": { "ar": "يستكشف كل فرع حتى نهايته قبل العودة.", "en": "Explores each branch to its end before backtracking." },
+    "code": "function dfs(graph, node, visited = new Set()) {\n  visited.add(node);\n  for (const neighbor of graph[node]) {\n    if (!visited.has(neighbor)) dfs(graph, neighbor, visited);\n  }\n}"
   },
-  "kruskal": {
-    "id": "kruskal",
-    "title": {
-      "en": "Kruskal's Algorithm"
-    },
-    "category": "Graph Theory",
-    "difficulty": "Advanced",
-    "complexity": {
-      "time": {
-        "best": "O(E log E)",
-        "average": "O(E log E)",
-        "worst": "O(E log E)"
-      },
-      "space": "O(V)",
-      "stable": true,
-      "in_place": false,
-      "recursive": false
-    },
-    "content": {
-      "abstract": {
-        "en": "Finds a minimum spanning forest of an undirected edge-weighted graph."
-      },
-      "logic_steps": [],
-      "proof_latex": "T(E, V) = O(E \\log E)"
-    },
-    "code": [],
-    "benchmarks": [],
-    "status": "Simulation"
+  "dijkstra": {
+    "title": { "ar": "خوارزمية ديكسترا", "en": "Dijkstra's Algorithm" },
+    "category": "Graphs",
+    "complexity": { "time": "O(E + V log V)", "space": "O(V)" },
+    "description": { "ar": "تجد أقصر مسار بين نقطة وباقي نقاط الجراف.", "en": "Finds the shortest path between nodes." },
+    "code": "function dijkstra(graph, start) {\n  // Implementation logic\n}"
   },
-  "dynamic-programming-knapsack": {
-    "id": "dynamic-programming-knapsack",
-    "title": {
-      "en": "0/1 Knapsack (DP)"
-    },
-    "category": "Dynamic Programming",
-    "difficulty": "Advanced",
-    "complexity": {
-      "time": {
-        "best": "O(nW)",
-        "average": "O(nW)",
-        "worst": "O(nW)"
-      },
-      "space": "O(nW)",
-      "stable": true,
-      "in_place": false,
-      "recursive": false
-    },
-    "content": {
-      "abstract": {
-        "en": "Given a set of items, each with a weight and a value, determine the number of each item to include in a collection so that the total weight is less than or equal to a given limit and the total value is as large as possible."
-      },
-      "logic_steps": [],
-      "proof_latex": "K(i, w) = \\max(K(i-1, w), K(i-1, w-w_i) + v_i)"
-    },
-    "code": [],
-    "benchmarks": [],
-    "status": "Researching"
+  "bst-insert": {
+    "title": { "ar": "الإدراج في BST", "en": "BST Insertion" },
+    "category": "Trees",
+    "complexity": { "time": "O(log n)", "space": "O(n)" },
+    "description": { "ar": "إدراج عنصر في شجرة بحث ثنائية.", "en": "Inserts a value into a Binary Search Tree." },
+    "code": "function insert(node, value) {\n  if (!node) return { value, left: null, right: null };\n  if (value < node.value) node.left = insert(node.left, value);\n  else node.right = insert(node.right, value);\n  return node;\n}"
+  },
+  "convex-hull": {
+    "title": { "ar": "الغلاف المحدب", "en": "Convex Hull" },
+    "category": "Geometry",
+    "complexity": { "time": "O(n log n)", "space": "O(n)" },
+    "description": { "ar": "يجد أصغر مضلع يحيط بمجموعة نقاط.", "en": "Finds the smallest convex polygon containing all points." },
+    "code": "function getConvexHull(points) {\n  // Jarvis March or Graham Scan\n}"
   }
 }

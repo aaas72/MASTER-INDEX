@@ -1,19 +1,29 @@
+import algorithmsData from "@/data/algorithms.json";
+
 interface VersusHeaderProps {
   activeCategory: string;
   onCategoryChange: (category: string) => void;
 }
 
+const ICON_MAP: Record<string, string> = {
+  "Sorting": "sort_by_alpha",
+  "Search": "search",
+  "Graphs": "hub",
+  "Trees": "account_tree",
+  "Geometry": "architecture"
+};
+
 export default function VersusHeader({
   activeCategory,
   onCategoryChange,
 }: VersusHeaderProps) {
-  const categories = [
-    { id: "Sorting", label: "Sorting", icon: "sort_by_alpha" },
-    { id: "Search", label: "Search", icon: "search" },
-    { id: "Graph Theory", label: "Graphs", icon: "hub" },
-    { id: "Trees", label: "Trees", icon: "account_tree" },
-    { id: "Geometry", label: "Geometry", icon: "architecture" },
-  ];
+  const dynamicCategories = Array.from(
+    new Set(Object.values(algorithmsData).map((algo) => algo.category))
+  ).map(cat => ({
+    id: cat,
+    label: cat,
+    icon: ICON_MAP[cat] || "category"
+  }));
 
   return (
     <header className="sticky top-0 flex h-20 w-full shrink-0 items-center justify-between gap-4 border-b border-outline-variant/20 bg-white px-8 z-10">
@@ -27,7 +37,7 @@ export default function VersusHeader({
           </span>
         </div>
         <nav className="hidden gap-2 font-mono text-[11px] font-bold uppercase tracking-widest xl:flex">
-          {categories.map((cat) => (
+          {dynamicCategories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => onCategoryChange(cat.id)}
