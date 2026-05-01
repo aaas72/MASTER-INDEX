@@ -5,12 +5,13 @@ import algorithmsData from "@/data/algorithms.json";
 
 type Algorithm = {
   id: string;
-  title: { en: string };
+  title: { en: string; ar: string };
   category: string;
   complexity: {
-    time: { average: string };
+    time: string;
+    space: string;
   };
-  status: string;
+  status?: string;
 };
 
 type CategoryMetadata = {
@@ -67,15 +68,17 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
     accentClass: "bg-primary-container",
   };
 
-  const filteredAlgorithms = (Object.values(algorithmsData) as Algorithm[]).filter(
-    (algo) => algo.category.toLowerCase().replace(/ /g, "-") === params.slug
-  );
+  const filteredAlgorithms = Object.entries(algorithmsData)
+    .map(([id, data]) => ({ id, ...data } as Algorithm))
+    .filter(
+      (algo) => algo.category.toLowerCase().replace(/ /g, "-") === params.slug
+    );
 
   const columns: TableColumn<Algorithm>[] = [
     {
       header: "ID",
       key: "id",
-      render: (algo) => <span className="font-mono text-xs text-outline">{algo.id.substring(0, 6).toUpperCase()}</span>,
+      render: (algo) => <span className="font-mono text-xs text-outline">{(algo.id || "ID_N/A").substring(0, 6).toUpperCase()}</span>,
     },
     {
       header: "Algorithm Name",
@@ -92,7 +95,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       align: "right",
       render: (algo) => (
         <span className="bg-primary-fixed px-2 py-1 font-mono text-[10px] font-bold text-[#001355]">
-          {algo.complexity.time.average}
+          {algo.complexity.time}
         </span>
       ),
     },
@@ -102,7 +105,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       align: "right",
       render: (algo) => (
         <span className="font-mono text-[10px] font-bold text-primary-container uppercase">
-          {algo.status}
+          {algo.status || "STABLE"}
         </span>
       ),
     },

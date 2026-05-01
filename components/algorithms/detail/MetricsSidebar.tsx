@@ -1,8 +1,8 @@
 import { AlgorithmData } from "@/types/algorithm";
 import Link from "next/link";
 
-const MetricRow = ({ label, value, isMath = true }: { label: string; value: string | boolean; isMath?: boolean }) => {
-  const displayValue = typeof value === "boolean" ? (value ? "YES" : "NO") : value;
+const MetricRow = ({ label, value, isMath = true }: { label: string; value: any; isMath?: boolean }) => {
+  const displayValue = typeof value === "boolean" ? (value ? "YES" : "NO") : (value || "N/A");
 
   return (
     <div className="group flex items-baseline justify-between border-b border-outline-variant/10 px-1 py-2 transition-colors hover:bg-surface-container-lowest">
@@ -16,9 +16,22 @@ const MetricRow = ({ label, value, isMath = true }: { label: string; value: stri
   );
 };
 
-export default function MetricsSidebar({ algoData }: { algoData: AlgorithmData }) {
+interface MetricsSidebarProps {
+  algoData: any;
+  onExport?: () => void;
+  isExporting?: boolean;
+}
+
+export default function MetricsSidebar({ algoData, onExport, isExporting }: MetricsSidebarProps) {
+  const getTimeValue = (key: 'best' | 'average' | 'worst') => {
+    if (typeof algoData.complexity.time === 'string') {
+      return key === 'average' ? algoData.complexity.time : "--";
+    }
+    return algoData.complexity.time?.[key] || "--";
+  };
+
   return (
-    <aside className="hidden w-full shrink-0 border-l border-outline-variant/20 bg-surface/50 backdrop-blur-sm lg:block">
+    <aside className="hidden w-full shrink-0 border-l border-outline-variant/20 bg-surface/50 backdrop-blur-sm lg:block no-export">
       <div className="sticky top-0 flex h-screen flex-col overflow-hidden p-5">
         <div className="mb-10 pt-4">
           <div className="mb-1 flex items-center gap-2">
@@ -28,7 +41,7 @@ export default function MetricsSidebar({ algoData }: { algoData: AlgorithmData }
             </h2>
           </div>
           <p className="font-mono text-[9px] uppercase tracking-widest leading-none text-on-surface-variant/60">
-            Ref. Node: {algoData.id.replace('-', '_')} // Ver 1.0.4
+            Ref. Node: {algoData.id?.replace('-', '_') || "NODE_01"} // Ver 1.0.4
           </p>
         </div>
 
@@ -38,9 +51,9 @@ export default function MetricsSidebar({ algoData }: { algoData: AlgorithmData }
               <span className="h-[1px] w-4 bg-primary/30" /> TIME_ANALYSIS
             </h3>
             <div className="flex flex-col">
-              <MetricRow label="Best Case" value={algoData.complexity.time.best} />
-              <MetricRow label="Average" value={algoData.complexity.time.average} />
-              <MetricRow label="Worst Case" value={algoData.complexity.time.worst} />
+              <MetricRow label="Best Case" value={getTimeValue('best')} />
+              <MetricRow label="Average" value={getTimeValue('average')} />
+              <MetricRow label="Worst Case" value={getTimeValue('worst')} />
             </div>
           </section>
 
@@ -67,10 +80,29 @@ export default function MetricsSidebar({ algoData }: { algoData: AlgorithmData }
             </span>
           </Link>
 
-          <button className="group relative w-full overflow-hidden bg-on-surface py-3 px-4 text-surface transition-all hover:bg-primary">
-            <span className="relative z-10 flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest">
-              Export Analysis
-              <span className="material-symbols-outlined text-sm">terminal</span>
+          <button 
+            onClick={onExport}
+            disabled={isExporting}
+            className={`group relative w-full overflow-hidden py-3 px-4 transition-all shadow-lg active:scale-95 ${
+              isExporting ? 'bg-primary cursor-wait' : 'bg-on-surface hover:bg-primary'
+            }`}
+          >
+            <span className="relative z-10 flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-surface">
+              {isExporting ? (
+                <div className="flex items-center gap-2">
+                  <span>PROCESSING</span>
+                  <div className="flex gap-1">
+                    <div className="w-1.5 h-1.5 bg-white animate-bounce [animation-delay:-0.3s]" />
+                    <div className="w-1.5 h-1.5 bg-white animate-bounce [animation-delay:-0.15s]" />
+                    <div className="w-1.5 h-1.5 bg-white animate-bounce" />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  Export Analysis
+                  <span className="material-symbols-outlined text-sm">terminal</span>
+                </>
+              )}
             </span>
             <div className="absolute inset-0 translate-y-full bg-white/10 transition-transform group-hover:translate-y-0" />
           </button>
