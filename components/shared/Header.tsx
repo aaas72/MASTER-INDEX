@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { header as t } from "@/locales/en/header";
 import IntelligenceHub from "./IntelligenceHub";
 
 export default function Header() {
@@ -21,10 +22,10 @@ export default function Header() {
           </div>
           <div className="flex flex-col leading-none">
             <span className="text-lg font-bold text-black uppercase font-sans tracking-tight">
-              MASTER INDEX
+              {t.title}
             </span>
             <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-slate-500">
-              LIBRARIAN GUIDE
+              {t.subtitle}
             </span>
           </div>
         </Link>
@@ -37,7 +38,7 @@ export default function Header() {
             }`}
             href="/"
           >
-            OVERVIEW
+            {t.nav.overview}
           </Link>
           <Link
             className={`font-mono text-xs uppercase tracking-widest transition-all duration-100 ${
@@ -47,7 +48,7 @@ export default function Header() {
             }`}
             href="/versus"
           >
-            VERSUS HUB
+            {t.nav.versus}
           </Link>
           <Link
             className={`font-mono text-xs uppercase tracking-widest transition-all duration-100 ${
@@ -57,7 +58,7 @@ export default function Header() {
             }`}
             href="/documentation"
           >
-            DOCUMENTATION
+            {t.nav.docs}
           </Link>
           <Link
             className={`font-mono text-xs uppercase tracking-widest transition-all duration-100 ${
@@ -67,7 +68,7 @@ export default function Header() {
             }`}
             href="/playground"
           >
-            PLAYGROUND
+            {t.nav.playground}
           </Link>
         </nav>
       </div>
@@ -78,7 +79,7 @@ export default function Header() {
           </span>
           <input
             className="w-48 border-none bg-transparent p-0 font-mono text-xs text-on-surface focus:ring-0"
-            placeholder="Quick Search (Cmd+K)"
+            placeholder={t.search_placeholder}
             type="text"
           />
         </div>

@@ -1,5 +1,10 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { pdfLocale } from '@/locales/en/pdf';
+import { header } from '@/locales/en/header';
+import { common } from '@/locales/en/common';
+
+const t = { ...pdfLocale, header, ...common };
 
 export async function exportToPdf(elementId: string, fileName: string) {
   const element = document.getElementById(elementId);
@@ -25,10 +30,10 @@ export async function exportToPdf(elementId: string, fileName: string) {
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
     
-    // Reduced margins for full-width look
+    // Balanced margins and header height
     const margin = 0; 
-    const headerHeight = 25;
-    const footerHeight = 15;
+    const headerHeight = 20; // Adjusted to match the geometric feel
+    const footerHeight = 12;
     const contentWidth = pageWidth; // Stretch to full page width
     const contentHeightPerPage = pageHeight - headerHeight - footerHeight;
 
@@ -48,22 +53,22 @@ export async function exportToPdf(elementId: string, fileName: string) {
       pdf.setTextColor(255, 255, 255);
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(16);
-      pdf.text("MASTER_INDEX", 10, 12);
+      pdf.text(t.header.title.replace(' ', '_'), 10, 12);
       pdf.setFontSize(8);
       pdf.setFont("helvetica", "normal");
       pdf.setTextColor(200, 210, 255);
-      pdf.text("ALGORITHM_LABORATORY_SYSTEM // RESEARCH_DIVISION", 10, 18);
+      pdf.text(t.system_name, 10, 18);
       pdf.setFontSize(7);
-      pdf.text(`REPORT_ID: ${Math.random().toString(36).substr(2, 9).toUpperCase()}`, pageWidth - 50, 10);
-      pdf.text(`TS: ${new Date().toLocaleString()}`, pageWidth - 50, 15);
+      pdf.text(`${t.report_id}: ${Math.random().toString(36).substr(2, 9).toUpperCase()}`, pageWidth - 50, 10);
+      pdf.text(`${t.timestamp}: ${new Date().toLocaleString()}`, pageWidth - 50, 15);
 
       // --- FOOTER ---
       pdf.setFillColor(248, 250, 252);
       pdf.rect(0, pageHeight - footerHeight, pageWidth, footerHeight, 'F');
       pdf.setTextColor(100, 116, 139);
       pdf.setFontSize(8);
-      pdf.text("Formal output of Master Index Simulation Engine. Full-Width Analysis.", 10, pageHeight - 6);
-      pdf.text(`PAGE ${page.toString().padStart(2, '0')}`, pageWidth - 25, pageHeight - 6);
+      pdf.text(t.footer_note, 10, pageHeight - 6);
+      pdf.text(`${t.page.toUpperCase()} ${page.toString().padStart(2, '0')}`, pageWidth - 25, pageHeight - 6);
     };
 
     // 3. Multi-page Loop with Smart Cropping

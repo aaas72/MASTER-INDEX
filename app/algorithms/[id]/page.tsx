@@ -9,6 +9,10 @@ import algorithmsData from "@/data/algorithms.json";
 import { AlgorithmToc, MetricsSidebar, CodeVisualizer } from "@/components/algorithms/detail";
 import { exportToPdf } from "@/utils/export-pdf";
 import { Terminal } from "lucide-react";
+import { detail } from "@/locales/en/detail";
+import { common } from "@/locales/en/common";
+
+const t = { ...detail, common }; // Merge for full page access
 
 // Simplified type for the actual JSON data
 type AlgorithmKey = keyof typeof algorithmsData;
@@ -88,11 +92,11 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
             <header className="mb-12 border-b border-outline-variant/30 pb-4">
               <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-8">
                 <Link className="transition-colors hover:text-primary" href="/">
-                  Index
+                  {t.common.index}
                 </Link>
                 <span className="text-outline">/</span>
                 <Link className="transition-colors hover:text-primary" href="/categories/sorting-search">
-                  Algorithms
+                  {t.common.algorithms}
                 </Link>
                 <span className="text-outline">/</span>
                 <span className="font-bold text-primary">
@@ -118,7 +122,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
             </header>
 
             <section id="visualization" className="mb-24">
-              <h2 className="section-title text-lg mb-6">Computational Visualization</h2>
+              <h2 className="section-title text-lg mb-6">{t.sections.visualization}</h2>
               {algoData.category === "Graphs" ? (
                 <GraphVisualizer
                   algoData={algoData}
@@ -159,7 +163,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
             </section>
 
             <section id="proof" className="mb-24">
-              <h2 className="section-title text-lg mb-6">Mathematical Analysis</h2>
+              <h2 className="section-title text-lg mb-6">{t.sections.math_analysis}</h2>
               <div className="border border-outline-variant/10 bg-surface-container-low p-8 text-center">
                 <div className="math-display text-base md:text-lg">
                   <BlockMath math={algoData.content.proof_latex} />
@@ -168,7 +172,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
             </section>
 
             <section id="implementation" className="mb-24">
-              <h2 className="section-title text-lg mb-6">Reference Implementation</h2>
+              <h2 className="section-title text-lg mb-6">{t.sections.implementation}</h2>
               <div className="bg-surface-container-lowest border-2 border-primary/20 shadow-xl overflow-hidden">
                 <CodeVisualizer 
                   code={algoData.code[0].snippet} 
@@ -186,14 +190,14 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
             </section>
 
             <section id="benchmarks" className="mb-24">
-              <h2 className="section-title text-lg mb-6">Performance Benchmarks</h2>
+              <h2 className="section-title text-lg mb-6">{t.sections.benchmarks}</h2>
               <div className="border-2 border-outline-variant/10 overflow-hidden">
                 <table className="w-full font-mono text-xs">
                   <thead className="bg-primary/5 text-left text-primary">
                     <tr>
-                      <th className="p-4 uppercase tracking-widest font-black">Input Size</th>
-                      <th className="p-4 uppercase tracking-widest font-black">Execution Time (ms)</th>
-                      <th className="p-4 uppercase tracking-widest font-black">Environment</th>
+                      <th className="p-4 uppercase tracking-widest font-black">{t.table.input_size}</th>
+                      <th className="p-4 uppercase tracking-widest font-black">{t.table.execution_time}</th>
+                      <th className="p-4 uppercase tracking-widest font-black">{t.table.environment}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-outline-variant/10">

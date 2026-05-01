@@ -1,3 +1,5 @@
+import { footer as t } from "@/locales/en/footer";
+
 export default function Footer() {
   return (
     <footer className="border-t border-slate-100 bg-white py-20 w-full">
@@ -5,27 +7,24 @@ export default function Footer() {
         <div className="grid w-full grid-cols-1 gap-16 md:grid-cols-4">
         <div className="col-span-2">
           <h4 className="mb-4 font-sans text-base font-bold uppercase tracking-tight">
-            The Neo-Formalist Archive
+            {t.title}
           </h4>
           <p className="max-w-md font-body text-sm leading-relaxed text-on-surface-variant">
-            This index is maintained as a digital artifact of high-performance
-            computing history. Each entry is rigorously peer-reviewed by the
-            Librarian Guide AI for complexity accuracy and implementation
-            integrity.
+            {t.description}
           </p>
           <div className="mt-8 flex gap-8">
             <div>
               <span className="block font-mono text-[10px] uppercase text-slate-400">
-                Version
+                {t.version_label}
               </span>
               <span className="font-mono text-[10px] font-bold">4.2.0-STABLE</span>
             </div>
             <div>
               <span className="block font-mono text-[10px] uppercase text-slate-400">
-                Last Sync
+                {t.sync_label}
               </span>
               <span className="font-mono text-[10px] font-bold">
-                2023.10.24 // 14:00 UTC
+                {t.sync_value}
               </span>
             </div>
           </div>
@@ -33,19 +32,19 @@ export default function Footer() {
 
         <div>
           <h5 className="mb-6 font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
-            Taxonomy
+            {t.taxonomy_title}
           </h5>
           <ul className="space-y-4 font-sans text-xs font-bold uppercase tracking-tight text-black">
-            <li><a className="transition-colors hover:text-[#002FA7]" href="#">Heuristic Search</a></li>
-            <li><a className="transition-colors hover:text-[#002FA7]" href="#">Stochastic Logic</a></li>
-            <li><a className="transition-colors hover:text-[#002FA7]" href="#">Memory Layouts</a></li>
-            <li><a className="transition-colors hover:text-[#002FA7]" href="#">Linear Systems</a></li>
+            <li><a className="transition-colors hover:text-[#002FA7]" href="#">{t.links.heuristic}</a></li>
+            <li><a className="transition-colors hover:text-[#002FA7]" href="#">{t.links.stochastic}</a></li>
+            <li><a className="transition-colors hover:text-[#002FA7]" href="#">{t.links.memory}</a></li>
+            <li><a className="transition-colors hover:text-[#002FA7]" href="#">{t.links.linear}</a></li>
           </ul>
         </div>
 
         <div>
           <h5 className="mb-6 font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
-            Terminal
+            {t.terminal_title}
           </h5>
           <ul className="space-y-4 font-mono text-[10px] uppercase text-slate-500">
             <li><a className="transition-colors hover:text-black" href="#">ssh root@the-hub.io</a></li>
@@ -58,4 +57,4 @@ export default function Footer() {
     </div>
   </footer>
 );
-}
+}

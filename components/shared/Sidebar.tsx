@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { sidebar as t } from "@/locales/en/sidebar";
+
 export default function Sidebar() {
   const [isHovered, setIsHovered] = useState(false);
   const pathname = usePathname();
@@ -32,7 +34,7 @@ export default function Sidebar() {
         <Link
           className={getLinkClasses("/categories")}
           href="/categories"
-          title="Taxonomy"
+          title={t.taxonomy}
         >
           <div className="w-16 h-full flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-[17px]">
@@ -48,7 +50,7 @@ export default function Sidebar() {
                 transition={{ duration: 0.15 }}
                 className="text-xs uppercase tracking-widest pl-1"
               >
-                Taxonomy
+                {t.taxonomy}
               </motion.span>
             )}
           </AnimatePresence>
@@ -56,7 +58,7 @@ export default function Sidebar() {
         <Link
           className={getLinkClasses("/algorithms")}
           href="/algorithms"
-          title="Master Index"
+          title={t.master_index}
         >
           <div className="w-16 h-full flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-[17px]">
@@ -72,7 +74,7 @@ export default function Sidebar() {
                 transition={{ duration: 0.15 }}
                 className="text-xs uppercase tracking-widest pl-1"
               >
-                Master Index
+                {t.master_index}
               </motion.span>
             )}
           </AnimatePresence>
@@ -80,7 +82,7 @@ export default function Sidebar() {
         <Link
           className={getLinkClasses("/archive")}
           href="/archive"
-          title="Archives"
+          title={t.archives}
         >
           <div className="w-16 h-full flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-[17px]">
@@ -96,7 +98,7 @@ export default function Sidebar() {
                 transition={{ duration: 0.15 }}
                 className="text-xs uppercase tracking-widest pl-1"
               >
-                Archives
+                {t.archives}
               </motion.span>
             )}
           </AnimatePresence>
@@ -104,7 +106,7 @@ export default function Sidebar() {
         <Link
           className={`mt-auto ${getLinkClasses("/settings")}`}
           href="/settings"
-          title="Settings"
+          title={t.settings}
         >
           <div className="w-16 h-full flex items-center justify-center shrink-0">
             <span className="material-symbols-outlined text-[17px]">
@@ -120,7 +122,7 @@ export default function Sidebar() {
                 transition={{ duration: 0.15 }}
                 className="text-xs uppercase tracking-widest pl-1"
               >
-                Settings
+                {t.settings}
               </motion.span>
             )}
           </AnimatePresence>

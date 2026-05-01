@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { common as t } from "@/locales/en/common";
 
 /**
  * LoadingOverlay: A global loading state component using the brutalist 
@@ -27,10 +28,10 @@ export default function LoadingOverlay({ fullScreen = false }: { fullScreen?: bo
       </div>
       <div className="text-center">
         <div className="font-mono text-[10px] uppercase tracking-[0.6em] text-[#002FA7] animate-pulse">
-          ARCHIVE_SYNCHRONIZATION_IN_PROGRESS
+          {t.sync_progress}
         </div>
         <div className="mt-2 font-mono text-[8px] text-slate-400 uppercase tracking-widest">
-          Please stand by for protocol initialization...
+          {t.stand_by}
         </div>
       </div>
     </div>

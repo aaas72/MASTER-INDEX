@@ -6,6 +6,7 @@ import CodePanel from "@/components/playground/CodePanel";
 import HistorySlider from "@/components/playground/HistorySlider";
 import { DataVisualizer } from "@/components/visualizer";
 import algorithmsData from "@/data/algorithms.json";
+import { playground as t } from "@/locales/en/playground";
 
 type NodePoint = {
   id: string;
@@ -419,6 +420,7 @@ export default function PlaygroundPage() {
         }
         .custom-slim-scrollbar::-webkit-scrollbar-thumb:hover {
           background: rgba(0, 47, 167, 0.5);
+          border-radius: 10px;
         }
         .custom-slim-scrollbar {
           scrollbar-width: thin;
@@ -436,7 +438,7 @@ export default function PlaygroundPage() {
       >
         <div className="h-full flex flex-col p-4 space-y-6 overflow-y-auto custom-slim-scrollbar pb-20">
           <div className="space-y-1.5">
-            <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Algorithm_Engine</label>
+            <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">{t.header.kicker}</label>
             <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="w-full border border-[#C4C5D6] bg-[#0A1022] px-2 py-2.5 text-[9px] font-bold tracking-widest text-[#DBE7FF] outline-none cursor-pointer rounded-sm">
               {ALGORITHM_OPTIONS.map((id) => (
                 <option key={id} value={id}>
@@ -447,7 +449,6 @@ export default function PlaygroundPage() {
             </select>
           </div>
 
-          {/* 2. Data Input */}
           <div className="space-y-1.5">
             <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Input_Matrix</label>
             <textarea 
@@ -458,7 +459,6 @@ export default function PlaygroundPage() {
             />
           </div>
 
-          {/* 3. Interaction Tools */}
           <div className="space-y-3">
             <label className="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Canvas_Tools</label>
             <button onClick={() => setIsDrawingMode(!isDrawingMode)} className={`w-full py-2.5 text-[9px] border flex items-center justify-center gap-2 transition-all font-bold tracking-widest rounded-sm ${isDrawingMode ? 'bg-[#002FA7] text-white border-[#002FA7]' : 'bg-white text-[#002FA7] border-[#C4C5D6] hover:border-[#002FA7]'}`}>
@@ -467,7 +467,6 @@ export default function PlaygroundPage() {
             </button>
           </div>
 
-          {/* 4. Performance & View */}
           <div className="space-y-4 pt-2 border-t border-slate-100">
              <div className="space-y-1.5">
                <div className="flex justify-between text-[8px] uppercase text-slate-400 font-bold tracking-widest">
@@ -486,9 +485,8 @@ export default function PlaygroundPage() {
              </div>
           </div>
 
-          {/* 5. Execution Controls */}
           <div className="space-y-2 pt-4 border-t border-slate-100">
-            <button onClick={() => { regenerateData(); setIsRunning(true); }} className="w-full bg-[#002FA7] py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white hover:bg-[#0D3DB3] shadow-lg shadow-primary/20 transition-all rounded-sm">EXECUTE_RUN</button>
+            <button onClick={() => { regenerateData(); setIsRunning(true); }} className="w-full bg-[#002FA7] py-3 text-[10px] font-bold uppercase tracking-[0.24em] text-white hover:bg-[#0D3DB3] shadow-lg shadow-primary/20 transition-all rounded-sm">{t.controls.play}</button>
             <div className="grid grid-cols-2 gap-2">
               <button onClick={resetAll} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors rounded-sm">RESET</button>
               <button onClick={exportToJson} className="border border-[#C4C5D6] py-2 text-[9px] font-bold uppercase text-[#002FA7] hover:bg-slate-50 transition-colors rounded-sm">JSON</button>
@@ -520,7 +518,6 @@ export default function PlaygroundPage() {
         </DataVisualizer.InfiniteCanvas>
 
         <div className="fixed top-20 right-8 z-30 flex flex-col gap-4 items-end">
-            {/* Metrics Widget */}
             <motion.div drag dragMomentum={false} className="cursor-grab active:cursor-grabbing">
               <div className="bg-[#0A1022] border border-[#002FA7]/40 shadow-2xl backdrop-blur-md select-none min-w-[180px] overflow-hidden">
                   <div className="px-4 py-3 border-b border-primary/20 flex justify-between items-center">
@@ -550,7 +547,6 @@ export default function PlaygroundPage() {
               </div>
             </motion.div>
 
-            {/* Code Panel */}
             {currentAlgoData && currentAlgoData.code && currentAlgoData.code[0] && (
               <div className="w-[320px] h-[360px] shadow-2xl">
                 <CodePanel 
@@ -562,7 +558,6 @@ export default function PlaygroundPage() {
             )}
         </div>
 
-        {/* History Slider - Absolute Bottom Above Console */}
         <div 
           className="fixed z-40 transition-all duration-300 ease-in-out" 
           style={{ 

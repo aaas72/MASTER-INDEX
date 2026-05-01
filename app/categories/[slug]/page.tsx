@@ -2,6 +2,7 @@
 
 import { SidebarLayout, BrutalistTable, type TableColumn } from "@/components/shared";
 import algorithmsData from "@/data/algorithms.json";
+import { categories as t } from "@/locales/en/categories";
 
 type Algorithm = {
   id: string;
@@ -24,29 +25,29 @@ type CategoryMetadata = {
 
 const categoryMetadata: Record<string, CategoryMetadata> = {
   "graph-theory": {
-    label: "Graph Theory",
-    description: "A definitive collection of computational structures and traversals. This index maintains the rigorous hierarchy of nodes.",
+    label: t.meta.graph.label,
+    description: t.meta.graph.desc,
     totalAlgorithms: "14",
     primaryComplexity: "O(V + E)",
     accentClass: "bg-primary-container",
   },
   "sorting-search": {
-    label: "Sorting & Search",
-    description: "A curated ledger of sorting and search procedures focused on runtime behavior, partitioning logic, and retrieval efficiency.",
+    label: t.meta.sorting.label,
+    description: t.meta.sorting.desc,
     totalAlgorithms: "22",
     primaryComplexity: "O(N log N)",
     accentClass: "bg-primary",
   },
   "dynamic-programming": {
-    label: "Dynamic Programming",
-    description: "A focused archive of state-transition strategies where overlapping subproblems and memoized decisions dominate complexity.",
+    label: t.meta.dynamic.label,
+    description: t.meta.dynamic.desc,
     totalAlgorithms: "31",
     primaryComplexity: "O(N^2)",
     accentClass: "bg-secondary",
   },
   "computational-geometry": {
-    label: "Computational Geometry",
-    description: "A precision-oriented set of geometric procedures for spatial computation, intersection analysis, and planar optimization.",
+    label: t.meta.geometry.label,
+    description: t.meta.geometry.desc,
     totalAlgorithms: "8",
     primaryComplexity: "O(N log N)",
     accentClass: "bg-tertiary-container",
@@ -62,7 +63,7 @@ const formatCategoryTitle = (slug: string) =>
 export default function CategoryDetailPage({ params }: { params: { slug: string } }) {
   const metadata = categoryMetadata[params.slug] ?? {
     label: formatCategoryTitle(params.slug),
-    description: "A categorized subset of the archive with indexed entries, complexity metadata, and implementation references.",
+    description: t.meta.fallback_desc,
     totalAlgorithms: "--",
     primaryComplexity: "--",
     accentClass: "bg-primary-container",
@@ -76,12 +77,12 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
 
   const columns: TableColumn<Algorithm>[] = [
     {
-      header: "ID",
+      header: t.table.id,
       key: "id",
       render: (algo) => <span className="font-mono text-xs text-outline">{(algo.id || "ID_N/A").substring(0, 6).toUpperCase()}</span>,
     },
     {
-      header: "Algorithm Name",
+      header: t.table.name,
       key: "title",
       render: (algo) => (
         <a href={`/algorithms/${algo.id}`} className="font-sans text-sm font-bold text-black hover:text-primary-container hover:underline transition-colors">
@@ -90,7 +91,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       ),
     },
     {
-      header: "Complexity",
+      header: t.table.complexity,
       key: "time",
       align: "right",
       render: (algo) => (
@@ -100,7 +101,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       ),
     },
     {
-      header: "Status",
+      header: t.table.status,
       key: "status",
       align: "right",
       render: (algo) => (
@@ -116,7 +117,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       <div className="pt-4">
         {/* Page Header */}
         <header className="mb-16">
-          <span className="page-kicker block mb-2">CATEGORY_INDEX</span>
+          <span className="page-kicker block mb-2">{t.index_kicker}</span>
           <h1 className="page-title mb-4 uppercase">
             {metadata.label}_
           </h1>
@@ -130,8 +131,8 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
         <div className="grid grid-cols-12 gap-8 items-start">
           <div className="col-span-12 lg:col-span-8">
             <BrutalistTable 
-              title="Master Ledger // Algorithms" 
-              subtitle="UPDATED: RECENT"
+              title={t.ledger_title} 
+              subtitle={t.ledger_subtitle}
               columns={columns}
               data={filteredAlgorithms}
             />
@@ -141,13 +142,13 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
           <aside className="col-span-12 lg:col-span-4 space-y-8">
             <div className="bg-surface-container-lowest border border-outline-variant/10 p-8 shadow-sm">
               <h3 className="font-mono font-bold text-xs tracking-widest uppercase mb-8 border-b-2 border-primary-container pb-2 inline-block">
-                Category Snapshot
+                {t.snapshot_title}
               </h3>
               <div className="space-y-6">
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="font-mono text-[10px] text-outline uppercase tracking-wider mb-1">
-                      Total Algorithms
+                      {t.total_label}
                     </p>
                     <p className="font-sans text-3xl font-black text-on-surface">
                       {filteredAlgorithms.length || metadata.totalAlgorithms}
@@ -158,7 +159,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
               <div className="mt-10 space-y-10">
                 <section>
                   <h4 className="font-mono text-[10px] font-bold tracking-[0.22em] text-outline uppercase mb-4">
-                    Most Accessed
+                    {t.most_accessed}
                   </h4>
                   <div className="bg-surface-container p-6 border border-outline-variant/15">
                     <div className="flex items-center justify-between gap-4">
@@ -167,7 +168,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
                           A* Pathfinding
                         </p>
                         <p className="mt-4 font-mono text-[10px] font-bold tracking-[0.18em] uppercase text-on-surface-variant">
-                          Queries: 12.4k
+                          {t.queries_label}: 12.4k
                         </p>
                       </div>
                       <span className="material-symbols-outlined text-primary-container text-xl">
@@ -175,13 +176,13 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
                       </span>
                     </div>
                     <div className="mt-6 border-t border-outline-variant/15 pt-4 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
-                      Primary Complexity: {metadata.primaryComplexity}
+                      {t.complexity_label}: {metadata.primaryComplexity}
                     </div>
                   </div>
                 </section>
               </div>
               <button className="w-full mt-10 border-2 border-primary-container text-primary-container py-3 font-mono text-[11px] font-bold hover:bg-primary-container hover:text-white transition-all">
-                GENERATE REPORT [PDF]
+                {t.generate_report}
               </button>
             </div>
           </aside>

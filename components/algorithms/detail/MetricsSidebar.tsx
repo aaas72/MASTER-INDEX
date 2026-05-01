@@ -1,5 +1,9 @@
 import { AlgorithmData } from "@/types/algorithm";
 import Link from "next/link";
+import { metrics } from "@/locales/en/metrics";
+import { common } from "@/locales/en/common";
+
+const t = { ...metrics, common };
 
 const MetricRow = ({ label, value, isMath = true }: { label: string; value: any; isMath?: boolean }) => {
   const displayValue = typeof value === "boolean" ? (value ? "YES" : "NO") : (value || "N/A");
@@ -37,7 +41,7 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
           <div className="mb-1 flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse bg-primary" />
             <h2 className="font-sans text-xs font-black uppercase tracking-[0.2em] text-on-surface">
-              Operational Metrics
+              {t.title}
             </h2>
           </div>
           <p className="font-mono text-[9px] uppercase tracking-widest leading-none text-on-surface-variant/60">
@@ -48,23 +52,23 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
         <div className="flex-1 space-y-8 overflow-y-auto scrollbar-hide">
           <section>
             <h3 className="mb-3 flex items-center gap-2 text-[10px] font-bold text-primary">
-              <span className="h-[1px] w-4 bg-primary/30" /> TIME_ANALYSIS
+              <span className="h-[1px] w-4 bg-primary/30" /> {t.time_analysis}
             </h3>
             <div className="flex flex-col">
-              <MetricRow label="Best Case" value={getTimeValue('best')} />
-              <MetricRow label="Average" value={getTimeValue('average')} />
-              <MetricRow label="Worst Case" value={getTimeValue('worst')} />
+              <MetricRow label={t.best_case} value={getTimeValue('best')} />
+              <MetricRow label={t.average} value={getTimeValue('average')} />
+              <MetricRow label={t.worst_case} value={getTimeValue('worst')} />
             </div>
           </section>
 
           <section>
             <h3 className="mb-3 flex items-center gap-2 text-[10px] font-bold text-primary">
-              <span className="h-[1px] w-4 bg-primary/30" /> ARCHITECTURE
+              <span className="h-[1px] w-4 bg-primary/30" /> {t.architecture}
             </h3>
             <div className="flex flex-col">
-              <MetricRow label="Memory" value={algoData.complexity.space} />
-              <MetricRow label="Stability" value={algoData.complexity.stable} isMath={false} />
-              <MetricRow label="In-Place" value={algoData.complexity.in_place} isMath={false} />
+              <MetricRow label={t.memory} value={algoData.complexity.space} />
+              <MetricRow label={t.stability} value={algoData.complexity.stable} isMath={false} />
+              <MetricRow label={t.in_place} value={algoData.complexity.in_place} isMath={false} />
             </div>
           </section>
         </div>
@@ -74,7 +78,7 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
             href="/documentation"
             className="group flex items-center justify-between text-[10px] font-mono uppercase tracking-widest text-on-surface-variant transition-all hover:text-primary"
           >
-            Read Methodology
+            {t.read_methodology}
             <span className="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">
               arrow_right_alt
             </span>
@@ -90,7 +94,7 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
             <span className="relative z-10 flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-surface">
               {isExporting ? (
                 <div className="flex items-center gap-2">
-                  <span>PROCESSING</span>
+                  <span>{t.common.processing}</span>
                   <div className="flex gap-1">
                     <div className="w-1.5 h-1.5 bg-white animate-bounce [animation-delay:-0.3s]" />
                     <div className="w-1.5 h-1.5 bg-white animate-bounce [animation-delay:-0.15s]" />
@@ -99,7 +103,7 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
                 </div>
               ) : (
                 <>
-                  Export Analysis
+                  {t.export_analysis}
                   <span className="material-symbols-outlined text-sm">terminal</span>
                 </>
               )}

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import algorithmsData from "@/data/algorithms.json";
+import { home as t } from "@/locales/en/home";
 
 export default function Hero() {
   const streamsRef = useRef<HTMLDivElement[]>([]);
@@ -71,23 +72,23 @@ export default function Hero() {
           01011001 11001010 01110101
         </div>
         <div className="data-stream" style={{ top: "15%", right: "10%" }} ref={(el) => { if (el) streamsRef.current[1] = el; }}>
-          TREE_TRAVERSAL_RUNNING
+          {t.hero.streams.traversal}
         </div>
         <div className="data-stream" style={{ bottom: "20%", left: "8%" }} ref={(el) => { if (el) streamsRef.current[2] = el; }}>
-          NODE_EXPANSION_STABLE
+          {t.hero.streams.expansion}
         </div>
         <div className="data-stream" style={{ bottom: "10%", right: "15%" }} ref={(el) => { if (el) streamsRef.current[3] = el; }}>
-          MEMORY_GRAPH_INIT_v4.2
+          {t.hero.streams.memory}
         </div>
       </div>
 
       <div className="w-full">
         <div className="relative z-10 w-full max-w-3xl text-left">
           <span className="mb-4 block font-mono text-xs uppercase tracking-[0.3em] text-[#002FA7]">
-            The Librarian Guide
+            {t.hero.kicker}
           </span>
           <h2 className="mb-12 font-sans text-5xl font-extrabold leading-[0.95] tracking-tighter text-black md:text-7xl">
-            Search the Global Algorithm Repository.
+            {t.hero.title}
           </h2>
           <div className="group relative w-full">
             <div className="pointer-events-none absolute inset-y-0 left-6 flex items-center">
@@ -97,7 +98,7 @@ export default function Hero() {
             </div>
             <input
               className="w-full border-none border-b-2 border-outline-variant bg-white/90 px-16 py-8 text-xl font-body italic outline-none backdrop-blur-sm transition-all focus:border-primary-container focus:ring-0 placeholder:text-slate-400 shadow-custom"
-              placeholder="Type an algorithm, complexity, or category..."
+              placeholder={t.hero.placeholder}
               type="text"
             />
             <div className="absolute inset-y-0 right-6 flex items-center space-x-2">
@@ -112,14 +113,14 @@ export default function Hero() {
 
           <div className="mt-8 flex items-center justify-between">
             <p className="font-mono text-xs uppercase tracking-widest text-slate-500">
-              Showing <span className="font-bold text-[#002FA7]">[{totalAlgorithms}]</span> Algorithms across <span className="font-bold text-[#002FA7]">[{totalCategories}]</span> Categories
+              {t.hero.stats.replace('[{totalAlgorithms}]', `[${totalAlgorithms}]`).replace('[{totalCategories}]', `[${totalCategories}]`)}
             </p>
             <div className="flex gap-4">
               <span className="bg-surface-container-high px-3 py-1 font-mono text-[10px] uppercase text-primary">
-                Trending: Dijkstra
+                {t.hero.trending}
               </span>
               <span className="bg-surface-container-high px-3 py-1 font-mono text-[10px] uppercase text-primary">
-                New: Bloom Filters
+                {t.hero.new}
               </span>
             </div>
           </div>

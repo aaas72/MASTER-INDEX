@@ -16,6 +16,7 @@ import { runRealBenchmark, type BenchmarkResult } from "@/utils/benchmark-engine
 import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, ChevronRight, RotateCcw, Terminal, Zap, Share2, Check, FileDown } from "lucide-react";
 import { exportToPdf } from "@/utils/export-pdf";
+import { versus as t } from "@/locales/en/versus";
 
 // --- Types & Interfaces ---
 type VersusAlgorithm = {
@@ -258,8 +259,8 @@ export default function VersusHubPage() {
     <FullWidthLayout>
       <header className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="page-title-sm uppercase">VERSUS_HUB Calibration</h1>
-          <p className="body-copy mt-2">Industrial-grade comparative simulation environment.</p>
+          <h1 className="page-title-sm uppercase">{t.header.title} Calibration</h1>
+          <p className="body-copy mt-2">{t.header.subtitle}</p>
         </div>
         <div className="flex items-center gap-3">
           <button onClick={handleExportPdf} disabled={!showResults || isExporting} className={`bg-primary/5 border border-primary/20 p-2 px-4 flex items-center gap-2 hover:bg-primary/10 transition-all ${(!showResults || isExporting) ? 'opacity-30' : 'opacity-100'}`}>
