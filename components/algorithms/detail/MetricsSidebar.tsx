@@ -2,6 +2,7 @@ import { Algorithm } from "@/types/algorithm";
 import Link from "next/link";
 import { metrics } from "@/locales/en/metrics";
 import { common } from "@/locales/en/common";
+import { BrutalistButton } from "@/components/shared";
 
 const t = { ...metrics, common };
 
@@ -81,32 +82,15 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
             </span>
           </Link>
 
-          <button 
+          <BrutalistButton 
             onClick={onExport}
-            disabled={isExporting}
-            className={`group relative w-full overflow-hidden py-3 px-4 transition-all shadow-lg active:scale-95 ${
-              isExporting ? 'bg-primary cursor-wait' : 'bg-on-surface hover:bg-primary'
-            }`}
+            isLoading={isExporting}
+            loadingText={t.common.processing}
+            icon="terminal"
+            className="w-full"
           >
-            <span className="relative z-10 flex items-center justify-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest text-surface">
-              {isExporting ? (
-                <div className="flex items-center gap-2">
-                  <span>{t.common.processing}</span>
-                  <div className="flex gap-1">
-                    <div className="w-1.5 h-1.5 bg-white animate-bounce [animation-delay:-0.3s]" />
-                    <div className="w-1.5 h-1.5 bg-white animate-bounce [animation-delay:-0.15s]" />
-                    <div className="w-1.5 h-1.5 bg-white animate-bounce" />
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {t.export_analysis}
-                  <span className="material-symbols-outlined text-sm">terminal</span>
-                </>
-              )}
-            </span>
-            <div className="absolute inset-0 translate-y-full bg-white/10 transition-transform group-hover:translate-y-0" />
-          </button>
+            {t.export_analysis}
+          </BrutalistButton>
         </div>
       </div>
     </aside>
