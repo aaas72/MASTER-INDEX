@@ -1,10 +1,11 @@
 import { SidebarLayout } from "@/components/shared";
-import { MasterIndex } from "@/components/algorithms";
+import { AlgorithmGallery } from "@/components/algorithms";
+
 
 export default function AlgorithmsPage() {
   return (
     <SidebarLayout>
-      <MasterIndex />
+      <AlgorithmGallery />
     </SidebarLayout>
   );
 }
