@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlockMath } from "react-katex";
-import { BarVisualizer, GraphVisualizer, LinkedListVisualizer, DpVisualizer, GeometryVisualizer, TreeVisualizer, ArrayVisualizer } from "@/components/algorithms/visualizers";
+import { BarsVisualizer, GraphVisualizer, LinkedListVisualizer, MatrixVisualizer, GeometryVisualizer, TreeVisualizer, ArrayVisualizer } from "@/components/algorithms/visualizers";
 import algorithmsData from "@/data/algorithms.json";
 import { AlgorithmToc, MetricsSidebar, CodeVisualizer } from "@/components/algorithms/detail";
 import { exportToPdf } from "@/utils/export-pdf";
@@ -169,7 +169,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
                     fullTrace={fullTrace}
                   />
                 ) : algoData.visualizer_config.type === "matrix" ? (
-                  <DpVisualizer
+                  <MatrixVisualizer
                     algoData={algoData as any}
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}
@@ -205,7 +205,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
                     setIsPlaying={setIsPlaying}
                   />
                 ) : (
-                  <BarVisualizer
+                  <BarsVisualizer
                     algoData={algoData as any}
                     currentStep={currentStep}
                     setCurrentStep={setCurrentStep}

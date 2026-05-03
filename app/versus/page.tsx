@@ -255,9 +255,28 @@ export default function VersusHubPage() {
               <div className="flex items-center gap-2"><Terminal size={14} /><span className="font-mono text-[9px] font-black uppercase tracking-widest">Logic_Core_Log</span></div>
               <div className="flex items-center gap-2"><Zap size={10} className="text-white fill-current animate-pulse" /><span className="font-mono text-[8px] font-bold text-white/80">{totalSteps} STEPS</span></div>
             </div>
-            <div className="p-4 flex flex-col gap-1">
-              <span className="font-mono text-[8px] text-primary/40 uppercase font-black tracking-widest">Active_Simulation_Vector</span>
-              <p className="font-mono text-xs text-primary font-black leading-relaxed">{leftMsg || rightMsg || "System Idle."}</p>
+            <div className="p-4 flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[8px] text-primary/40 uppercase font-black tracking-widest flex items-center gap-1.5">
+                    <span className="w-1 h-1 bg-primary animate-pulse"></span> CHALLENGER_01_VECTOR
+                  </span>
+                  <span className="font-mono text-[7px] text-primary/30 font-bold uppercase">{leftStepIdx} / {leftTrace.length}</span>
+                </div>
+                <p className="font-mono text-[10px] text-primary font-black leading-snug pl-2 border-l-2 border-primary/20">{leftMsg || "Initializing System..."}</p>
+              </div>
+              
+              <div className="h-px bg-primary/5 w-full" />
+
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[8px] text-secondary/60 uppercase font-black tracking-widest flex items-center gap-1.5">
+                    <span className="w-1 h-1 bg-secondary animate-pulse"></span> CHALLENGER_02_VECTOR
+                  </span>
+                  <span className="font-mono text-[7px] text-secondary/30 font-bold uppercase">{rightStepIdx} / {rightTrace.length}</span>
+                </div>
+                <p className="font-mono text-[10px] text-secondary font-black leading-snug pl-2 border-l-2 border-secondary/20">{rightMsg || "Initializing System..."}</p>
+              </div>
             </div>
           </motion.div>
         )}

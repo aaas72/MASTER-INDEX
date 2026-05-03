@@ -1,5 +1,4 @@
-import { Algorithm } from "@/types/algorithm";
-import { InfiniteCanvas } from "@/components/visualizer/InfiniteCanvas";
+import { DataVisualizer } from "@/components/visualizer";
 import { useState, useEffect } from "react";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 
@@ -44,11 +43,6 @@ export default function LinkedListVisualizer({
     );
   }
 
-  const stateColor = (s?: string) => {
-    if (s === "active") return "bg-primary text-white border-primary";
-    if (s === "visited") return "bg-primary/20 text-primary border-primary/40";
-    return "bg-white text-on-surface border-outline-variant/30";
-  };
 
   return (
     <div className={isFullscreen ? 'fixed inset-0 z-[9999] w-screen h-screen bg-surface flex flex-col m-0 p-0' : 'relative w-full flex flex-col mt-4 overflow-hidden border border-outline-variant/20'}>
@@ -74,26 +68,9 @@ export default function LinkedListVisualizer({
         {/* Left: Visualization (60% in normal, flex-1 in fullscreen) */}
         <div className={`${isFullscreen ? 'flex-1' : 'md:w-[60%]'} flex flex-col relative min-h-0 ${isFullscreen ? 'p-8 md:p-12 lg:p-16' : ''}`}>
           <div className={`flex-1 relative min-h-0 pb-2 ${isFullscreen ? 'border-0' : 'h-full border-b md:border-b-0'}`}>
-            <InfiniteCanvas>
-              {/* Linked List Visual */}
-              <div className="flex items-center gap-0 p-4">
-                {listState.map((node, idx) => (
-                  <div key={idx} className="flex items-center">
-                    <div className={`w-16 h-16 border-2 flex items-center justify-center font-mono text-lg font-bold transition-all ${stateColor(node.state)}`}>
-                      {node.value}
-                    </div>
-                    {idx < listState.length - 1 && (
-                      <div className="w-8 h-0.5 bg-primary/40 relative">
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-6 border-t-transparent border-b-transparent border-l-primary/40"></div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {listState.length > 0 && (
-                  <div className="ml-2 font-mono text-xs text-outline-variant uppercase">null</div>
-                )}
-              </div>
-            </InfiniteCanvas>
+            <DataVisualizer.InfiniteCanvas>
+              <DataVisualizer.LinkedList nodes={listState} />
+            </DataVisualizer.InfiniteCanvas>
           </div>
         </div>
 

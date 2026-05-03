@@ -16,7 +16,7 @@ interface BarVisualizerProps {
   setIsPlaying?: (v: boolean) => void;
 }
 
-export default function BarVisualizer({
+export default function BarsVisualizer({
   algoData,
   currentStep,
   setCurrentStep,
