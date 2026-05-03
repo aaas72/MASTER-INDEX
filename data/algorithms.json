@@ -1,72 +1,766 @@
 {
   "bubble-sort": {
-    "title": { "ar": "الفرز الفقاعي", "en": "Bubble Sort" },
-    "category": "Sorting",
-    "complexity": { "time": "O(n^2)", "space": "O(1)" },
-    "description": { "ar": "خوارزمية فرز بسيطة تقارن العناصر المتجاورة.", "en": "A simple sorting algorithm that compares adjacent elements." },
-    "code": "function bubbleSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j+1]] = [arr[j+1], arr[j]];\n      }\n    }\n  }\n  return arr;\n}"
+    "metadata": {
+      "title": { "en": "Bubble Sort" },
+      "subtitle": { "en": "Simple exchange-based sorting" },
+      "category": "Sorting",
+      "tags": ["simple", "stable", "in-place"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(n)", "rank": 3 },
+        "average": { "label": "O(n^2)", "rank": 5 },
+        "worst": { "label": "O(n^2)", "rank": 5 }
+      },
+      "space": { "label": "O(1)", "rank": 1 }
+    },
+    "visualizer_config": {
+      "type": "bars",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 400, "default_size": 12 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function bubbleSort(arr) {\n  for (let i = 0; i < arr.length; i++) {\n    for (let j = 0; j < arr.length - i - 1; j++) {\n      if (arr[j] > arr[j + 1]) {\n        [arr[j], arr[j+1]] = [arr[j+1], arr[j]];\n      }\n    }\n  }\n  return arr;\n}",
+        "explanation": { "en": "Compares adjacent elements and swaps them if they are in the wrong order." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "A simple sorting algorithm that compares adjacent elements." },
+      "how_it_works": [
+        { "en": "Start from the first element and compare with the second." },
+        { "en": "If the first is larger, swap them." },
+        { "en": "Repeat for every adjacent pair." }
+      ],
+      "applications": [
+        { "en": "Educational purposes due to its simplicity." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Initial unsorted array." },
+        "active_line": 1,
+        "state_snapshot": {
+          "array": [8, 3, 5, 1, 9, 2, 7, 4, 6]
+        }
+      }
+    ]
   },
   "quick-sort": {
-    "title": { "ar": "الفرز السريع", "en": "Quick Sort" },
-    "category": "Sorting",
-    "complexity": { "time": "O(n log n)", "space": "O(log n)" },
-    "description": { "ar": "خوارزمية فرز تعتمد على مبدأ 'فرق تسد'.", "en": "A divide-and-conquer sorting algorithm." },
-    "code": "function quickSort(arr) {\n  if (arr.length <= 1) return arr;\n  const pivot = arr[arr.length - 1];\n  const left = [];\n  const right = [];\n  for (let i = 0; i < arr.length - 1; i++) {\n    if (arr[i] < pivot) left.push(arr[i]);\n    else right.push(arr[i]);\n  }\n  return [...quickSort(left), pivot, ...quickSort(right)];\n}"
+    "metadata": {
+      "title": { "en": "Quick Sort" },
+      "subtitle": { "en": "High-performance divide and conquer" },
+      "category": "Sorting",
+      "tags": ["efficient", "recursive", "divide-and-conquer"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(n log n)", "rank": 4 },
+        "average": { "label": "O(n log n)", "rank": 4 },
+        "worst": { "label": "O(n^2)", "rank": 5 }
+      },
+      "space": { "label": "O(log n)", "rank": 2 }
+    },
+    "visualizer_config": {
+      "type": "bars",
+      "initial_pattern": "reverse_sorted",
+      "engine_params": { "default_speed": 300, "default_size": 15 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function quickSort(arr) {\n  if (arr.length <= 1) return arr;\n  const pivot = arr[arr.length - 1];\n  const left = [];\n  const right = [];\n  for (let i = 0; i < arr.length - 1; i++) {\n    if (arr[i] < pivot) left.push(arr[i]);\n    else right.push(arr[i]);\n  }\n  return [...quickSort(left), pivot, ...quickSort(right)];\n}",
+        "explanation": { "en": "Picks a pivot and partitions the array around it." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "A divide-and-conquer sorting algorithm." },
+      "how_it_works": [
+        { "en": "Choose a pivot element." },
+        { "en": "Partition the array into smaller and larger elements." },
+        { "en": "Recursively repeat for sub-arrays." }
+      ],
+      "applications": [
+        { "en": "Sorting large datasets." }
+      ]
+    }
   },
   "merge-sort": {
-    "title": { "ar": "الفرز بالدمج", "en": "Merge Sort" },
-    "category": "Sorting",
-    "complexity": { "time": "O(n log n)", "space": "O(n)" },
-    "description": { "ar": "خوارزمية فرز مستقرة تقسم المصفوفة ثم تدمجها.", "en": "A stable sorting algorithm that divides and merges." },
-    "code": "function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n  return merge(left, right);\n}"
-  },
-  "linear-search": {
-    "title": { "ar": "البحث الخطي", "en": "Linear Search" },
-    "category": "Search",
-    "complexity": { "time": "O(n)", "space": "O(1)" },
-    "description": { "ar": "يبحث عن عنصر من خلال فحص كل العناصر بالتسلسل.", "en": "Finds an element by checking each item sequentially." },
-    "code": "function linearSearch(arr, target) {\n  for (let i = 0; i < arr.length; i++) {\n    if (arr[i] === target) return i;\n  }\n  return -1;\n}"
+    "metadata": {
+      "title": { "en": "Merge Sort" },
+      "subtitle": { "en": "Stable divide and conquer" },
+      "category": "Sorting",
+      "tags": ["stable", "guaranteed-performance", "recursive"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(n log n)", "rank": 4 },
+        "average": { "label": "O(n log n)", "rank": 4 },
+        "worst": { "label": "O(n log n)", "rank": 4 }
+      },
+      "space": { "label": "O(n)", "rank": 3 }
+    },
+    "visualizer_config": {
+      "type": "bars",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 350, "default_size": 20 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function mergeSort(arr) {\n  if (arr.length <= 1) return arr;\n  const mid = Math.floor(arr.length / 2);\n  const left = mergeSort(arr.slice(0, mid));\n  const right = mergeSort(arr.slice(mid));\n  return merge(left, right);\n}",
+        "explanation": { "en": "Divides the array into halves and merges them in order." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "A stable sorting algorithm that divides and merges." },
+      "how_it_works": [
+        { "en": "Recursively divide array into halves." },
+        { "en": "Merge small arrays in a sorted manner." }
+      ],
+      "applications": [
+        { "en": "Linked list sorting." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Initial array split into halves." },
+        "active_line": 1,
+        "state_snapshot": {
+          "array": [12, 4, 8, 3, 10, 2, 7, 5, 9, 6]
+        }
+      }
+    ]
   },
   "binary-search": {
-    "title": { "ar": "البحث الثنائي", "en": "Binary Search" },
-    "category": "Search",
-    "complexity": { "time": "O(log n)", "space": "O(1)" },
-    "description": { "ar": "يبحث في مصفوفة مرتبة عن طريق تقسيم النطاق إلى النصف.", "en": "Finds an element in a sorted array by halving the range." },
-    "code": "function binarySearch(arr, target) {\n  let low = 0, high = arr.length - 1;\n  while (low <= high) {\n    let mid = Math.floor((low + high) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) low = mid + 1;\n    else high = mid - 1;\n  }\n  return -1;\n}"
+    "metadata": {
+      "title": { "en": "Binary Search" },
+      "subtitle": { "en": "Efficient search in sorted data" },
+      "category": "Searching",
+      "tags": ["fast", "logarithmic", "sorted-only"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(1)", "rank": 1 },
+        "average": { "label": "O(log n)", "rank": 2 },
+        "worst": { "label": "O(log n)", "rank": 2 }
+      },
+      "space": { "label": "O(1)", "rank": 1 }
+    },
+    "visualizer_config": {
+      "type": "array",
+      "initial_pattern": "sorted",
+      "engine_params": { "default_speed": 800, "default_size": 30 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function binarySearch(arr, target) {\n  let low = 0, high = arr.length - 1;\n  while (low <= high) {\n    let mid = Math.floor((low + high) / 2);\n    if (arr[mid] === target) return mid;\n    if (arr[mid] < target) low = mid + 1;\n    else high = mid - 1;\n  }\n  return -1;\n}",
+        "explanation": { "en": "Halves the search range at each step." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Finds an element in a sorted array by halving the range." },
+      "how_it_works": [
+        { "en": "Identify the middle point." },
+        { "en": "If target is smaller, search left half." },
+        { "en": "Repeat until found or range is empty." }
+      ],
+      "applications": [
+        { "en": "Searching in indexed databases." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Initialize search range: [0, 9]. Target: 16." },
+        "active_line": 1,
+        "state_snapshot": {
+          "array": [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+        }
+      }
+    ]
+  },
+  "linear-search": {
+    "metadata": {
+      "title": { "en": "Linear Search" },
+      "subtitle": { "en": "Sequential search through all elements" },
+      "category": "Searching",
+      "tags": ["simple", "sequential", "un-ordered"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(1)", "rank": 1 },
+        "average": { "label": "O(n)", "rank": 3 },
+        "worst": { "label": "O(n)", "rank": 3 }
+      },
+      "space": { "label": "O(1)", "rank": 1 }
+    },
+    "visualizer_config": {
+      "type": "array",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 500, "default_size": 20 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function linearSearch(arr, target) {\n  for (let i = 0; i < arr.length; i++) {\n    if (arr[i] === target) return i;\n  }\n  return -1;\n}",
+        "explanation": { "en": "Checks each element one by one until the target is found." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "The most basic search algorithm." },
+      "how_it_works": [
+        { "en": "Iterate from index 0 to n-1." },
+        { "en": "Return index if element matches target." }
+      ],
+      "applications": [
+        { "en": "Small or unsorted datasets." }
+      ]
+    }
+  },
+  "jump-search": {
+    "metadata": {
+      "title": { "en": "Jump Search" },
+      "subtitle": { "en": "Block-based search in sorted data" },
+      "category": "Searching",
+      "tags": ["block-search", "sqrt-n", "sorted-only"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(1)", "rank": 1 },
+        "average": { "label": "O(√n)", "rank": 2 },
+        "worst": { "label": "O(√n)", "rank": 2 }
+      },
+      "space": { "label": "O(1)", "rank": 1 }
+    },
+    "visualizer_config": {
+      "type": "array",
+      "initial_pattern": "sorted",
+      "engine_params": { "default_speed": 600, "default_size": 25 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function jumpSearch(arr, x) {\n  let n = arr.length; let step = Math.floor(Math.sqrt(n));\n  let prev = 0;\n  while (arr[Math.min(step, n) - 1] < x) {\n    prev = step; step += Math.floor(Math.sqrt(n));\n    if (prev >= n) return -1;\n  }\n  while (arr[prev] < x) {\n    prev++;\n    if (prev === Math.min(step, n)) return -1;\n  }\n  if (arr[prev] === x) return prev;\n  return -1;\n}",
+        "explanation": { "en": "Jumps ahead by fixed blocks to narrow down the search range." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Combines linear and block jumping for efficiency." },
+      "how_it_works": [
+        { "en": "Jump forward by √n blocks." },
+        { "en": "Once target is exceeded, perform linear search in the previous block." }
+      ],
+      "applications": [
+        { "en": "Intermediate alternative to Binary Search." }
+      ]
+    }
   },
   "bfs": {
-    "title": { "ar": "البحث بالعرض", "en": "Breadth-First Search" },
-    "category": "Graphs",
-    "complexity": { "time": "O(V + E)", "space": "O(V)" },
-    "description": { "ar": "يستكشف العقد حسب مستواها في الجراف.", "en": "Explores nodes level by level." },
-    "code": "function bfs(graph, start) {\n  const queue = [start];\n  const visited = new Set();\n  while (queue.length) {\n    const node = queue.shift();\n    if (!visited.has(node)) {\n      visited.add(node);\n      queue.push(...graph[node]);\n    }\n  }\n}"
+    "metadata": {
+      "title": { "en": "Breadth-First Search" },
+      "subtitle": { "en": "Level-order graph traversal" },
+      "category": "Pathfinding & Networks",
+      "tags": ["graph", "shortest-path", "layer-by-layer"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(V + E)", "rank": 3 },
+        "average": { "label": "O(V + E)", "rank": 3 },
+        "worst": { "label": "O(V + E)", "rank": 3 }
+      },
+      "space": { "label": "O(V)", "rank": 3 }
+    },
+    "visualizer_config": {
+      "type": "graph",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 600, "default_size": 10 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function bfs(graph, start) {\n  const queue = [start];\n  const visited = new Set();\n  while (queue.length) {\n    const node = queue.shift();\n    if (!visited.has(node)) {\n      visited.add(node);\n      queue.push(...graph[node]);\n    }\n  }\n}",
+        "explanation": { "en": "Uses a queue to explore nearest neighbors first." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Explores nodes level by level." },
+      "how_it_works": [
+        { "en": "Add start node to queue." },
+        { "en": "Dequeue node and visit all unvisited neighbors." },
+        { "en": "Add neighbors to queue and repeat." }
+      ],
+      "applications": [
+        { "en": "Shortest path in unweighted graphs." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Start BFS from root node 1. Add to queue." },
+        "active_line": 1,
+        "state_snapshot": {
+          "nodes": [
+            { "id": "1", "x": 300, "y": 50, "label": "1", "state": "active" },
+            { "id": "2", "x": 150, "y": 150, "label": "2", "state": "default" },
+            { "id": "3", "x": 450, "y": 150, "label": "3", "state": "default" }
+          ],
+          "edges": [
+            { "from": "1", "to": "2", "directed": true, "state": "default" },
+            { "from": "1", "to": "3", "directed": true, "state": "default" }
+          ]
+        }
+      }
+    ]
   },
   "dfs": {
-    "title": { "ar": "البحث بالعمق", "en": "Depth-First Search" },
-    "category": "Graphs",
-    "complexity": { "time": "O(V + E)", "space": "O(V)" },
-    "description": { "ar": "يستكشف كل فرع حتى نهايته قبل العودة.", "en": "Explores each branch to its end before backtracking." },
-    "code": "function dfs(graph, node, visited = new Set()) {\n  visited.add(node);\n  for (const neighbor of graph[node]) {\n    if (!visited.has(neighbor)) dfs(graph, neighbor, visited);\n  }\n}"
+    "metadata": {
+      "title": { "en": "Depth-First Search" },
+      "subtitle": { "en": "Deep exploration graph traversal" },
+      "category": "Pathfinding & Networks",
+      "tags": ["graph", "backtracking", "recursive"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(V + E)", "rank": 3 },
+        "average": { "label": "O(V + E)", "rank": 3 },
+        "worst": { "label": "O(V + E)", "rank": 3 }
+      },
+      "space": { "label": "O(V)", "rank": 3 }
+    },
+    "visualizer_config": {
+      "type": "graph",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 600, "default_size": 10 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function dfs(graph, node, visited = new Set()) {\n  if (visited.has(node)) return;\n  visited.add(node);\n  for (let neighbor of graph[node]) {\n    dfs(graph, neighbor, visited);\n  }\n}",
+        "explanation": { "en": "Uses recursion (stack) to explore as deep as possible before backtracking." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Explores a branch fully before moving to neighbors." },
+      "how_it_works": [
+        { "en": "Visit a node and mark it visited." },
+        { "en": "Recursively visit every unvisited neighbor." }
+      ],
+      "applications": [
+        { "en": "Topological sorting, cycle detection." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Start DFS from node 1. Push to stack." },
+        "active_line": 1,
+        "state_snapshot": {
+          "nodes": [
+            { "id": "1", "x": 300, "y": 50, "label": "1", "state": "active" },
+            { "id": "2", "x": 150, "y": 150, "label": "2", "state": "default" }
+          ],
+          "edges": [
+            { "from": "1", "to": "2", "directed": true, "state": "default" }
+          ]
+        }
+      }
+    ]
   },
   "dijkstra": {
-    "title": { "ar": "خوارزمية ديكسترا", "en": "Dijkstra's Algorithm" },
-    "category": "Graphs",
-    "complexity": { "time": "O(E + V log V)", "space": "O(V)" },
-    "description": { "ar": "تجد أقصر مسار بين نقطة وباقي نقاط الجراف.", "en": "Finds the shortest path between nodes." },
-    "code": "function dijkstra(graph, start) {\n  // Implementation logic\n}"
+    "metadata": {
+      "title": { "en": "Dijkstra's Algorithm" },
+      "subtitle": { "en": "Shortest path in weighted graphs" },
+      "category": "Pathfinding & Networks",
+      "tags": ["greedy", "weighted-graph", "optimization"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(V log V + E)", "rank": 4 },
+        "average": { "label": "O(E log V)", "rank": 4 },
+        "worst": { "label": "O(V^2)", "rank": 5 }
+      },
+      "space": { "label": "O(V)", "rank": 3 }
+    },
+    "visualizer_config": {
+      "type": "graph",
+      "initial_pattern": "empty",
+      "engine_params": { "default_speed": 800, "default_size": 15 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "// Simplified Dijkstra logic\nfunction dijkstra(graph, start) {\n  let dist = {}; for(let v in graph) dist[v] = Infinity;\n  dist[start] = 0;\n  let pq = new PriorityQueue(); pq.push(start, 0);\n  // ... processing logic\n}",
+        "explanation": { "en": "Maintains a set of 'shortest-distance' values to find the path from source to all other nodes." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Finds the shortest path from a source to all nodes in a weighted graph." },
+      "how_it_works": [
+        { "en": "Initialize distances to infinity." },
+        { "en": "Repeatedly pick the unvisited node with the smallest distance." },
+        { "en": "Relax edges connected to that node." }
+      ],
+      "applications": [
+        { "en": "GPS navigation systems, Network routing." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Initialize source node A with distance 0, others with Infinity." },
+        "active_line": 1,
+        "state_snapshot": {
+          "nodes": [
+            { "id": "A", "x": 100, "y": 150, "label": "A", "state": "active" },
+            { "id": "B", "x": 300, "y": 50, "label": "B", "state": "default" }
+          ],
+          "edges": [
+            { "from": "A", "to": "B", "weight": 5, "directed": true, "state": "default" }
+          ]
+        }
+      }
+    ]
   },
-  "bst-insert": {
-    "title": { "ar": "الإدراج في BST", "en": "BST Insertion" },
-    "category": "Trees",
-    "complexity": { "time": "O(log n)", "space": "O(n)" },
-    "description": { "ar": "إدراج عنصر في شجرة بحث ثنائية.", "en": "Inserts a value into a Binary Search Tree." },
-    "code": "function insert(node, value) {\n  if (!node) return { value, left: null, right: null };\n  if (value < node.value) node.left = insert(node.left, value);\n  else node.right = insert(node.right, value);\n  return node;\n}"
+  "fibonacci-dp": {
+    "metadata": {
+      "title": { "en": "Fibonacci (DP)" },
+      "subtitle": { "en": "Classic memoization approach" },
+      "category": "Dynamic Programming",
+      "tags": ["memoization", "recursion", "linear-time"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(1)", "rank": 1 },
+        "average": { "label": "O(n)", "rank": 3 },
+        "worst": { "label": "O(n)", "rank": 3 }
+      },
+      "space": { "label": "O(n)", "rank": 3 }
+    },
+    "visualizer_config": {
+      "type": "tree",
+      "initial_pattern": "empty",
+      "engine_params": { "default_speed": 500, "default_size": 10 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function fib(n, memo = {}) {\n  if (n in memo) return memo[n];\n  if (n <= 2) return 1;\n  memo[n] = fib(n-1, memo) + fib(n-2, memo);\n  return memo[n];\n}",
+        "explanation": { "en": "Uses a memo table to avoid redundant recursive calls." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Computes Fibonacci numbers efficiently using Dynamic Programming." },
+      "how_it_works": [
+        { "en": "Check if value is in memo." },
+        { "en": "If not, calculate recursively and store." }
+      ],
+      "applications": [
+        { "en": "Basic DP teaching example." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Calculate fib(4). Branching into fib(3) and fib(2)." },
+        "active_line": 1,
+        "state_snapshot": {
+          "nodes": [
+            { "id": "fib(4)", "x": 300, "y": 50, "label": "fib(4)", "state": "active" },
+            { "id": "fib(3)", "x": 150, "y": 150, "label": "fib(3)", "state": "default" },
+            { "id": "fib(2)", "x": 450, "y": 150, "label": "fib(2)", "state": "default" },
+            { "id": "fib(2)_sub", "x": 75, "y": 250, "label": "fib(2)", "state": "default" },
+            { "id": "fib(1)", "x": 225, "y": 250, "label": "fib(1)", "state": "default" }
+          ],
+          "edges": [
+            { "from": "fib(4)", "to": "fib(3)", "directed": true, "state": "default" },
+            { "from": "fib(4)", "to": "fib(2)", "directed": true, "state": "default" },
+            { "from": "fib(3)", "to": "fib(2)_sub", "directed": true, "state": "default" },
+            { "from": "fib(3)", "to": "fib(1)", "directed": true, "state": "default" }
+          ]
+        }
+      },
+      {
+        "step": 2,
+        "description": { "en": "Calculate fib(3). Branching into fib(2) and fib(1)." },
+        "active_line": 4,
+        "state_snapshot": {
+          "nodes": [
+            { "id": "fib(4)", "x": 300, "y": 50, "label": "fib(4)", "state": "active" },
+            { "id": "fib(3)", "x": 150, "y": 150, "label": "fib(3)", "state": "active" },
+            { "id": "fib(2)", "x": 450, "y": 150, "label": "fib(2)", "state": "default" },
+            { "id": "fib(2)_sub", "x": 75, "y": 250, "label": "fib(2)", "state": "default" },
+            { "id": "fib(1)", "x": 225, "y": 250, "label": "fib(1)", "state": "default" }
+          ],
+          "edges": [
+            { "from": "fib(4)", "to": "fib(3)", "directed": true, "state": "active" },
+            { "from": "fib(4)", "to": "fib(2)", "directed": true, "state": "default" },
+            { "from": "fib(3)", "to": "fib(2)_sub", "directed": true, "state": "default" },
+            { "from": "fib(3)", "to": "fib(1)", "directed": true, "state": "default" }
+          ]
+        }
+      }
+    ]
   },
-  "convex-hull": {
-    "title": { "ar": "الغلاف المحدب", "en": "Convex Hull" },
-    "category": "Geometry",
-    "complexity": { "time": "O(n log n)", "space": "O(n)" },
-    "description": { "ar": "يجد أصغر مضلع يحيط بمجموعة نقاط.", "en": "Finds the smallest convex polygon containing all points." },
-    "code": "function getConvexHull(points) {\n  // Jarvis March or Graham Scan\n}"
+  "knapsack-01": {
+    "metadata": {
+      "title": { "en": "0/1 Knapsack" },
+      "subtitle": { "en": "Value optimization under weight constraint" },
+      "category": "Dynamic Programming",
+      "tags": ["optimization", "matrix-dp", "np-complete"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(n*W)", "rank": 5 },
+        "average": { "label": "O(n*W)", "rank": 5 },
+        "worst": { "label": "O(n*W)", "rank": 5 }
+      },
+      "space": { "label": "O(n*W)", "rank": 5 }
+    },
+    "visualizer_config": {
+      "type": "matrix",
+      "initial_pattern": "empty",
+      "engine_params": { "default_speed": 1000, "default_size": 10 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function knapsack(W, weights, values, n) {\n  let dp = Array(n+1).fill().map(() => Array(W+1).fill(0));\n  for (let i = 1; i <= n; i++) {\n    for (let w = 1; w <= W; w++) {\n      if (weights[i-1] <= w)\n        dp[i][w] = Math.max(values[i-1] + dp[i-1][w-weights[i-1]], dp[i-1][w]);\n      else\n        dp[i][w] = dp[i-1][w];\n    }\n  }\n  return dp[n][W];\n}",
+        "explanation": { "en": "Builds a 2D table to store maximum values for every sub-capacity." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Solves the classical item selection problem." },
+      "how_it_works": [
+        { "en": "Build a matrix where rows are items and columns are weights." },
+        { "en": "Decision: either take the item or leave it." }
+      ],
+      "applications": [
+        { "en": "Resource allocation, Budgeting." }
+      ]
+    },
+    "simulation_trace": [
+      {
+        "step": 1,
+        "description": { "en": "Initialize DP table with zeros for capacity 0 and item 0." },
+        "active_line": 1,
+        "state_snapshot": {
+          "nodes": [
+            [0, 0, 0, 0, 0, 0],
+            [0, null, null, null, null, null],
+            [0, null, null, null, null, null],
+            [0, null, null, null, null, null]
+          ]
+        }
+      },
+      {
+        "step": 2,
+        "description": { "en": "Item 1 (v:10, w:1): Fill row 1. Can we take item 1 at each capacity?" },
+        "active_line": 3,
+        "state_snapshot": {
+          "nodes": [
+            [0, 0, 0, 0, 0, 0],
+            [0, 10, 10, 10, 10, 10],
+            [0, null, null, null, null, null],
+            [0, null, null, null, null, null]
+          ]
+        }
+      }
+    ]
+  },
+  "lcs": {
+    "metadata": {
+      "title": { "en": "Longest Common Subsequence" },
+      "subtitle": { "en": "Sequence similarity optimization" },
+      "category": "Dynamic Programming",
+      "tags": ["strings", "matrix-dp", "bio-informatics"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(m*n)", "rank": 5 },
+        "average": { "label": "O(m*n)", "rank": 5 },
+        "worst": { "label": "O(m*n)", "rank": 5 }
+      },
+      "space": { "label": "O(m*n)", "rank": 5 }
+    },
+    "visualizer_config": {
+      "type": "matrix",
+      "initial_pattern": "empty",
+      "engine_params": { "default_speed": 1000, "default_size": 10 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "// LCS implementation snippet",
+        "explanation": { "en": "Compares two strings to find the longest subsequence shared by both." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Finds the length of the longest subsequence present in both strings." },
+      "how_it_works": [
+        { "en": "Fill a DP table where dp[i][j] stores the LCS of prefixes." }
+      ],
+      "applications": [
+        { "en": "Diff tools (git diff), DNA sequencing." }
+      ]
+    }
+  },
+  "bst-insertion": {
+    "metadata": {
+      "title": { "en": "BST Insertion" },
+      "subtitle": { "en": "Maintaining binary search properties" },
+      "category": "Trees & Hierarchies",
+      "tags": ["binary-tree", "recursive", "search-structure"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(log n)", "rank": 2 },
+        "average": { "label": "O(log n)", "rank": 2 },
+        "worst": { "label": "O(n)", "rank": 3 }
+      },
+      "space": { "label": "O(h)", "rank": 2 }
+    },
+    "visualizer_config": {
+      "type": "tree",
+      "initial_pattern": "empty",
+      "engine_params": { "default_speed": 600, "default_size": 15 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function insert(root, val) {\n  if (!root) return new Node(val);\n  if (val < root.val) root.left = insert(root.left, val);\n  else root.right = insert(root.right, val);\n  return root;\n}",
+        "explanation": { "en": "Recursively finds the correct leaf position to maintain sorting." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Adds a new node to a Binary Search Tree." },
+      "how_it_works": [
+        { "en": "Compare value with current node." },
+        { "en": "Go left if smaller, right if larger." }
+      ],
+      "applications": [
+        { "en": "Dynamic data indexing." }
+      ]
+    }
+  },
+  "tree-inorder": {
+    "metadata": {
+      "title": { "en": "Inorder Traversal" },
+      "subtitle": { "en": "Sorted access for binary trees" },
+      "category": "Trees & Hierarchies",
+      "tags": ["binary-tree", "dfs", "recursive"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(n)", "rank": 3 },
+        "average": { "label": "O(n)", "rank": 3 },
+        "worst": { "label": "O(n)", "rank": 3 }
+      },
+      "space": { "label": "O(h)", "rank": 2 }
+    },
+    "visualizer_config": {
+      "type": "tree",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 500, "default_size": 15 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function inorder(node) {\n  if (node) {\n    inorder(node.left);\n    console.log(node.val);\n    inorder(node.right);\n  }\n}",
+        "explanation": { "en": "Visits nodes in Left-Root-Right order." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Traverses a tree in sorted order." },
+      "how_it_works": [
+        { "en": "Recursive call on left child." },
+        { "en": "Visit the current node." },
+        { "en": "Recursive call on right child." }
+      ],
+      "applications": [
+        { "en": "Retrieving sorted data from BST." }
+      ]
+    }
+  },
+  "max-heapify": {
+    "metadata": {
+      "title": { "en": "Max Heapify" },
+      "subtitle": { "en": "Maintaining heap property" },
+      "category": "Trees & Hierarchies",
+      "tags": ["heap", "priority-queue", "sorting"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(1)", "rank": 1 },
+        "average": { "label": "O(log n)", "rank": 2 },
+        "worst": { "label": "O(log n)", "rank": 2 }
+      },
+      "space": { "label": "O(log n)", "rank": 2 }
+    },
+    "visualizer_config": {
+      "type": "tree",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 400, "default_size": 12 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "// Max Heapify implementation",
+        "explanation": { "en": "Adjusts node position to satisfy the Max-Heap property." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "Ensures the parent node is greater than its children." },
+      "how_it_works": [
+        { "en": "Compare parent with children." },
+        { "en": "Swap with largest child if necessary." },
+        { "en": "Recurse on the affected sub-tree." }
+      ],
+      "applications": [
+        { "en": "Building priority queues, Heap Sort." }
+      ]
+    }
+  },
+  "singly-linked-list": {
+    "metadata": {
+      "title": { "en": "Singly Linked List" },
+      "subtitle": { "en": "Linear data structure with sequential access" },
+      "category": "Searching",
+      "tags": ["linear", "dynamic", "sequential"]
+    },
+    "complexity": {
+      "time": {
+        "best": { "label": "O(1)", "rank": 1 },
+        "average": { "label": "O(n)", "rank": 3 },
+        "worst": { "label": "O(n)", "rank": 3 }
+      },
+      "space": { "label": "O(n)", "rank": 3 }
+    },
+    "visualizer_config": {
+      "type": "linkedlist",
+      "initial_pattern": "random",
+      "engine_params": { "default_speed": 500, "default_size": 10 }
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "class Node {\n  constructor(val) {\n    this.val = val;\n    this.next = null;\n  }\n}",
+        "explanation": { "en": "Each node points to the next node in the sequence." }
+      }
+    ],
+    "documentation": {
+      "description": { "en": "A linear data structure where elements are not stored at contiguous memory locations." },
+      "how_it_works": [
+        { "en": "Start at the head node." },
+        { "en": "Follow the 'next' pointers to traverse the list." }
+      ],
+      "applications": [
+        { "en": "Dynamic memory allocation, implementation of stacks and queues." }
+      ]
+    }
   }
 }

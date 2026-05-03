@@ -1,4 +1,4 @@
-import { AlgorithmData } from "@/types/algorithm";
+import { Algorithm } from "@/types/algorithm";
 import Link from "next/link";
 import { metrics } from "@/locales/en/metrics";
 import { common } from "@/locales/en/common";
@@ -21,17 +21,14 @@ const MetricRow = ({ label, value, isMath = true }: { label: string; value: any;
 };
 
 interface MetricsSidebarProps {
-  algoData: any;
+  algoData: Algorithm;
   onExport?: () => void;
   isExporting?: boolean;
 }
 
 export default function MetricsSidebar({ algoData, onExport, isExporting }: MetricsSidebarProps) {
   const getTimeValue = (key: 'best' | 'average' | 'worst') => {
-    if (typeof algoData.complexity.time === 'string') {
-      return key === 'average' ? algoData.complexity.time : "--";
-    }
-    return algoData.complexity.time?.[key] || "--";
+    return algoData.complexity.time[key]?.label || "--";
   };
 
   return (
@@ -66,9 +63,9 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
               <span className="h-[1px] w-4 bg-primary/30" /> {t.architecture}
             </h3>
             <div className="flex flex-col">
-              <MetricRow label={t.memory} value={algoData.complexity.space} />
-              <MetricRow label={t.stability} value={algoData.complexity.stable} isMath={false} />
-              <MetricRow label={t.in_place} value={algoData.complexity.in_place} isMath={false} />
+              <MetricRow label={t.memory} value={algoData.complexity.space.label} />
+              <MetricRow label={t.stability} value={algoData.metadata.tags.includes("stable")} isMath={false} />
+              <MetricRow label={t.in_place} value={algoData.metadata.tags.includes("in-place")} isMath={false} />
             </div>
           </section>
         </div>

@@ -5,18 +5,7 @@ import algorithmsData from "@/data/algorithms.json";
 import { BrutalistTable, type TableColumn } from "@/components/shared";
 import { home as t } from "@/locales/en/home";
 
-type Algorithm = {
-  id: string;
-  title: { ar: string; en: string };
-  category: string;
-  difficulty: string;
-  complexity: {
-    time: string;
-    space: string;
-  };
-  status: string;
-  description: { ar: string; en: string };
-};
+import { Algorithm } from "@/types/algorithm";
 
 export default function MasterIndex() {
   const algorithms = Object.entries(algorithmsData).map(([id, data]) => ({
@@ -31,10 +20,10 @@ export default function MasterIndex() {
       render: (algo) => (
         <div>
           <span className="block font-sans text-lg font-bold text-black">
-            {algo.title.en}
+            {algo.metadata.title.en}
           </span>
           <span className="font-mono text-[10px] uppercase text-slate-400">
-            {algo.difficulty || "STABLE"} • {algo.category}
+            {algo.metadata.category} • {algo.metadata.tags[0]}
           </span>
         </div>
       )
@@ -44,7 +33,7 @@ export default function MasterIndex() {
       key: "category",
       render: (algo) => (
         <span className="bg-primary-fixed px-3 py-1 font-mono text-[10px] font-bold uppercase text-primary">
-          {algo.category}
+          {algo.metadata.category}
         </span>
       )
     },
@@ -53,7 +42,7 @@ export default function MasterIndex() {
       key: "time",
       render: (algo) => (
         <code className="font-mono text-sm font-bold text-[#002FA7]">
-          {algo.complexity.time}
+          {algo.complexity.time.average.label}
         </code>
       )
     },
@@ -61,7 +50,7 @@ export default function MasterIndex() {
       header: t.master_index.table.space,
       key: "space",
       render: (algo) => (
-        <code className="font-mono text-sm text-slate-600">{algo.complexity.space}</code>
+        <code className="font-mono text-sm text-slate-600">{algo.complexity.space.label}</code>
       )
     },
     {
@@ -69,9 +58,9 @@ export default function MasterIndex() {
       key: "status",
       render: (algo) => (
         <div className="flex items-center gap-2">
-          <div className={`h-2 w-2 ${algo.status === 'Code Ready' ? 'bg-green-500' : algo.status === 'Simulation' ? 'bg-purple-500' : 'bg-[#002FA7]'}`}></div>
+          <div className="h-2 w-2 bg-green-500"></div>
           <span className="font-mono text-[10px] uppercase tracking-tighter">
-            {algo.status}
+            STABLE
           </span>
         </div>
       )

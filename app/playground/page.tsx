@@ -7,6 +7,8 @@ import HistorySlider from "@/components/playground/HistorySlider";
 import { DataVisualizer } from "@/components/visualizer";
 import algorithmsData from "@/data/algorithms.json";
 import { playground as t } from "@/locales/en/playground";
+import { Algorithm } from "@/types/algorithm";
+import { generateSimulation } from "@/lib/engine/simulator";
 
 type NodePoint = {
   id: string;
@@ -115,7 +117,8 @@ export default function PlaygroundPage() {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const canvasRef = useRef<HTMLDivElement | null>(null);
 
-  const isGraphMode = useMemo(() => algorithm.includes("GRAPH"), [algorithm]);
+  const currentAlgoConfig = useMemo(() => (algorithmsData as unknown as Record<string, Algorithm>)[algorithm], [algorithm]);
+  const isGraphMode = useMemo(() => currentAlgoConfig?.visualizer_config?.type === 'graph', [currentAlgoConfig]);
 
   const pushLog = useCallback((message: string) => {
     const timestamp = new Date().toLocaleTimeString("en-GB", { hour12: false });
@@ -218,16 +221,7 @@ export default function PlaygroundPage() {
     pushLog("LOG: WORKSPACE_RESET.");
   };
 
-  const currentAlgoData = useMemo(() => {
-    const idMap: Record<string, string> = {
-      "QUICK_SORT_TERMINAL": "quick-sort",
-      "BUBBLE_SORT_LEGACY": "bubble-sort",
-      "MERGE_SORT_PIPELINE": "merge-sort",
-      "GRAPH_BFS_NODEMAP": "bfs"
-    };
-    const id = idMap[algorithm];
-    return (algorithmsData as any)[id];
-  }, [algorithm]);
+  const currentAlgoData = currentAlgoConfig;
 
   const handleBarsPointerDown = (e: React.PointerEvent) => {
     if (isGraphMode) return;
@@ -253,94 +247,41 @@ export default function PlaygroundPage() {
 
   const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-  const runBubbleSort = async (arr: number[]) => {
-    const n = arr.length;
-    let tempArr = [...arr];
+  // UNIFIED ENGINE: All algorithms use generateSimulation
+  const runUnifiedSimulation = async () => {
+    const inputData = parseInputArray(inputValue, dataSize);
+    const trace = generateSimulation(algorithm, inputData);
     let ops = { comparisons: 0, swaps: 0, steps: 0 };
-    
-    // Initial State
-    takeSnapshot(1, tempArr, nodes, edges, ops, "LOG: BUBBLE_SORT_INIT.");
 
-    for (let i = 0; i < n; i++) {
-      for (let j = 0; j < n - i - 1; j++) {
-        if (!isRunning) return;
-        
-        ops = { ...ops, comparisons: ops.comparisons + 1, steps: ops.steps + 1 };
-        setOpsCount(ops);
-        takeSnapshot(5, tempArr, nodes, edges, ops, `CMP: ${tempArr[j]} <> ${tempArr[j+1]}`);
-        await sleep(speed);
+    pushLog(`LOG: ${algorithm.toUpperCase()}_INIT. Steps: ${trace.length}`);
 
-        if (tempArr[j] > tempArr[j + 1]) {
-          [tempArr[j], tempArr[j + 1]] = [tempArr[j + 1], tempArr[j]];
-          ops = { ...ops, swaps: ops.swaps + 1 };
-          setBars([...tempArr]);
-          setOpsCount(ops);
-          takeSnapshot(6, tempArr, nodes, edges, ops, `SWP: ${tempArr[j]} <=> ${tempArr[j+1]}`);
-          await sleep(speed);
-        }
-      }
+    for (let i = 0; i < trace.length; i++) {
+      if (!isRunning) return;
+      const step = trace[i];
+      ops = { ...ops, steps: ops.steps + 1 };
+
+      if (step.array_state) setBars([...step.array_state]);
+      if (step.nodes_state) setNodes(step.nodes_state.map((n: any) => ({ id: n.id, label: n.label, x: n.x, y: n.y })));
+      if (step.edges_state) setEdges(step.edges_state.map((e: any) => ({ from: e.from, to: e.to, weight: e.weight })));
+
+      setOpsCount(ops);
+      setActiveLine(step.active_line ?? -1);
+      takeSnapshot(step.active_line ?? -1, step.array_state || bars, step.nodes_state?.map((n: any) => ({ id: n.id, label: n.label, x: n.x, y: n.y })) || nodes, step.edges_state?.map((e: any) => ({ from: e.from, to: e.to, weight: e.weight })) || edges, ops, step.description_en);
+
+      await sleep(speed);
     }
+
     if (isRunning) {
       setIsRunning(false);
       setIsComplete(true);
-      takeSnapshot(-1, tempArr, nodes, edges, ops, "LOG: BUBBLE_SORT_COMPLETE.");
+      pushLog(`LOG: ${algorithm.toUpperCase()}_COMPLETE.`);
     }
-  };
-
-  const runQuickSort = async (arr: number[], low: number, high: number, currentOps = { comparisons: 0, swaps: 0, steps: 0 }) => {
-    if (low < high) {
-      const { pi, nextOps } = await partition(arr, low, high, currentOps);
-      if (isRunning) {
-        await runQuickSort(arr, low, pi - 1, nextOps);
-        await runQuickSort(arr, pi + 1, high, nextOps);
-      }
-    }
-    if (low === 0 && high === arr.length - 1 && isRunning) {
-      setIsRunning(false);
-      setIsComplete(true);
-      pushLog("LOG: QUICK_SORT_COMPLETE.");
-    }
-  };
-
-  const partition = async (arr: number[], low: number, high: number, ops: { comparisons: number; swaps: number; steps: number }) => {
-    const pivot = arr[high];
-    takeSnapshot(8, arr, nodes, edges, ops, `PIVOT_SELECTED: ${pivot}`);
-    let i = low - 1;
-    for (let j = low; j < high; j++) {
-      if (!isRunning) return { pi: low, nextOps: ops };
-      
-      ops = { ...ops, comparisons: ops.comparisons + 1, steps: ops.steps + 1 };
-      setOpsCount(ops);
-      takeSnapshot(11, arr, nodes, edges, ops, `CMP: ${arr[j]} < ${pivot}`);
-      await sleep(speed);
-
-      if (arr[j] < pivot) {
-        i++;
-        [arr[i], arr[j]] = [arr[j], arr[i]];
-        ops = { ...ops, swaps: ops.swaps + 1 };
-        setBars([...arr]);
-        setOpsCount(ops);
-        takeSnapshot(12, arr, nodes, edges, ops, `SWP: ${arr[i]} <=> ${arr[j]}`);
-        await sleep(speed);
-      }
-    }
-    [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
-    ops = { ...ops, swaps: ops.swaps + 1 };
-    setBars([...arr]);
-    setOpsCount(ops);
-    takeSnapshot(13, arr, nodes, edges, ops, `PARTITION_FINAL_SWAP`);
-    await sleep(speed);
-    return { pi: i + 1, nextOps: ops };
   };
 
   useEffect(() => {
     if (isRunning) {
       setIsComplete(false);
-      if (algorithm === "BUBBLE_SORT_LEGACY") {
-        runBubbleSort(bars);
-      } else if (algorithm === "QUICK_SORT_TERMINAL") {
-        runQuickSort([...bars], 0, bars.length - 1);
-      }
+      runUnifiedSimulation();
     }
   }, [isRunning]);
 
@@ -442,8 +383,7 @@ export default function PlaygroundPage() {
             <select value={algorithm} onChange={(e) => setAlgorithm(e.target.value)} className="w-full border border-[#C4C5D6] bg-[#0A1022] px-2 py-2.5 text-[9px] font-bold tracking-widest text-[#DBE7FF] outline-none cursor-pointer rounded-sm">
               {ALGORITHM_OPTIONS.map((id) => (
                 <option key={id} value={id}>
-                  {/* @ts-ignore */}
-                  {algorithmsData[id]?.title?.en || id}
+                  {(algorithmsData as unknown as Record<string, Algorithm>)[id]?.metadata?.title?.en || id}
                 </option>
               ))}
             </select>
@@ -547,12 +487,12 @@ export default function PlaygroundPage() {
               </div>
             </motion.div>
 
-            {currentAlgoData && currentAlgoData.code && currentAlgoData.code[0] && (
+            {currentAlgoData && currentAlgoData.implementations && currentAlgoData.implementations[0] && (
               <div className="w-[320px] h-[360px] shadow-2xl">
                 <CodePanel 
-                  code={currentAlgoData.code[0].snippet} 
+                  code={currentAlgoData.implementations[0].snippet} 
                   activeLine={activeLine} 
-                  language={currentAlgoData.code[0].language}
+                  language={currentAlgoData.implementations[0].language}
                 />
               </div>
             )}

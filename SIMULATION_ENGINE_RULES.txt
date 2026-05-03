@@ -1,0 +1,220 @@
+================================================================================
+  MASTER INDEX — SIMULATION ENGINE RULES & ARCHITECTURE
+  Version: 2.0
+  Last Updated: 2026-05-01
+================================================================================
+
+1. ARCHITECTURE OVERVIEW
+================================================================================
+
+The simulation engine is a CENTRALIZED, MODULAR system located at:
+
+  d:\2026\index\lib\engine\simulator.ts      ← Main dispatcher
+  d:\2026\index\lib\engine\simulators\        ← Sub-modules per category
+    ├── sorting.ts      (Bubble, Quick, Merge)
+    ├── searching.ts    (Binary, Linear, Jump)
+    ├── graph.ts        (BFS, DFS, Dijkstra)
+    ├── dp.ts           (Fibonacci, Knapsack, LCS)
+    └── structures.ts   (BST Insertion, Inorder, Heapify, LinkedList)
+
+CRITICAL RULE: ALL simulation logic MUST go through the central
+generateSimulation() function. No page is allowed to implement its own
+simulation algorithm. This is the SINGLE SOURCE OF TRUTH.
+
+
+2. THE LogicStep INTERFACE
+================================================================================
+
+Every simulation step is represented by:
+
+  interface LogicStep {
+    description_en: string;          // REQUIRED — English description of step
+    description_ar?: string;         // Optional — Arabic description
+    array_state?: number[];          // For bars visualizers (Sorting, Searching)
+    nodes_state?: any[];             // For graph/tree visualizers
+    edges_state?: any[];             // For graph/tree visualizers
+    matrix_state?: (number|null)[][]; // For DP matrix visualizers
+    linked_list_state?: { value: number|string; state?: string }[];
+    pivot_index?: number | null;     // Sorting-specific
+    partition_range?: [number,number] | null; // Search range
+    highlight_indices?: number[];    // Which array indices are "active"
+    active_line?: number;            // Code line to highlight
+    pointers?: Record<string,number>; // Named pointers (low, mid, high, etc.)
+  }
+
+RULES:
+  - description_en is MANDATORY on every step
+  - At least ONE state field must be populated per step
+  - array_state is for BAR-based visualizers (Sorting & Searching)
+  - nodes_state + edges_state are for GRAPH-based visualizers
+  - matrix_state is for DP TABLE visualizers
+  - linked_list_state is for LINKED LIST visualizers
+  - highlight_indices marks "active" elements in array visualizations
+  - active_line syncs with the CodeVisualizer component
+
+
+3. THE generateSimulation() FUNCTION
+================================================================================
+
+  function generateSimulation(
+    algorithmId: string,       // Key from algorithms.json (e.g., "bubble-sort")
+    initialData?: number[]     // Optional override for Sorting/Searching
+  ): LogicStep[]               // ALWAYS returns array, NEVER null
+
+DISPATCH LOGIC:
+  1. STRUCTURAL_SIMULATORS — algorithms that generate their own data structures
+     (graph, tree, DP, linkedlist). These ignore initialData.
+  2. SIMULATORS — algorithms that work on arrays (sorting, searching).
+     These use initialData if provided, otherwise use built-in defaults.
+  3. FALLBACK — returns single step with "not yet implemented" message.
+
+RETURN CONTRACT:
+  - ALWAYS returns LogicStep[] (even if empty or single-step)
+  - NEVER returns null or undefined
+  - Typical trace length: 10-50 steps per algorithm
+
+
+4. PAGE INTEGRATION RULES
+================================================================================
+
+4A. DETAIL PAGE (/algorithms/[id]/page.tsx)
+----------------------------------------------
+  - Calls generateSimulation(algorithmId) once via useMemo
+  - Maps LogicStep[] to internal trace format with state_snapshot
+  - Manages currentStep state + auto-play interval
+  - Selects visualizer based on algoData.visualizer_config.type:
+      "bars"       → BarVisualizer
+      "graph"      → GraphVisualizer
+      "tree"       → TreeVisualizer (uses Graph component internally)
+      "matrix"     → DpVisualizer
+      "linkedlist" → LinkedListVisualizer
+      "geometry"   → GeometryVisualizer
+
+4B. VERSUS PAGE (/versus/page.tsx)
+----------------------------------------------
+  - Calls generateSimulation() for BOTH left and right algorithms
+  - Animates both traces in parallel with waitStep() delays
+  - renderVisualizer() auto-detects data type:
+      If step has nodes_state → renders Graph component
+      If step has array_state → renders Bars component
+      Otherwise → renders description text
+  - No ALGO_DOMAINS or category-specific logic
+  - All categories work the same way
+
+4C. PLAYGROUND PAGE (/playground/page.tsx)
+----------------------------------------------
+  - Calls generateSimulation(algorithmId, userInputData)
+  - Replays trace steps with configurable speed delay
+  - Updates bars/nodes/edges from each step
+  - Takes snapshots for history slider
+  - Algorithm selection uses real JSON keys (not legacy names)
+
+
+5. ADDING A NEW ALGORITHM
+================================================================================
+
+Step 1: Add to algorithms.json
+  - Add entry with all required fields
+  - Set visualizer_config.type to appropriate visualizer
+
+Step 2: Create simulator function in appropriate sub-module
+  - Function signature: (data: number[]) => LogicStep[]  (for array-based)
+  - Function signature: () => LogicStep[]                 (for structural)
+  - MUST return full trace with meaningful descriptions
+  - Clone all mutable state (arrays, nodes, edges) at each step
+
+Step 3: Register in simulator.ts
+  - Add to SIMULATORS map (for array-based) or
+  - Add to STRUCTURAL_SIMULATORS map (for structural)
+
+Step 4: Verify
+  - Detail page auto-selects correct visualizer from JSON config
+  - Versus page auto-renders correct visualization
+  - Playground page shows algorithm in dropdown
+
+
+6. VISUALIZER COMPONENT RULES
+================================================================================
+
+All visualizers accept this common interface:
+  - algoData: Algorithm        (from JSON)
+  - currentStep: number
+  - setCurrentStep: function
+  - handlePrev/handleNext: functions
+  - hasLogicSteps: boolean
+  - fullTrace: any[]           (the mapped trace from detail page)
+  - isPlaying?: boolean
+  - setIsPlaying?: function
+
+The fullTrace items have this shape:
+  {
+    step: number,
+    description: { en: string },
+    state_snapshot: {
+      array?: number[],
+      nodes?: any[],
+      edges?: any[],
+      matrix?: (number|null)[][],
+      linked_list?: { value: number|string; state?: string }[],
+      highlight_indices?: number[],
+      pivot_index?: number,
+      partition_range?: [number, number],
+      pointers?: Record<string, number>,
+      activeLine?: number
+    }
+  }
+
+
+7. NODE/EDGE STATE VALUES
+================================================================================
+
+Nodes have a "state" field with these values:
+  "default"    → neutral, unvisited
+  "active"     → currently being processed (highlighted)
+  "processing" → dequeued/popped, being examined
+  "visited"    → fully processed, done
+
+Edges have a "state" field with these values:
+  "default"    → neutral
+  "active"     → currently being traversed
+
+These states are used by the Graph/Tree visualizer components
+to apply different colors/styles.
+
+
+8. DATA FLOW DIAGRAM
+================================================================================
+
+  algorithms.json ──┐
+                    ↓
+  simulator.ts ─── dispatches to ──→ sorting.ts / searching.ts / graph.ts / etc.
+                    ↓
+              LogicStep[]
+                    ↓
+     ┌──────────────┼──────────────┐
+     ↓              ↓              ↓
+  Detail Page   Versus Page   Playground
+     ↓              ↓              ↓
+  Visualizer    renderVisualizer  DataVisualizer
+  Components    (auto-detect)     (InfiniteCanvas)
+
+
+9. COMMON MISTAKES TO AVOID
+================================================================================
+
+  ✗ DO NOT create local simulation logic in page files
+  ✗ DO NOT use hardcoded algorithm names (use JSON keys)
+  ✗ DO NOT return null from generateSimulation (always return [])
+  ✗ DO NOT mutate arrays/nodes in-place without cloning
+  ✗ DO NOT read algoData.simulation_trace directly (use engine)
+  ✗ DO NOT assume simulation_trace in JSON is complete
+
+  ✓ DO add new algorithms to the sub-module files
+  ✓ DO register them in simulator.ts maps
+  ✓ DO clone all mutable state at each step
+  ✓ DO provide meaningful description_en for every step
+  ✓ DO populate the correct state fields for the visualizer type
+
+================================================================================
+  END OF DOCUMENT
+================================================================================

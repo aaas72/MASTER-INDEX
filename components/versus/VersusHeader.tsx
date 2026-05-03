@@ -7,10 +7,12 @@ interface VersusHeaderProps {
 
 const ICON_MAP: Record<string, string> = {
   "Sorting": "sort_by_alpha",
-  "Search": "search",
-  "Graphs": "hub",
-  "Trees": "account_tree",
-  "Geometry": "architecture"
+  "Searching": "search",
+  "Pathfinding & Networks": "hub",
+  "Trees & Hierarchies": "account_tree",
+  "Geometry": "architecture",
+  "Dynamic Programming": "rebase_edit",
+  "Strings": "text_fields"
 };
 
 export default function VersusHeader({
@@ -18,7 +20,7 @@ export default function VersusHeader({
   onCategoryChange,
 }: VersusHeaderProps) {
   const dynamicCategories = Array.from(
-    new Set(Object.values(algorithmsData).map((algo) => algo.category))
+    new Set(Object.values(algorithmsData).map((algo: any) => algo.metadata.category))
   ).map(cat => ({
     id: cat,
     label: cat,
@@ -36,7 +38,7 @@ export default function VersusHeader({
             Target_Domain:
           </span>
         </div>
-        <nav className="hidden gap-2 font-mono text-[11px] font-bold uppercase tracking-widest xl:flex">
+        <nav className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-widest overflow-x-auto whitespace-nowrap pb-1 no-scrollbar max-w-[calc(100vw-300px)]">
           {dynamicCategories.map((cat) => (
             <button
               key={cat.id}

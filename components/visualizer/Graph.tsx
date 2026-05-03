@@ -39,12 +39,20 @@ export const Graph = React.memo(({
   statusMessage = ""
 }: GraphProps) => {
   return (
-    <div className="relative border border-[#002FA7]/20 bg-white overflow-hidden shadow-[4px_4px_0px_#DCE6FF] flex flex-col items-center justify-center p-2" style={{ width, height }}>
+    <div className="relative overflow-visible flex flex-col items-center justify-center p-2" style={{ width, height }}>
       <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox={`0 0 600 300`}>
         {/* Definition for arrows */}
         <defs>
-          <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="20" refY="3.5" orient="auto">
-            <polygon points="0 0, 10 3.5, 0 7" fill="#002FA7" />
+          <marker 
+            id="arrowhead" 
+            markerUnits="userSpaceOnUse" 
+            markerWidth="12" 
+            markerHeight="8" 
+            refX="28" 
+            refY="4" 
+            orient="auto"
+          >
+            <polygon points="0 0, 12 4, 0 8" fill="#002FA7" />
           </marker>
         </defs>
 

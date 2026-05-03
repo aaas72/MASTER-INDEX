@@ -1,9 +1,10 @@
 import { Algorithm } from "@/types/algorithm";
+import { Graph } from "@/components/visualizer/Graph";
 import { InfiniteCanvas } from "@/components/visualizer/InfiniteCanvas";
 import { useState, useEffect } from "react";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 
-interface LinkedListVisualizerProps {
+interface TreeVisualizerProps {
   algoData: Algorithm;
   currentStep: number;
   setCurrentStep: (step: number) => void;
@@ -15,7 +16,7 @@ interface LinkedListVisualizerProps {
   setIsPlaying?: (v: boolean) => void;
 }
 
-export default function LinkedListVisualizer({
+export default function TreeVisualizer({
   algoData,
   currentStep,
   setCurrentStep,
@@ -25,30 +26,28 @@ export default function LinkedListVisualizer({
   fullTrace,
   isPlaying,
   setIsPlaying,
-}: LinkedListVisualizerProps) {
+}: TreeVisualizerProps) {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const effectiveTrace = fullTrace;
   const logicStep = effectiveTrace[currentStep];
-  const listState: { value: number | string; state?: string }[] = logicStep?.state_snapshot?.linked_list || [];
 
   useEffect(() => {
-    const el = document.getElementById(`list-step-${currentStep}`);
+    const el = document.getElementById(`tree-step-${currentStep}`);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [currentStep]);
 
   if (!hasLogicSteps || !logicStep) {
     return (
       <div className="flex h-64 items-center justify-center border border-outline-variant/20 bg-surface-container-lowest text-on-surface-variant font-mono text-sm uppercase tracking-widest">
-        Linked List Visualization pending integration
+        Tree Visualization pending integration
       </div>
     );
   }
 
-  const stateColor = (s?: string) => {
-    if (s === "active") return "bg-primary text-white border-primary";
-    if (s === "visited") return "bg-primary/20 text-primary border-primary/40";
-    return "bg-white text-on-surface border-outline-variant/30";
-  };
+  // Tree algorithms now use nodes/edges format (same as graph)
+  const nodes = logicStep.state_snapshot.nodes || [];
+  const edges = logicStep.state_snapshot.edges || [];
+  const activeNodeId = nodes.find((n: any) => n.state === 'active' || n.state === 'processing')?.id;
 
   return (
     <div className={isFullscreen ? 'fixed inset-0 z-[9999] w-screen h-screen bg-surface flex flex-col m-0 p-0' : 'relative w-full flex flex-col mt-4 overflow-hidden border border-outline-variant/20'}>
@@ -73,38 +72,21 @@ export default function LinkedListVisualizer({
       <div className={`flex flex-col md:flex-row flex-1 overflow-hidden ${isFullscreen ? 'bg-surface' : 'p-6 gap-6 h-[600px]'}`}>
         {/* Left: Visualization (60% in normal, flex-1 in fullscreen) */}
         <div className={`${isFullscreen ? 'flex-1' : 'md:w-[60%]'} flex flex-col relative min-h-0 ${isFullscreen ? 'p-8 md:p-12 lg:p-16' : ''}`}>
-          <div className={`flex-1 relative min-h-0 pb-2 ${isFullscreen ? 'border-0' : 'h-full border-b md:border-b-0'}`}>
+          <div className={`flex-1 relative min-h-0 border-outline-variant/20 pb-2 ${isFullscreen ? 'border-0' : 'h-full border-b md:border-b-0'}`}>
             <InfiniteCanvas>
-              {/* Linked List Visual */}
-              <div className="flex items-center gap-0 p-4">
-                {listState.map((node, idx) => (
-                  <div key={idx} className="flex items-center">
-                    <div className={`w-16 h-16 border-2 flex items-center justify-center font-mono text-lg font-bold transition-all ${stateColor(node.state)}`}>
-                      {node.value}
-                    </div>
-                    {idx < listState.length - 1 && (
-                      <div className="w-8 h-0.5 bg-primary/40 relative">
-                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-l-6 border-t-transparent border-b-transparent border-l-primary/40"></div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {listState.length > 0 && (
-                  <div className="ml-2 font-mono text-xs text-outline-variant uppercase">null</div>
-                )}
-              </div>
+              <Graph nodes={nodes} edges={edges} width={800} height={500} activeNodeId={activeNodeId} statusMessage={logicStep.description.en} />
             </InfiniteCanvas>
           </div>
         </div>
 
         {/* Right: Execution Trace (40% in normal, fixed 80 in fullscreen) */}
         <div className={`w-full ${isFullscreen ? 'md:w-80' : 'md:w-[40%]'} border-outline-variant/20 flex flex-col overflow-y-auto ${isFullscreen ? 'h-full bg-white border-l p-6' : 'md:border-l md:pl-6 h-full'}`}>
-          <span className="font-mono text-[10px] text-primary font-bold mb-4 block">LIST_TRACE</span>
+          <span className="font-mono text-[10px] text-primary font-bold mb-4 block">HIERARCHY_TRACE</span>
           <div className="space-y-4">
             {effectiveTrace.map((step: any, idx: number) => (
-              <div key={idx} id={`list-step-${idx}`} onClick={() => setCurrentStep(idx)} className={`p-2 cursor-pointer transition-all ${idx === currentStep ? 'bg-primary/5 border-l-2 border-primary' : 'opacity-40'}`}>
-                <p className="font-mono text-[10px] uppercase text-primary font-bold">Step {idx + 1}</p>
-                <p className="text-xs text-on-surface-variant mt-1">{step.description.en}</p>
+              <div key={idx} id={`tree-step-${idx}`} onClick={() => setCurrentStep(idx)} className={`p-2 cursor-pointer transition-all ${idx === currentStep ? 'bg-primary/5 border-l-2 border-primary' : 'opacity-40'}`}>
+                <p className="font-mono text-[10px] uppercase text-primary">Step {idx + 1}</p>
+                <p className="text-xs mt-1">{step.description.en}</p>
               </div>
             ))}
           </div>

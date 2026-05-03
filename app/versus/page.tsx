@@ -18,26 +18,11 @@ import { Play, Pause, ChevronRight, RotateCcw, Terminal, Zap, Share2, Check, Fil
 import { exportToPdf } from "@/utils/export-pdf";
 import { versus as t } from "@/locales/en/versus";
 
-// --- Types & Interfaces ---
-type VersusAlgorithm = {
-  id: string;
-  title: { ar: string; en: string };
-  category: string;
-  complexity: { time: any; space: string; stable?: boolean; in_place?: boolean; };
-  benchmarks?: { input_size: number; execution_time_ms: number; }[];
-};
+import { Algorithm } from "@/types/algorithm";
+import { generateSimulation } from "@/lib/engine/simulator";
+import { LogicStep } from "@/types/algorithm";
 
-type SimDetails = {
-  low: number;
-  mid: number;
-  high: number;
-  excluded: [number, number][];
-  msg: string;
-  narrative?: string;
-  steps?: number;
-};
-
-const typedAlgorithmsData = algorithmsData as unknown as Record<string, VersusAlgorithm>;
+const typedAlgorithmsData = algorithmsData as unknown as Record<string, Algorithm>;
 
 export default function VersusHubPage() {
   const router = useRouter();
@@ -45,10 +30,8 @@ export default function VersusHubPage() {
   const searchParams = useSearchParams();
 
   // --- Global UI State ---
-  const [activeCategory, setActiveCategory] = useState(searchParams.get("cat") || "Sorting");
+  const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || searchParams.get("cat") || "Sorting");
   const [scenario, setScenario] = useState(searchParams.get("sce") || "Random");
-  const [targetValue, setTargetValue] = useState<string>(searchParams.get("tgt") || "50");
-  const [customData, setCustomData] = useState<string>(searchParams.get("dat") || "");
   const [isExecuting, setIsExecuting] = useState(false);
   const [isVisualSim, setIsVisualSim] = useState(false);
   const [showResults, setShowResults] = useState(false);
@@ -63,6 +46,7 @@ export default function VersusHubPage() {
       if (value) newParams.set(key, value);
       else newParams.delete(key);
     });
+    if (newParams.has("category")) newParams.delete("category");
     router.replace(`${pathname}?${newParams.toString()}`, { scroll: false });
   };
 
@@ -73,9 +57,12 @@ export default function VersusHubPage() {
 
   const [isPaused, setIsPausedState] = useState(false);
   const [isManualStep, setIsManualStepState] = useState(false);
+  const [leftStepIdx, setLeftStepIdx] = useState(0);
+  const [rightStepIdx, setRightStepIdx] = useState(0);
 
-  const [leftSteps, setLeftSteps] = useState(0);
-  const [rightSteps, setRightSteps] = useState(0);
+  // Generated traces
+  const [leftTrace, setLeftTrace] = useState<LogicStep[]>([]);
+  const [rightTrace, setRightTrace] = useState<LogicStep[]>([]);
 
   const togglePause = (val?: boolean) => {
     const next = val !== undefined ? val : !isPausedRef.current;
@@ -102,15 +89,11 @@ export default function VersusHubPage() {
   // --- Visualizer States ---
   const [leftBars, setLeftBars] = useState<number[]>([]);
   const [rightBars, setRightBars] = useState<number[]>([]);
-  const [leftActiveLine, setLeftActiveLine] = useState(-1);
-  const [rightActiveLine, setRightActiveLine] = useState(-1);
-  const [leftSimDetails, setLeftSimDetails] = useState<SimDetails>({ low: -1, mid: -1, high: -1, excluded: [], msg: "", steps: 0 });
-  const [rightSimDetails, setRightSimDetails] = useState<SimDetails>({ low: -1, mid: -1, high: -1, excluded: [], msg: "", steps: 0 });
+  const [leftMsg, setLeftMsg] = useState("");
+  const [rightMsg, setRightMsg] = useState("");
   const [realResults, setRealResults] = useState<{ left: BenchmarkResult | null; right: BenchmarkResult | null; }>({ left: null, right: null });
 
-  const waitStep = async (ms: number, side?: 'left' | 'right') => {
-    if (side === 'left') setLeftSteps(prev => prev + 1);
-    if (side === 'right') setRightSteps(prev => prev + 1);
+  const waitStep = async (ms: number) => {
     if (isManualStepRef.current || isPausedRef.current) {
       return new Promise<void>(resolve => {
         stepResolversRef.current.push(resolve);
@@ -119,77 +102,7 @@ export default function VersusHubPage() {
     await new Promise(resolve => setTimeout(resolve, ms));
   };
 
-  const ALGO_DOMAINS: Record<string, any> = {
-    "Sorting": {
-      generateData: (custom: string) => {
-        if (custom) return custom.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
-        return Array.from({ length: 20 }, () => Math.floor(Math.random() * 90) + 10);
-      },
-      runSim: async (algoId: string, data: any, setters: any, details: any, side: any) => {
-        const { setBars, setActiveLine } = setters;
-        const arr = [...data];
-        if (algoId === "bubble-sort") {
-          for (let i = 0; i < arr.length; i++) {
-            for (let j = 0; j < arr.length - i - 1; j++) {
-              setActiveLine(j);
-              const needsSwap = arr[j] > arr[j + 1];
-              details((prev: SimDetails) => ({ ...prev, msg: `Comp: ${arr[j]} & ${arr[j+1]}`, narrative: needsSwap ? `Swap detected.` : `Correct order.` }));
-              if (needsSwap) { [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]]; setBars([...arr]); }
-              await waitStep(200, side);
-            }
-          }
-        } else if (algoId === "quick-sort") {
-          const partition = async (a: number[], low: number, high: number) => {
-            const pivot = a[high];
-            details((prev: SimDetails) => ({ ...prev, msg: `Pivot: ${pivot}` }));
-            let i = low - 1;
-            for (let j = low; j < high; j++) {
-              setActiveLine(j);
-              if (a[j] < pivot) { i++; [a[i], a[j]] = [a[j], a[i]]; setBars([...a]); }
-              await waitStep(200, side);
-            }
-            [a[i + 1], a[high]] = [a[high], a[i + 1]];
-            setBars([...a]); await waitStep(200, side); return i + 1;
-          };
-          const sort = async (a: number[], low: number, high: number) => {
-            if (low < high) { const pi = await partition(a, low, high); await sort(a, low, pi - 1); await sort(a, pi + 1, high); }
-          };
-          await sort(arr, 0, arr.length - 1);
-        } else { for (let i = 0; i < 5; i++) { setActiveLine(i); await waitStep(400, side); } }
-      }
-    },
-    "Search": {
-      generateData: (custom: string, target: string) => {
-        const targetNum = parseInt(target) || 50;
-        let raw = custom ? custom.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n)) : Array.from({ length: 19 }, () => Math.floor(Math.random() * 90) + 10);
-        if (!raw.includes(targetNum)) raw.push(targetNum);
-        return raw.sort((a, b) => a - b);
-      },
-      runSim: async (algoId: string, data: any, setters: any, detailsSetter: any, target: string, side: any) => {
-        const { setActiveLine } = setters;
-        const targetNum = parseInt(target);
-        if (algoId === "binary-search") {
-          let low = 0, high = data.length - 1;
-          while (low <= high) {
-            let mid = Math.floor((low + high) / 2); setActiveLine(mid);
-            detailsSetter((prev: SimDetails) => ({ ...prev, low, high, mid, msg: `Check: ${data[mid]}` }));
-            await waitStep(1000, side);
-            if (data[mid] === targetNum) break;
-            if (data[mid] < targetNum) {
-              const oldLow = low; low = mid + 1;
-              detailsSetter((prev: SimDetails) => ({ ...prev, low, excluded: [...prev.excluded, [oldLow, mid]] }));
-            } else {
-              const oldHigh = high; high = mid - 1;
-              detailsSetter((prev: SimDetails) => ({ ...prev, high, excluded: [...prev.excluded, [mid, oldHigh]] }));
-            }
-            await waitStep(800, side);
-          }
-        }
-      }
-    }
-  };
-
-  const algorithmEntries = useMemo(() => Object.entries(typedAlgorithmsData).filter(([_, algo]) => algo.category === activeCategory), [activeCategory]);
+  const algorithmEntries = useMemo(() => Object.entries(typedAlgorithmsData).filter(([_, algo]) => algo.metadata.category === activeCategory), [activeCategory]);
   const [leftAlgorithmId, setLeftAlgorithmId] = useState(searchParams.get("l") || "");
   const [rightAlgorithmId, setRightAlgorithmId] = useState(searchParams.get("r") || "");
 
@@ -202,26 +115,59 @@ export default function VersusHubPage() {
   }, [algorithmEntries, leftAlgorithmId]);
 
   useEffect(() => {
-    updateURL({ 
-      cat: activeCategory, l: leftAlgorithmId, r: rightAlgorithmId, 
-      sce: scenario, tgt: targetValue, dat: customData 
-    });
+    updateURL({ cat: activeCategory, l: leftAlgorithmId, r: rightAlgorithmId, sce: scenario });
     setShowResults(false); setIsAnalysisMode(false);
-  }, [activeCategory, leftAlgorithmId, rightAlgorithmId, scenario, targetValue, customData]);
+  }, [activeCategory, leftAlgorithmId, rightAlgorithmId, scenario]);
 
+  // --- UNIFIED EXECUTION: Uses generateSimulation for ALL categories ---
   const handleExecute = async (isAnalysis = false) => {
     if (!leftAlgorithmId || !rightAlgorithmId) return;
-    setLeftSteps(0); setRightSteps(0);
-    if (isAnalysis) { setIsAnalysisMode(true); isPausedRef.current = true; setIsPausedState(true); isManualStepRef.current = true; setIsManualStepState(true); }
-    else { setIsExecuting(true); setShowResults(false); }
-    const domain = ALGO_DOMAINS[activeCategory] || ALGO_DOMAINS["Sorting"];
-    const simData = domain.generateData(customData, targetValue);
-    if (activeCategory === "Sorting" || activeCategory === "Search") { setLeftBars([...simData]); setRightBars([...simData]); }
+    setLeftStepIdx(0); setRightStepIdx(0);
+
+    if (isAnalysis) {
+      setIsAnalysisMode(true);
+      isPausedRef.current = true; setIsPausedState(true);
+      isManualStepRef.current = true; setIsManualStepState(true);
+    } else {
+      setIsExecuting(true); setShowResults(false);
+    }
+
+    // Generate full traces from unified engine
+    const lTrace = generateSimulation(leftAlgorithmId);
+    const rTrace = generateSimulation(rightAlgorithmId);
+    setLeftTrace(lTrace);
+    setRightTrace(rTrace);
+
+    // Set initial bars if available
+    if (lTrace[0]?.array_state) setLeftBars([...lTrace[0].array_state]);
+    if (rTrace[0]?.array_state) setRightBars([...rTrace[0].array_state]);
+
+    // Benchmark
     const benchmarkPromise = isAnalysis ? Promise.resolve([]) : Promise.all([runRealBenchmark(leftAlgorithmId, scenario, 2500), runRealBenchmark(rightAlgorithmId, scenario, 2500)]);
+
     setIsVisualSim(true);
-    const visualSimPromise = Promise.all([domain.runSim(leftAlgorithmId, simData, { setBars: setLeftBars, setActiveLine: setLeftActiveLine }, setLeftSimDetails, targetValue, 'left'), domain.runSim(rightAlgorithmId, simData, { setBars: setRightBars, setActiveLine: setRightActiveLine }, setRightSimDetails, targetValue, 'right')]);
-    const [benchResults] = await Promise.all([benchmarkPromise, visualSimPromise]);
-    if (!isAnalysis) { setRealResults({ left: benchResults[0], right: benchResults[1] }); setIsExecuting(false); }
+
+    // Animate both sides in parallel
+    const maxSteps = Math.max(lTrace.length, rTrace.length);
+    for (let i = 0; i < maxSteps; i++) {
+      if (i < lTrace.length) {
+        setLeftStepIdx(i);
+        if (lTrace[i].array_state) setLeftBars([...lTrace[i].array_state!]);
+        setLeftMsg(lTrace[i].description_en);
+      }
+      if (i < rTrace.length) {
+        setRightStepIdx(i);
+        if (rTrace[i].array_state) setRightBars([...rTrace[i].array_state!]);
+        setRightMsg(rTrace[i].description_en);
+      }
+      await waitStep(120);
+    }
+
+    const [benchResults] = await Promise.all([benchmarkPromise]);
+    if (!isAnalysis && Array.isArray(benchResults) && benchResults.length === 2) {
+      setRealResults({ left: benchResults[0], right: benchResults[1] });
+      setIsExecuting(false);
+    }
     setIsVisualSim(false); setShowResults(true);
   };
 
@@ -246,13 +192,35 @@ export default function VersusHubPage() {
     return name.split(' ')[0];
   };
 
-  const options = algorithmEntries.map(([id, algo]) => ({ id, name: algo.title.en }));
-  const speedDeltaPercent = (isVisualSim || isAnalysisMode) ? (Math.abs(leftSteps - rightSteps) / Math.max(leftSteps, rightSteps || 1)) * 100 : realResults.left ? (Math.abs(realResults.left.execution_time_ms - realResults.right!.execution_time_ms) / Math.max(realResults.left.execution_time_ms, realResults.right!.execution_time_ms)) * 100 : 0;
+  const options = algorithmEntries.map(([id, algo]) => ({ id, name: algo.metadata.title.en }));
+  const totalSteps = Math.max(leftStepIdx, rightStepIdx);
+  const speedDeltaPercent = realResults.left ? (Math.abs(realResults.left.execution_time_ms - realResults.right!.execution_time_ms) / Math.max(realResults.left.execution_time_ms, realResults.right!.execution_time_ms)) * 100 : 0;
 
   const renderVisualizer = (side: 'left' | 'right', height = 200) => {
-    const isLeft = side === 'left', bars = isLeft ? leftBars : rightBars, activeLine = isLeft ? leftActiveLine : rightActiveLine, details = isLeft ? leftSimDetails : rightSimDetails;
-    if (activeCategory === "Search") return <DataVisualizer.Array data={bars} activeIndex={activeLine} targetIndex={bars.indexOf(parseInt(targetValue))} lowIndex={details.low} midIndex={details.mid} highIndex={details.high} excludedRanges={details.excluded} statusMessage={details.msg} width="100%" height={height} />;
-    return <DataVisualizer.Bars data={bars} activeIndices={[activeLine]} width="100%" height={height} />;
+    const bars = side === 'left' ? leftBars : rightBars;
+    const stepIdx = side === 'left' ? leftStepIdx : rightStepIdx;
+    const trace = side === 'left' ? leftTrace : rightTrace;
+    const step = trace[stepIdx];
+    const highlights = step?.highlight_indices || [];
+
+    // If graph/tree data exists, show a status message instead of bars
+    if (step?.nodes_state && step.nodes_state.length > 0) {
+      return (
+        <div className="w-full h-full flex flex-col items-center justify-center gap-2 p-4">
+          <DataVisualizer.Graph nodes={step.nodes_state} edges={step.edges_state || []} width={400} height={height - 40} activeNodeId={step.nodes_state.find((n: any) => n.state === 'active')?.id} statusMessage={step.description_en} />
+        </div>
+      );
+    }
+
+    if (bars.length > 0) {
+      return <DataVisualizer.Bars data={bars} activeIndices={highlights} width="100%" height={height} />;
+    }
+
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <p className="font-mono text-[10px] text-primary/60 uppercase">{step?.description_en || 'Awaiting data...'}</p>
+      </div>
+    );
   };
 
   return (
@@ -283,11 +251,14 @@ export default function VersusHubPage() {
       <AnimatePresence>
         {(isVisualSim || isAnalysisMode) && (
           <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }} className="fixed bottom-6 right-6 z-[100] w-[320px] bg-white/90 backdrop-blur-md border-2 border-primary shadow-[16px_16px_0px_rgba(30,58,138,0.1)] overflow-hidden">
-             <div className="bg-primary text-white p-2 px-4 flex items-center justify-between">
-                <div className="flex items-center gap-2"><Terminal size={14} /><span className="font-mono text-[9px] font-black uppercase tracking-widest">Logic_Core_Log</span></div>
-                <div className="flex items-center gap-2"><Zap size={10} className="text-white fill-current animate-pulse" /><span className="font-mono text-[8px] font-bold text-white/80">{Math.max(leftSteps, rightSteps)} STEPS</span></div>
-             </div>
-             <div className="p-4 flex flex-col gap-1"><span className="font-mono text-[8px] text-primary/40 uppercase font-black tracking-widest">Active_Simulation_Vector</span><p className="font-mono text-xs text-primary font-black leading-relaxed">{leftSimDetails.narrative || rightSimDetails.narrative || "System Idle."}</p></div>
+            <div className="bg-primary text-white p-2 px-4 flex items-center justify-between">
+              <div className="flex items-center gap-2"><Terminal size={14} /><span className="font-mono text-[9px] font-black uppercase tracking-widest">Logic_Core_Log</span></div>
+              <div className="flex items-center gap-2"><Zap size={10} className="text-white fill-current animate-pulse" /><span className="font-mono text-[8px] font-bold text-white/80">{totalSteps} STEPS</span></div>
+            </div>
+            <div className="p-4 flex flex-col gap-1">
+              <span className="font-mono text-[8px] text-primary/40 uppercase font-black tracking-widest">Active_Simulation_Vector</span>
+              <p className="font-mono text-xs text-primary font-black leading-relaxed">{leftMsg || rightMsg || "System Idle."}</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -296,27 +267,27 @@ export default function VersusHubPage() {
         {showResults ? (
           <div className="flex-1 flex flex-col animate-in fade-in zoom-in-95 duration-300">
             <div className="bg-surface-container border-2 border-primary shadow-lg overflow-hidden mb-6">
-                <div className="p-4 flex items-center justify-between border-b-2 border-primary/20 bg-primary/5">
-                   <div className="flex items-center gap-3"><div className="w-8 h-8 bg-primary flex items-center justify-center text-white shadow-sm"><RotateCcw size={16} /></div><div className="flex flex-col"><span className="font-mono text-[10px] font-black text-primary uppercase leading-none">ANALYSIS_LABORATORY</span><span className="font-mono text-[8px] text-primary/60 uppercase font-bold">Deep Logic Reconstruction</span></div></div>
-                   {!isAnalysisMode ? (<button onClick={() => handleExecute(true)} className="bg-primary text-white px-6 py-2 font-mono text-[10px] uppercase font-bold hover:bg-primary/90 transition-all shadow-[4px_4px_0px_#DCE6FF] flex items-center gap-2"><Play size={12} fill="currentColor" /> ACTIVATE_DEEP_ANALYSIS</button>) : (
-                      <div className="flex items-center gap-3 bg-white border-2 border-primary p-1 px-3 shadow-sm">
-                         <button onClick={() => togglePause()} className="w-8 h-8 flex items-center justify-center bg-primary text-white hover:scale-105 transition-transform">{isPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}</button>
-                         <button onClick={handleManualStepTrigger} disabled={!isPaused && !isManualStep} className={`w-8 h-8 flex items-center justify-center border-2 border-primary text-primary hover:bg-primary/5 transition-colors ${(isPaused || isManualStep) ? 'opacity-100' : 'opacity-20'}`}><ChevronRight size={20} strokeWidth={3} /></button>
-                         <div className="h-5 w-[1px] bg-primary/20 mx-1" /><button onClick={() => { setIsAnalysisMode(false); togglePause(false); }} className="font-mono text-[9px] text-primary font-black hover:underline uppercase">EXIT_LAB</button>
-                      </div>
-                    )}
-                </div>
-                {isAnalysisMode && (<motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="border-b-2 border-primary/10"><div className="grid grid-cols-2 divide-x-2 divide-primary/10 bg-white"><div className="p-4 flex flex-col gap-2"><div className="flex items-center justify-between"><span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[leftAlgorithmId].title.en}</span><span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{leftSimDetails.msg}</span></div><div className="h-[200px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">{renderVisualizer('left', 180)}</div></div><div className="p-4 flex flex-col gap-2"><div className="flex items-center justify-between"><span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[rightAlgorithmId].title.en}</span><span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{rightSimDetails.msg}</span></div><div className="h-[200px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">{renderVisualizer('right', 180)}</div></div></div></motion.div>)}
+              <div className="p-4 flex items-center justify-between border-b-2 border-primary/20 bg-primary/5">
+                <div className="flex items-center gap-3"><div className="w-8 h-8 bg-primary flex items-center justify-center text-white shadow-sm"><RotateCcw size={16} /></div><div className="flex flex-col"><span className="font-mono text-[10px] font-black text-primary uppercase leading-none">ANALYSIS_LABORATORY</span><span className="font-mono text-[8px] text-primary/60 uppercase font-bold">Deep Logic Reconstruction</span></div></div>
+                {!isAnalysisMode ? (<button onClick={() => handleExecute(true)} className="bg-primary text-white px-6 py-2 font-mono text-[10px] uppercase font-bold hover:bg-primary/90 transition-all shadow-[4px_4px_0px_#DCE6FF] flex items-center gap-2"><Play size={12} fill="currentColor" /> ACTIVATE_DEEP_ANALYSIS</button>) : (
+                  <div className="flex items-center gap-3 bg-white border-2 border-primary p-1 px-3 shadow-sm">
+                    <button onClick={() => togglePause()} className="w-8 h-8 flex items-center justify-center bg-primary text-white hover:scale-105 transition-transform">{isPaused ? <Play size={14} fill="currentColor" /> : <Pause size={14} fill="currentColor" />}</button>
+                    <button onClick={handleManualStepTrigger} disabled={!isPaused && !isManualStep} className={`w-8 h-8 flex items-center justify-center border-2 border-primary text-primary hover:bg-primary/5 transition-colors ${(isPaused || isManualStep) ? 'opacity-100' : 'opacity-20'}`}><ChevronRight size={20} strokeWidth={3} /></button>
+                    <div className="h-5 w-[1px] bg-primary/20 mx-1" /><button onClick={() => { setIsAnalysisMode(false); togglePause(false); }} className="font-mono text-[9px] text-primary font-black hover:underline uppercase">EXIT_LAB</button>
+                  </div>
+                )}
+              </div>
+              {isAnalysisMode && (<motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="border-b-2 border-primary/10"><div className="grid grid-cols-2 divide-x-2 divide-primary/10 bg-white"><div className="p-4 flex flex-col gap-2"><div className="flex items-center justify-between"><span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[leftAlgorithmId]?.metadata.title.en}</span><span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{leftMsg}</span></div><div className="h-[200px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">{renderVisualizer('left', 180)}</div></div><div className="p-4 flex flex-col gap-2"><div className="flex items-center justify-between"><span className="font-mono text-[9px] text-primary font-bold uppercase tracking-widest">{typedAlgorithmsData[rightAlgorithmId]?.metadata.title.en}</span><span className="font-mono text-[9px] bg-primary/10 text-primary px-2 py-0.5">{rightMsg}</span></div><div className="h-[200px] bg-surface-container-low/20 flex items-center justify-center overflow-hidden border border-primary/5">{renderVisualizer('right', 180)}</div></div></div></motion.div>)}
             </div>
             <div className="grid grid-cols-2 border-2 border-outline-variant/30 bg-surface-container-lowest overflow-hidden shrink-0">
-              <VersusCompetitorLeft algorithm={typedAlgorithmsData[leftAlgorithmId]} isWinner={true} visualizer={renderVisualizer('left', 300)} summaryPoints={[`Domain: ${typedAlgorithmsData[leftAlgorithmId].category}`, `Time: ${typedAlgorithmsData[leftAlgorithmId].complexity.time}`, `Space: ${typedAlgorithmsData[leftAlgorithmId].complexity.space}`]} />
-              <VersusCompetitorRight algorithm={typedAlgorithmsData[rightAlgorithmId]} isWinner={true} visualizer={renderVisualizer('right', 300)} summaryPoints={[`Domain: ${typedAlgorithmsData[rightAlgorithmId].category}`, `Time: ${typedAlgorithmsData[rightAlgorithmId].complexity.time}`, `Space: ${typedAlgorithmsData[rightAlgorithmId].complexity.space}`]} />
+              <VersusCompetitorLeft algorithm={typedAlgorithmsData[leftAlgorithmId]} isWinner={true} visualizer={renderVisualizer('left', 300)} summaryPoints={[`Domain: ${typedAlgorithmsData[leftAlgorithmId]?.metadata.category}`, `Time: ${typedAlgorithmsData[leftAlgorithmId]?.complexity.time.average.label}`, `Space: ${typedAlgorithmsData[leftAlgorithmId]?.complexity.space.label}`]} />
+              <VersusCompetitorRight algorithm={typedAlgorithmsData[rightAlgorithmId]} isWinner={true} visualizer={renderVisualizer('right', 300)} summaryPoints={[`Domain: ${typedAlgorithmsData[rightAlgorithmId]?.metadata.category}`, `Time: ${typedAlgorithmsData[rightAlgorithmId]?.complexity.time.average.label}`, `Space: ${typedAlgorithmsData[rightAlgorithmId]?.complexity.space.label}`]} />
             </div>
-            <div className="mt-8"><VersusCenterRadar leftName={getAbbr(typedAlgorithmsData[leftAlgorithmId].title.en)} rightName={getAbbr(typedAlgorithmsData[rightAlgorithmId].title.en)} speedDeltaPercent={speedDeltaPercent} /></div>
+            <div className="mt-8"><VersusCenterRadar leftName={getAbbr(typedAlgorithmsData[leftAlgorithmId]?.metadata.title.en || '')} rightName={getAbbr(typedAlgorithmsData[rightAlgorithmId]?.metadata.title.en || '')} speedDeltaPercent={speedDeltaPercent} /></div>
           </div>
         ) : isExecuting || isVisualSim ? (
           <div className="flex-1 flex flex-col items-center justify-center bg-surface-container-low/20 backdrop-blur-sm min-h-[400px]">
-             {isVisualSim && (<div className="w-full h-full grid grid-cols-2 gap-12 p-8"><div className="flex flex-col gap-4"><div className="flex items-center justify-between"><p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[leftAlgorithmId].title.en}</p></div><div className="flex-1 border border-outline-variant/20 bg-white h-[300px] flex items-center justify-center">{renderVisualizer('left', 280)}</div></div><div className="flex flex-col gap-4"><div className="flex items-center justify-between"><p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[rightAlgorithmId].title.en}</p></div><div className="flex-1 border border-outline-variant/20 bg-white h-[300px] flex items-center justify-center">{renderVisualizer('right', 280)}</div></div></div>)}
+            {isVisualSim && (<div className="w-full h-full grid grid-cols-2 gap-12 p-8"><div className="flex flex-col gap-4"><div className="flex items-center justify-between"><p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[leftAlgorithmId]?.metadata.title.en}</p></div><div className="flex-1 border border-outline-variant/20 bg-white h-[300px] flex items-center justify-center">{renderVisualizer('left', 280)}</div></div><div className="flex flex-col gap-4"><div className="flex items-center justify-between"><p className="font-mono text-[10px] text-primary uppercase tracking-[0.4em]">{typedAlgorithmsData[rightAlgorithmId]?.metadata.title.en}</p></div><div className="flex-1 border border-outline-variant/20 bg-white h-[300px] flex items-center justify-center">{renderVisualizer('right', 280)}</div></div></div>)}
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center bg-surface-container-low/30 border-2 border-outline-variant/5 min-h-[300px]"><p className="font-mono text-[10px] uppercase tracking-[0.6em] text-on-surface-variant/40">System Awaiting Simulation</p></div>

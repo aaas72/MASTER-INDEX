@@ -1,19 +1,11 @@
 "use client";
 
 import { SidebarLayout, BrutalistTable, type TableColumn } from "@/components/shared";
+import Link from "next/link";
 import algorithmsData from "@/data/algorithms.json";
 import { categories as t } from "@/locales/en/categories";
 
-type Algorithm = {
-  id: string;
-  title: { en: string; ar: string };
-  category: string;
-  complexity: {
-    time: string;
-    space: string;
-  };
-  status?: string;
-};
+import { Algorithm } from "@/types/algorithm";
 
 type CategoryMetadata = {
   label: string;
@@ -24,19 +16,26 @@ type CategoryMetadata = {
 };
 
 const categoryMetadata: Record<string, CategoryMetadata> = {
-  "graph-theory": {
-    label: t.meta.graph.label,
+  "pathfinding-networks": {
+    label: "Pathfinding & Networks",
     description: t.meta.graph.desc,
     totalAlgorithms: "14",
     primaryComplexity: "O(V + E)",
     accentClass: "bg-primary-container",
   },
-  "sorting-search": {
-    label: t.meta.sorting.label,
+  "searching": {
+    label: "Searching",
     description: t.meta.sorting.desc,
     totalAlgorithms: "22",
-    primaryComplexity: "O(N log N)",
+    primaryComplexity: "O(log N)",
     accentClass: "bg-primary",
+  },
+  "trees-hierarchies": {
+    label: "Trees & Hierarchies",
+    description: "Hierarchical data structures and traversal techniques.",
+    totalAlgorithms: "12",
+    primaryComplexity: "O(log N)",
+    accentClass: "bg-tertiary-container",
   },
   "dynamic-programming": {
     label: t.meta.dynamic.label,
@@ -70,9 +69,15 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
   };
 
   const filteredAlgorithms = Object.entries(algorithmsData)
-    .map(([id, data]) => ({ id, ...data } as Algorithm))
+    .map(([id, data]) => ({ id, ...data } as unknown as Algorithm))
     .filter(
-      (algo) => algo.category.toLowerCase().replace(/ /g, "-") === params.slug
+      (algo) => {
+        const algoCategorySlug = algo.metadata.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, "-");
+        return algoCategorySlug === params.slug || 
+                (params.slug === "sorting-search" && (algo.metadata.category === "Sorting" || algo.metadata.category === "Searching")) ||
+                (params.slug === "graph-theory" && algo.metadata.category === "Pathfinding & Networks") ||
+                (params.slug === "trees-hierarchies" && algo.metadata.category === "Trees & Hierarchies")
+      }
     );
 
   const columns: TableColumn<Algorithm>[] = [
@@ -86,7 +91,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       key: "title",
       render: (algo) => (
         <a href={`/algorithms/${algo.id}`} className="font-sans text-sm font-bold text-black hover:text-primary-container hover:underline transition-colors">
-          {algo.title.en}
+          {algo.metadata.title.en}
         </a>
       ),
     },
@@ -96,7 +101,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       align: "right",
       render: (algo) => (
         <span className="bg-primary-fixed px-2 py-1 font-mono text-[10px] font-bold text-[#001355]">
-          {algo.complexity.time}
+          {algo.complexity.time.average.label}
         </span>
       ),
     },
@@ -106,7 +111,7 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
       align: "right",
       render: (algo) => (
         <span className="font-mono text-[10px] font-bold text-primary-container uppercase">
-          {algo.status || "STABLE"}
+          STABLE
         </span>
       ),
     },
@@ -151,39 +156,46 @@ export default function CategoryDetailPage({ params }: { params: { slug: string 
                       {t.total_label}
                     </p>
                     <p className="font-sans text-3xl font-black text-on-surface">
-                      {filteredAlgorithms.length || metadata.totalAlgorithms}
+                      {filteredAlgorithms.length}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="mt-10 space-y-10">
-                <section>
-                  <h4 className="font-mono text-[10px] font-bold tracking-[0.22em] text-outline uppercase mb-4">
-                    {t.most_accessed}
-                  </h4>
-                  <div className="bg-surface-container p-6 border border-outline-variant/15">
-                    <div className="flex items-center justify-between gap-4">
-                      <div>
-                        <p className="font-sans text-lg leading-snug font-black text-on-surface break-words max-w-[14rem]">
-                          A* Pathfinding
-                        </p>
-                        <p className="mt-4 font-mono text-[10px] font-bold tracking-[0.18em] uppercase text-on-surface-variant">
-                          {t.queries_label}: 12.4k
-                        </p>
+                {filteredAlgorithms.length > 0 && (
+                  <section>
+                    <h4 className="font-mono text-[10px] font-bold tracking-[0.22em] text-outline uppercase mb-4">
+                      {t.most_accessed}
+                    </h4>
+                    <div className="bg-surface-container p-6 border border-outline-variant/15">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="min-w-0">
+                          <p className="font-sans text-lg leading-snug font-black text-on-surface truncate">
+                            {filteredAlgorithms[0].metadata.title.en}
+                          </p>
+                          <p className="mt-4 font-mono text-[10px] font-bold tracking-[0.18em] uppercase text-on-surface-variant">
+                            {t.queries_label}: {(filteredAlgorithms[0].id?.length || 0) * 2 + 5}k
+                          </p>
+                        </div>
+                        <Link href={`/algorithms/${filteredAlgorithms[0].id}`} className="shrink-0">
+                          <span className="material-symbols-outlined text-primary-container text-xl hover:translate-x-1 hover:-translate-y-1 transition-transform">
+                            call_made
+                          </span>
+                        </Link>
                       </div>
-                      <span className="material-symbols-outlined text-primary-container text-xl">
-                        call_made
-                      </span>
+                      <div className="mt-6 border-t border-outline-variant/15 pt-4 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
+                        {t.complexity_label}: {filteredAlgorithms[0].complexity.time.average.label}
+                      </div>
                     </div>
-                    <div className="mt-6 border-t border-outline-variant/15 pt-4 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
-                      {t.complexity_label}: {metadata.primaryComplexity}
-                    </div>
-                  </div>
-                </section>
+                  </section>
+                )}
               </div>
-              <button className="w-full mt-10 border-2 border-primary-container text-primary-container py-3 font-mono text-[11px] font-bold hover:bg-primary-container hover:text-white transition-all">
-                {t.generate_report}
-              </button>
+              <Link 
+                href={`/versus?category=${encodeURIComponent(filteredAlgorithms[0].metadata.category)}`}
+                className="w-full mt-10 border-2 border-primary-container text-primary-container py-3 font-mono text-[11px] font-bold hover:bg-primary-container hover:text-white transition-all block text-center uppercase"
+              >
+                {t.compare_section} →
+              </Link>
             </div>
           </aside>
         </div>

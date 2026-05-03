@@ -26,7 +26,7 @@ export const Bars = React.memo(({
 
   return (
     <div 
-      className="flex items-end gap-1 px-8 pb-8 border border-[#E2E8F0] bg-white relative group"
+      className="flex items-end gap-1 px-8 pb-8 relative group"
       style={{ width, height }}
     >
 

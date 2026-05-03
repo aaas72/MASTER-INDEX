@@ -1,10 +1,10 @@
 import { Algorithm } from "@/types/algorithm";
-import { Bars } from "@/components/visualizer/Bars";
+import { ArrayStrip } from "@/components/visualizer/Array";
 import { InfiniteCanvas } from "@/components/visualizer/InfiniteCanvas";
 import { useState, useEffect } from "react";
 import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 
-interface BarVisualizerProps {
+interface ArrayVisualizerProps {
   algoData: Algorithm;
   currentStep: number;
   setCurrentStep: (step: number) => void;
@@ -16,7 +16,7 @@ interface BarVisualizerProps {
   setIsPlaying?: (v: boolean) => void;
 }
 
-export default function BarVisualizer({
+export default function ArrayVisualizer({
   algoData,
   currentStep,
   setCurrentStep,
@@ -26,16 +26,19 @@ export default function BarVisualizer({
   fullTrace,
   isPlaying,
   setIsPlaying,
-}: BarVisualizerProps) {
+}: ArrayVisualizerProps) {
   const effectiveTrace = fullTrace;
   const logicStep = effectiveTrace[currentStep];
   const arrayState = logicStep?.state_snapshot?.array || [];
-  const highlightIndices = logicStep?.state_snapshot?.highlight_indices || [];
-  const pivotIndex = logicStep?.state_snapshot?.pivot_index;
+  const highlightIndex = (logicStep?.state_snapshot?.highlight_indices && logicStep?.state_snapshot?.highlight_indices.length > 0) 
+    ? logicStep?.state_snapshot?.highlight_indices[0] 
+    : -1;
+  
+  const pointers = logicStep?.state_snapshot?.pointers || {};
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
-    const el = document.getElementById(`bar-step-${currentStep}`);
+    const el = document.getElementById(`array-step-${currentStep}`);
     if (el) {
       el.scrollIntoView({ behavior: "smooth", block: "center" });
     }
@@ -89,16 +92,18 @@ export default function BarVisualizer({
 
       <div className={`flex flex-col md:flex-row flex-1 overflow-hidden ${isFullscreen ? 'bg-surface' : 'p-6 gap-6 h-[600px]'}`}>
         {/* Left: Visualization (60% in normal, flex-1 in fullscreen) */}
-        <div className={`${isFullscreen ? 'flex-1' : 'md:w-[60%]'} flex flex-col relative ${isFullscreen ? 'p-8 md:p-12 lg:p-16' : ''}`}>
+        <div className={`${isFullscreen ? 'flex-1' : 'md:w-[60%]'} min-w-0 flex flex-col relative ${isFullscreen ? 'p-8 md:p-12 lg:p-16' : ''}`}>
           <div className={`flex-1 relative flex items-center justify-center pb-2 ${isFullscreen ? 'border-0' : 'h-full border-b md:border-b-0'}`}>
             <InfiniteCanvas>
-              <Bars
+              <ArrayStrip
                 data={arrayState}
-                activeIndices={highlightIndices}
-                compareIndices={[]}
-                swapIndices={[]}
+                activeIndex={highlightIndex}
+                lowIndex={pointers.low ?? pointers.left}
+                highIndex={pointers.high ?? pointers.right}
+                midIndex={pointers.mid}
+                statusMessage={logicStep.description.en}
                 width={800}
-                height={300}
+                height={200}
               />
             </InfiniteCanvas>
           </div>
@@ -106,7 +111,7 @@ export default function BarVisualizer({
 
         {/* Right: Execution Trace (40% in normal, fixed 96 in fullscreen) */}
         <div
-          className={`w-full ${isFullscreen ? 'md:w-96' : 'md:w-[40%]'} border-outline-variant/20 flex flex-col overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isFullscreen ? 'h-full bg-surface-container-lowest border-l p-6 md:p-8 shadow-xl z-10' : 'md:border-l md:pl-6 h-full'}`}
+          className={`w-full ${isFullscreen ? 'md:w-96' : 'md:w-[40%]'} shrink-0 border-outline-variant/20 flex flex-col overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isFullscreen ? 'h-full bg-surface-container-lowest border-l p-6 md:p-8 shadow-xl z-10' : 'md:border-l md:pl-6 h-full'}`}
         >
           <div className="flex justify-between items-center mb-4 pb-2 border-b border-primary/10 sticky top-0 bg-surface-container-lowest/80 backdrop-blur-sm z-10">
             <span className="font-mono text-[10px] tracking-tighter text-primary font-bold">EXECUTION_TRACE</span>
@@ -119,7 +124,7 @@ export default function BarVisualizer({
               return (
                 <div
                   key={idx}
-                  id={`bar-step-${idx}`}
+                  id={`array-step-${idx}`}
                   onClick={() => setCurrentStep(idx)}
                   className={`flex gap-3 cursor-pointer transition-all hover:bg-surface-container-low p-2 -mx-2 rounded-md ${isCurrent ? 'opacity-100' : isPast ? 'opacity-60' : 'opacity-30'}`}
                 >
@@ -136,11 +141,6 @@ export default function BarVisualizer({
                     <p className="font-sans text-xs text-on-surface-variant mt-1">
                       {step.description.en}
                     </p>
-                    {step.state_snapshot.array && (
-                      <div className="mt-2 font-mono text-[8px] text-outline tracking-tight bg-surface-container-high p-1 rounded-sm overflow-x-auto whitespace-nowrap">
-                        [{step.state_snapshot.array.join(', ')}]
-                      </div>
-                    )}
                   </div>
                 </div>
               );

@@ -8,6 +8,7 @@ export const categories = {
   queries_label: "Queries",
   complexity_label: "Primary Complexity",
   generate_report: "GENERATE REPORT [PDF]",
+  compare_section: "Start Section Comparison",
   table: {
     id: "ID",
     name: "Algorithm Name",

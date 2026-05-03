@@ -1,19 +1,9 @@
 import { BlockMath } from "react-katex";
 
-type VersusAlgorithm = {
-	title: { ar: string; en: string };
-	category: string;
-	complexity: {
-		time: any; // Can be string or { average, worst }
-		space: string;
-		stable?: boolean;
-		in_place?: boolean;
-	};
-	content?: { proof_latex: string };
-};
+import { Algorithm } from "@/types/algorithm";
 
 type VersusCompetitorRightProps = {
-	algorithm: VersusAlgorithm;
+	algorithm: Algorithm;
 	isWinner: boolean;
 	visualizer?: React.ReactNode;
 	summaryPoints?: string[];
@@ -38,10 +28,10 @@ export default function VersusCompetitorRight({
 						CHALLENGER_02
 					</span>
 					<h2 className="font-sans text-4xl font-bold text-on-surface mt-2">
-						{algorithm.title.en.replaceAll(" ", "")}
+						{algorithm.metadata.title.en.replaceAll(" ", "")}
 					</h2>
 					<p className="font-mono text-sm text-secondary mt-1">
-						{algorithm.category}
+						{algorithm.metadata.category}
 					</p>
 				</div>
 				<div
@@ -70,7 +60,7 @@ export default function VersusCompetitorRight({
 							Time Complexity
 						</span>
 						<div className="font-mono text-on-surface text-lg">
-							<BlockMath math={toMathNotation(typeof algorithm.complexity.time === 'string' ? algorithm.complexity.time : algorithm.complexity.time?.average)} />
+							<BlockMath math={toMathNotation(algorithm.complexity.time.average.label)} />
 						</div>
 					</div>
 					<div className="bg-surface-container-lowest p-6 flex flex-col justify-center items-center">
@@ -78,7 +68,7 @@ export default function VersusCompetitorRight({
 							Space Complexity
 						</span>
 						<div className="font-mono text-primary text-lg">
-							<BlockMath math={toMathNotation(algorithm.complexity.space)} />
+							<BlockMath math={toMathNotation(algorithm.complexity.space.label)} />
 						</div>
 					</div>
 					<div className="bg-surface-container-lowest p-6 flex flex-col justify-center items-center col-span-2">
@@ -86,7 +76,7 @@ export default function VersusCompetitorRight({
 							Stability Status
 						</span>
 						<div className="font-mono text-error text-sm font-bold uppercase tracking-widest">
-							{algorithm.complexity.stable ? "STABLE_COMPILATION" : "UNSTABLE_LOGIC"}
+							{algorithm.metadata.tags.includes("stable") ? "STABLE_COMPILATION" : "UNSTABLE_LOGIC"}
 						</div>
 					</div>
 				</div>
@@ -97,7 +87,7 @@ export default function VersusCompetitorRight({
 					Mathematical Signal
 				</h3>
 				<div className="font-mono text-sm text-on-surface overflow-x-auto">
-					<BlockMath math={algorithm.content?.proof_latex || "O(f(n)) \\rightarrow \\Omega(g(n))"} />
+					<BlockMath math={"O(f(n)) \\rightarrow \\Omega(g(n))"} />
 				</div>
 			</div>
 
@@ -112,7 +102,7 @@ export default function VersusCompetitorRight({
 						<div className="flex items-center gap-2">
 							<span className="w-2 h-2 rounded-none bg-[#002FA7] block"></span>
 							<span className="text-primary font-bold uppercase text-xs">
-								{algorithm.complexity.stable ? "True" : "False"}
+								{algorithm.metadata.tags.includes("stable") ? "True" : "False"}
 							</span>
 						</div>
 					</li>
@@ -121,14 +111,14 @@ export default function VersusCompetitorRight({
 						<div className="flex items-center gap-2">
 							<span className="w-2 h-2 rounded-none bg-error block"></span>
 							<span className="text-error font-bold uppercase text-xs">
-								{algorithm.complexity.in_place ? "True" : "False"}
+								{algorithm.metadata.tags.includes("in-place") ? "True" : "False"}
 							</span>
 						</div>
 					</li>
 					<li className="flex items-center justify-between p-3 bg-surface-container-lowest">
 						<span className="text-on-surface">Method</span>
 						<span className="text-on-surface-variant font-bold uppercase text-xs">
-							{algorithm.category}
+							{algorithm.metadata.category}
 						</span>
 					</li>
 				</ul>

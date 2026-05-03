@@ -7,7 +7,7 @@ import { home as t } from "@/locales/en/home";
 export default function Hero() {
   const streamsRef = useRef<HTMLDivElement[]>([]);
   const totalAlgorithms = Object.keys(algorithmsData).length;
-  const totalCategories = new Set(Object.values(algorithmsData).map(a => a.category)).size;
+  const totalCategories = new Set(Object.values(algorithmsData).map((a: any) => a.metadata?.category || "General")).size;
 
   useEffect(() => {
     const interval = setInterval(() => {

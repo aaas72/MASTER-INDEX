@@ -9,12 +9,13 @@ export default function CategoriesPage() {
   const [sortBy, setSortBy] = useState<"Alpha" | "Pop" | "Cmplx">("Alpha");
   
   const algorithms = Object.values(algorithmsData);
-  const categoriesMap = algorithms.reduce((acc, algo) => {
-    if (!acc[algo.category]) {
-      acc[algo.category] = { count: 0, algorithms: [] };
+  const categoriesMap = algorithms.reduce((acc, algo: any) => {
+    const category = algo.metadata?.category || "General";
+    if (!acc[category]) {
+      acc[category] = { count: 0, algorithms: [] };
     }
-    acc[algo.category].count++;
-    acc[algo.category].algorithms.push(algo);
+    acc[category].count++;
+    acc[category].algorithms.push(algo);
     return acc;
   }, {} as Record<string, { count: number; algorithms: any[] }>);
 
@@ -30,7 +31,7 @@ export default function CategoriesPage() {
     categories.sort((a, b) => b.count - a.count);
   } else if (sortBy === "Cmplx") {
     // Sort by approximate complexity weight
-    const weightMap: Record<string, number> = { "Sorting": 3, "Searching": 1, "Graph": 5, "DP": 10 };
+    const weightMap: Record<string, number> = { "Sorting": 3, "Searching": 1, "Pathfinding & Networks": 5, "Trees & Hierarchies": 4, "Dynamic Programming": 10 };
     categories.sort((a, b) => (weightMap[b.name] || 0) - (weightMap[a.name] || 0));
   }
 

@@ -1,12 +1,16 @@
 import Link from "next/link";
 import algorithmsData from "@/data/algorithms.json";
+import { Algorithm } from "@/types/algorithm";
 
 export default function AlgorithmTable({ categorySlug }: { categorySlug?: string }) {
-  let algorithms = Object.values(algorithmsData);
+  let algorithms = Object.entries(algorithmsData).map(([id, data]) => ({
+    id,
+    ...data,
+  })) as unknown as (Algorithm & { id: string })[];
 
   if (categorySlug) {
     algorithms = algorithms.filter(
-      (algo) => algo.category.toLowerCase().replace(" ", "-") === categorySlug
+      (algo) => algo.metadata.category.toLowerCase().replace(" ", "-") === categorySlug
     );
   }
 
@@ -34,16 +38,16 @@ export default function AlgorithmTable({ categorySlug }: { categorySlug?: string
                 </td>
                 <td className="px-6 py-5 font-sans text-sm font-bold text-black transition-colors group-hover:text-primary-container">
                   <Link href={`/algorithms/${algo.id}`} className="hover:underline">
-                    {algo.title.en}
+                    {algo.metadata.title.en}
                   </Link>
                 </td>
                 <td className="px-6 py-5 text-center">
                   <span className="inline-block bg-primary-fixed px-2 py-1 font-mono text-[10px] font-bold text-[#001355]">
-                    {algo.complexity.time.average}
+                    {algo.complexity.time.average.label}
                   </span>
                 </td>
                 <td className="px-6 py-5 text-right font-mono text-[10px] font-bold text-primary-container">
-                  {algo.status}
+                  STABLE
                 </td>
               </tr>
             ))}

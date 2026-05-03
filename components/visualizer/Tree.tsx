@@ -76,7 +76,7 @@ export const Tree = React.memo(({
 
   return (
     <div 
-      className="relative border border-[#002FA7]/20 bg-white overflow-hidden shadow-[4px_4px_0px_#DCE6FF] flex flex-col items-center justify-center p-2 cursor-grab active:cursor-grabbing group" 
+      className="relative overflow-visible flex flex-col items-center justify-center p-2 cursor-grab active:cursor-grabbing group" 
       style={{ width, height }}
     >
       <svg className="w-full h-full overflow-visible" viewBox="0 0 600 300">

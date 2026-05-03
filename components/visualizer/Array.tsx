@@ -34,7 +34,7 @@ export const ArrayStrip = React.memo(({
   };
 
   return (
-    <div className="relative border border-[#002FA7]/20 bg-white shadow-[4px_4px_0px_#DCE6FF] flex flex-col items-center justify-center p-2" style={{ width, height }}>
+    <div className="relative overflow-visible flex flex-col items-center justify-center p-2" style={{ width, height }}>
       <div className="flex gap-1 items-center w-full justify-start md:justify-center overflow-x-auto px-4 pb-8 h-full scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
         <style jsx>{`
           .scrollbar-hide::-webkit-scrollbar {

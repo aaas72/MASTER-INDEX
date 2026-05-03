@@ -1,286 +1,79 @@
-export type LogicStep = {
-  description_en: string;
-  array_state: number[];
-  pivot_index?: number | null;
-  partition_range?: [number, number] | null;
-  active_line?: number; // Line number in the pseudo-code/snippet to highlight
+import { LogicStep } from "@/types/algorithm";
+import { simulateBubbleSort, simulateQuickSort, simulateMergeSort } from "./simulators/sorting";
+import { simulateBinarySearch, simulateLinearSearch, simulateJumpSearch } from "./simulators/searching";
+import { simulateBFS, simulateDFS, simulateDijkstra } from "./simulators/graph";
+import { simulateFibonacciDP, simulateKnapsack, simulateLCS } from "./simulators/dp";
+import { simulateBSTInsertion, simulateInorderTraversal, simulateMaxHeapify, simulateLinkedList } from "./simulators/structures";
+
+/**
+ * MASTER SIMULATION ENGINE
+ * 
+ * Central dispatcher that generates full procedural LogicStep[] traces
+ * for every algorithm in the platform.
+ * 
+ * RULES:
+ * 1. Every algorithm MUST return LogicStep[] (never null)
+ * 2. Each step MUST contain description_en and at least one state field
+ * 3. The engine is DATA-DRIVEN: initialData can override defaults
+ * 4. All pages (Detail, Versus, Playground) use this single function
+ */
+
+// Default data generators per algorithm type
+function getDefaultData(algorithmId: string): number[] {
+  switch (algorithmId) {
+    case "bubble-sort": return [8, 3, 5, 1, 9, 2, 7, 4, 6];
+    case "quick-sort": return [7, 2, 9, 4, 1, 8, 3, 6, 5];
+    case "merge-sort": return [12, 4, 8, 3, 10, 2, 7, 5, 9, 6];
+    case "binary-search": return [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
+    case "linear-search": return [45, 12, 89, 34, 67, 23, 91, 56, 78, 10];
+    case "jump-search": return [3, 7, 11, 15, 19, 23, 27, 31, 35, 39, 43, 47];
+    default: return [5, 3, 8, 1, 9, 2, 7, 4, 6];
+  }
+}
+
+// Map of algorithm IDs to their simulator functions
+const SIMULATORS: Record<string, (data: number[]) => LogicStep[]> = {
+  "bubble-sort": simulateBubbleSort,
+  "quick-sort": simulateQuickSort,
+  "merge-sort": simulateMergeSort,
+  "binary-search": simulateBinarySearch,
+  "linear-search": simulateLinearSearch,
+  "jump-search": simulateJumpSearch,
+};
+
+// Algorithms that don't need array data (they generate their own structures)
+const STRUCTURAL_SIMULATORS: Record<string, () => LogicStep[]> = {
+  "bfs": simulateBFS,
+  "dfs": simulateDFS,
+  "dijkstra": simulateDijkstra,
+  "fibonacci-dp": simulateFibonacciDP,
+  "knapsack-01": simulateKnapsack,
+  "lcs": simulateLCS,
+  "bst-insertion": simulateBSTInsertion,
+  "tree-inorder": simulateInorderTraversal,
+  "max-heapify": simulateMaxHeapify,
+  "singly-linked-list": simulateLinkedList,
 };
 
 /**
- * Main Simulator Router
- * Returns an array of execution steps for visualization.
+ * Generate a full simulation trace for any algorithm.
+ * 
+ * @param algorithmId - The algorithm key from algorithms.json
+ * @param initialData - Optional array to override default data (for Sorting/Searching)
+ * @returns LogicStep[] - Full trace with 10-30+ steps
  */
-export function generateSimulation(algorithmId: string, initialData?: number[]): LogicStep[] | null {
-  if (algorithmId === "quick-sort") {
-    return simulateQuickSort(initialData || [12, 4, 8, 3, 10, 2, 7, 5, 9, 6]);
-  }
-  
-  if (algorithmId === "dijkstra") {
-    return simulateDijkstra();
+export function generateSimulation(algorithmId: string, initialData?: number[]): LogicStep[] {
+  // 1. Check structural simulators (no array data needed)
+  if (STRUCTURAL_SIMULATORS[algorithmId]) {
+    return STRUCTURAL_SIMULATORS[algorithmId]();
   }
 
-  if (algorithmId === "merge-sort") {
-    return simulateMergeSort(initialData || [12, 4, 8, 3, 10, 2, 7, 5, 9, 6]);
+  // 2. Check array-based simulators
+  if (SIMULATORS[algorithmId]) {
+    const data = initialData && initialData.length > 0 ? initialData : getDefaultData(algorithmId);
+    return SIMULATORS[algorithmId](data);
   }
 
-  if (algorithmId === "binary-search") {
-    return simulateBinarySearch();
-  }
-
-  return [
-    { description_en: `Simulation not implemented yet.`, array_state: [1, 2, 3], pivot_index: 0, active_line: 0 }
-  ];
-}
-
-// ---------------------------------------------------------
-// 1. QUICK SORT SIMULATOR (In-place with Line Tracing)
-// ---------------------------------------------------------
-function simulateQuickSort(initialArr: number[]): LogicStep[] {
-  const steps: LogicStep[] = [];
-  const arr = [...initialArr];
-
-  steps.push({
-    description_en: "Initial unsorted array.",
-    array_state: [...arr],
-    pivot_index: null,
-    partition_range: [0, arr.length - 1],
-    active_line: 1
-  });
-
-  function partition(low: number, high: number): number {
-    const pivot = arr[high];
-    steps.push({
-      description_en: `Select pivot (${pivot}) at index ${high}.`,
-      array_state: [...arr],
-      pivot_index: high,
-      partition_range: [low, high],
-      active_line: 7
-    });
-
-    let i = low - 1;
-    steps.push({
-      description_en: `Initialize partition pointer i at ${i}.`,
-      array_state: [...arr],
-      pivot_index: high,
-      partition_range: [low, high],
-      active_line: 8
-    });
-
-    for (let j = low; j < high; j++) {
-      steps.push({
-        description_en: `Comparing array[${j}] (${arr[j]}) with pivot (${pivot}).`,
-        array_state: [...arr],
-        pivot_index: high,
-        partition_range: [low, high],
-        active_line: 9
-      });
-
-      if (arr[j] < pivot) {
-        i++;
-        const temp = arr[i];
-        arr[i] = arr[j];
-        arr[j] = temp;
-        steps.push({
-          description_en: `Swapped ${arr[j]} and ${arr[i]} (i increased to ${i}).`,
-          array_state: [...arr],
-          pivot_index: high,
-          partition_range: [low, high],
-          active_line: 12
-        });
-      }
-    }
-    const temp2 = arr[i + 1];
-    arr[i + 1] = arr[high];
-    arr[high] = temp2;
-
-    steps.push({
-      description_en: `Swap pivot with array[i+1]. Pivot is now at index ${i + 1}.`,
-      array_state: [...arr],
-      pivot_index: i + 1,
-      partition_range: [low, high],
-      active_line: 13
-    });
-
-    return i + 1;
-  }
-
-  function sort(low: number, high: number) {
-    if (low < high) {
-      steps.push({
-        description_en: `Current sub-array [${low}..${high}] has size > 1. Proceed to partition.`,
-        array_state: [...arr],
-        pivot_index: null,
-        partition_range: [low, high],
-        active_line: 1
-      });
-
-      const pi = partition(low, high);
-      
-      steps.push({
-        description_en: `Recursively sorting left sub-array [${low}..${pi - 1}].`,
-        array_state: [...arr],
-        pivot_index: null,
-        partition_range: [low, pi - 1 >= low ? pi - 1 : low],
-        active_line: 3
-      });
-      sort(low, pi - 1);
-
-      steps.push({
-        description_en: `Recursively sorting right sub-array [${pi + 1}..${high}].`,
-        array_state: [...arr],
-        pivot_index: null,
-        partition_range: [pi + 1 <= high ? pi + 1 : high, high],
-        active_line: 4
-      });
-      sort(pi + 1, high);
-    }
-  }
-
-  sort(0, arr.length - 1);
-
-  steps.push({
-    description_en: "Final sorted array complete.",
-    array_state: [...arr],
-    pivot_index: null,
-    partition_range: null,
-    active_line: 0
-  });
-
-  return steps;
-}
-
-// ---------------------------------------------------------
-// 2. MERGE SORT SIMULATOR
-// ---------------------------------------------------------
-function simulateMergeSort(initialArr: number[]): LogicStep[] {
-  const steps: LogicStep[] = [];
-  const arr = [...initialArr];
-
-  function merge(left: number, mid: number, right: number) {
-    const temp = [];
-    let i = left;
-    let j = mid + 1;
-    
-    steps.push({
-      description_en: `Merging sub-arrays [${left}..${mid}] and [${mid+1}..${right}].`,
-      array_state: [...arr],
-      pivot_index: mid,
-      partition_range: [left, right],
-      active_line: 6
-    });
-
-    while (i <= mid && j <= right) {
-      if (arr[i] <= arr[j]) {
-        temp.push(arr[i++]);
-      } else {
-        temp.push(arr[j++]);
-      }
-    }
-    while (i <= mid) temp.push(arr[i++]);
-    while (j <= right) temp.push(arr[j++]);
-
-    for (let k = 0; k < temp.length; k++) {
-      arr[left + k] = temp[k];
-      steps.push({
-        description_en: `Updating element at index ${left + k}.`,
-        array_state: [...arr],
-        pivot_index: left + k,
-        partition_range: [left, right],
-        active_line: 12
-      });
-    }
-  }
-
-  function sort(left: number, right: number) {
-    if (left >= right) return;
-    const mid = Math.floor((left + right) / 2);
-    sort(left, mid);
-    sort(mid + 1, right);
-    merge(left, mid, right);
-  }
-
-  sort(0, arr.length - 1);
-  return steps;
-}
-
-// ---------------------------------------------------------
-// 3. BINARY SEARCH SIMULATOR
-// ---------------------------------------------------------
-function simulateBinarySearch(): LogicStep[] {
-  const steps: LogicStep[] = [];
-  const arr = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20];
-  const target = 16;
-  
-  let low = 0;
-  let high = arr.length - 1;
-
-  while (low <= high) {
-    const mid = Math.floor((low + high) / 2);
-    steps.push({
-      description_en: `Evaluating mid element ${arr[mid]} at index ${mid}.`,
-      array_state: [...arr],
-      pivot_index: mid,
-      partition_range: [low, high],
-      active_line: 4
-    });
-
-    if (arr[mid] === target) {
-      steps.push({
-        description_en: `Target found at index ${mid}.`,
-        array_state: [...arr],
-        pivot_index: mid,
-        partition_range: [mid, mid],
-        active_line: 5
-      });
-      return steps;
-    } else if (arr[mid] < target) {
-      low = mid + 1;
-      steps.push({
-        description_en: `Target is larger than ${arr[mid]}. Searching right half.`,
-        array_state: [...arr],
-        pivot_index: mid,
-        partition_range: [low, high],
-        active_line: 6
-      });
-    } else {
-      high = mid - 1;
-      steps.push({
-        description_en: `Target is smaller than ${arr[mid]}. Searching left half.`,
-        array_state: [...arr],
-        pivot_index: mid,
-        partition_range: [low, high],
-        active_line: 7
-      });
-    }
-  }
-  return steps;
-}
-
-// ---------------------------------------------------------
-// 4. DIJKSTRA SIMULATOR
-// ---------------------------------------------------------
-function simulateDijkstra(): LogicStep[] {
-  const steps: LogicStep[] = [];
-  steps.push({
-    description_en: "Distance to start node (A) set to 0. All others to Infinity.",
-    array_state: [0, Infinity, Infinity, Infinity, Infinity, Infinity],
-    pivot_index: 0,
-    active_line: 1
-  });
-
-  steps.push({
-    description_en: "Evaluating neighbor edges of A.",
-    array_state: [0, 5, Infinity, 8, Infinity, Infinity],
-    pivot_index: 0,
-    active_line: 4
-  });
-
-  steps.push({
-    description_en: "Updating shortest path to C through B.",
-    array_state: [0, 5, 8, 8, Infinity, Infinity],
-    pivot_index: 1,
-    active_line: 6
-  });
-
-  return steps;
+  // 3. Fallback: return a minimal single-step trace
+  return [{ description_en: `Simulation for "${algorithmId}" is not yet implemented.`, active_line: -1 }];
 }
