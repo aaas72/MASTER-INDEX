@@ -55,6 +55,8 @@ const STRUCTURAL_SIMULATORS: Record<string, () => LogicStep[]> = {
   "singly-linked-list": simulateLinkedList,
 };
 
+import { validateTrace } from "./validator";
+
 /**
  * Generate a full simulation trace for any algorithm.
  * 
@@ -63,17 +65,42 @@ const STRUCTURAL_SIMULATORS: Record<string, () => LogicStep[]> = {
  * @returns LogicStep[] - Full trace with 10-30+ steps
  */
 export function generateSimulation(algorithmId: string, initialData?: number[]): LogicStep[] {
+  let steps: LogicStep[] = [];
+  let inputForValidation: any = null;
+
   // 1. Check structural simulators (no array data needed)
   if (STRUCTURAL_SIMULATORS[algorithmId]) {
-    return STRUCTURAL_SIMULATORS[algorithmId]();
+    steps = STRUCTURAL_SIMULATORS[algorithmId]();
   }
 
   // 2. Check array-based simulators
-  if (SIMULATORS[algorithmId]) {
+  else if (SIMULATORS[algorithmId]) {
     const data = initialData && initialData.length > 0 ? initialData : getDefaultData(algorithmId);
-    return SIMULATORS[algorithmId](data);
+    inputForValidation = data;
+    steps = SIMULATORS[algorithmId](data);
   }
 
   // 3. Fallback: return a minimal single-step trace
-  return [{ description_en: `Simulation for "${algorithmId}" is not yet implemented.`, active_line: -1 }];
+  else {
+    steps = [{ description_en: `Simulation for "${algorithmId}" is not yet implemented.`, active_line: -1 }];
+  }
+
+  // 4. VALIDATION LAYER
+  const validation = validateTrace(algorithmId, steps, inputForValidation);
+  if (!validation.isValid) {
+    console.error(`[ALGO-ENGINE] Validation Failed for "${algorithmId}":`, validation.error);
+    if (process.env.NODE_ENV === "development") {
+      // In development, we might want to alert or mark the steps
+      steps.unshift({
+        description_en: `INTERNAL ERROR: This simulation might be incorrect. (${validation.error})`,
+        active_line: -1
+      });
+    }
+
+
+  }
+
+
+  return steps;
 }
+
