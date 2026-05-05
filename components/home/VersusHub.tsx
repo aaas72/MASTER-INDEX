@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { home as t } from "@/locales/en/home";
 
 export default function VersusHub() {
   return (
@@ -7,10 +6,10 @@ export default function VersusHub() {
       <div className="mx-auto w-full max-w-[1280px] px-12">
         <div className="mb-16 border-l-4 border-[#002FA7] pl-8 text-left">
           <h3 className="mb-2 font-sans text-4xl font-extrabold uppercase tracking-tighter text-black">
-            {t.versus.title}
+            VERSUS_HUB
           </h3>
           <p className="font-mono text-xs uppercase tracking-widest text-slate-500">
-            {t.versus.description}
+            Comparative performance analytics of standard computational paradigms.
           </p>
         </div>
 
@@ -20,7 +19,7 @@ export default function VersusHub() {
               <div className="flex w-1/2 flex-col justify-between border-r border-outline-variant p-8">
                 <div>
                   <span className="mb-2 block font-mono text-[10px] uppercase text-slate-400">
-                    {t.versus.challenger_a}
+                    CHALLENGER_A
                   </span>
                   <h4 className="font-sans text-2xl font-bold text-black">
                     Merge Sort
@@ -33,7 +32,7 @@ export default function VersusHub() {
               <div className="relative flex w-1/2 flex-col justify-between overflow-hidden bg-[#002FA7] p-8 text-white">
                 <div>
                   <span className="mb-2 block font-mono text-[10px] uppercase opacity-60">
-                    {t.versus.challenger_b}
+                    CHALLENGER_B
                   </span>
                   <h4 className="font-sans text-2xl font-bold">Quick Sort</h4>
                 </div>
@@ -42,7 +41,7 @@ export default function VersusHub() {
                 </div>
                 <div className="z-10 flex items-end justify-between">
                   <span className="bg-white px-3 py-1 font-mono text-[10px] font-bold uppercase text-[#002FA7]">
-                    {t.versus.winner_speed}
+                    WINNER_SPEED
                   </span>
                   <span className="material-symbols-outlined">
                     military_tech
@@ -54,7 +53,7 @@ export default function VersusHub() {
               <div className="flex gap-4">
                 <div className="flex flex-col">
                   <span className="font-mono text-[8px] uppercase text-slate-400">
-                    {t.versus.context}
+                    CONTEXT
                   </span>
                   <span className="font-mono text-xs font-bold text-black">
                     Random Large Array
@@ -62,7 +61,7 @@ export default function VersusHub() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-mono text-[8px] uppercase text-slate-400">
-                    {t.versus.latency}
+                    LATENCY
                   </span>
                   <span className="font-mono text-xs font-bold text-[#002FA7]">
                     -14.2%
@@ -70,7 +69,7 @@ export default function VersusHub() {
                 </div>
               </div>
               <Link href="/versus" className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
-                {t.versus.view_breakdown}
+                VIEW BREAKDOWN
               </Link>
             </div>
           </div>
@@ -80,7 +79,7 @@ export default function VersusHub() {
               <div className="flex w-1/2 flex-col justify-between border-r border-outline-variant bg-surface-container-high p-8">
                 <div>
                   <span className="mb-2 block font-mono text-[10px] uppercase text-slate-400">
-                    {t.versus.challenger_a}
+                    CHALLENGER_A
                   </span>
                   <h4 className="font-sans text-2xl font-bold text-black">
                     DFS
@@ -93,12 +92,12 @@ export default function VersusHub() {
               <div className="relative flex w-1/2 flex-col justify-between p-8">
                 <div className="absolute top-4 right-4">
                   <span className="bg-tertiary-fixed px-2 py-1 font-mono text-[8px] font-bold uppercase text-tertiary">
-                    {t.versus.recommended}
+                    RECOMMENDED
                   </span>
                 </div>
                 <div>
                   <span className="mb-2 block font-mono text-[10px] uppercase text-slate-400">
-                    {t.versus.challenger_b}
+                    CHALLENGER_B
                   </span>
                   <h4 className="font-sans text-2xl font-bold text-black">
                     BFS
@@ -106,7 +105,7 @@ export default function VersusHub() {
                 </div>
                 <div className="flex items-end justify-between">
                   <span className="bg-[#002FA7] px-3 py-1 font-mono text-[10px] font-bold uppercase text-white">
-                    {t.versus.winner_path}
+                    WINNER_PATH
                   </span>
                   <span className="material-symbols-outlined text-slate-300">
                     compare_arrows
@@ -118,7 +117,7 @@ export default function VersusHub() {
               <div className="flex gap-4">
                 <div className="flex flex-col">
                   <span className="font-mono text-[8px] uppercase text-slate-400">
-                    {t.versus.context}
+                    CONTEXT
                   </span>
                   <span className="font-mono text-xs font-bold text-black">
                     Unweighted Graph
@@ -126,7 +125,7 @@ export default function VersusHub() {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-mono text-[8px] uppercase text-slate-400">
-                    {t.versus.reliability}
+                    RELIABILITY
                   </span>
                   <span className="font-mono text-xs font-bold text-green-600">
                     100%
@@ -134,7 +133,7 @@ export default function VersusHub() {
                 </div>
               </div>
               <Link href="/versus" className="border-b-2 border-[#002FA7] font-mono text-[10px] font-bold uppercase tracking-widest text-[#002FA7]">
-                {t.versus.view_breakdown}
+                VIEW BREAKDOWN
               </Link>
             </div>
           </div>

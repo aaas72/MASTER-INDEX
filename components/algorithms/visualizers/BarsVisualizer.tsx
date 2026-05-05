@@ -106,7 +106,7 @@ export default function BarsVisualizer({
 
         {/* Right: Execution Trace (40% in normal, fixed 96 in fullscreen) */}
         <div
-          className={`w-full ${isFullscreen ? 'md:w-96' : 'md:w-[40%]'} border-outline-variant/20 flex flex-col overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isFullscreen ? 'h-full bg-surface-container-lowest border-l p-6 md:p-8 shadow-xl z-10' : 'md:border-l md:pl-6 h-full'}`}
+          className={`w-full ${isFullscreen ? 'md:w-96' : 'md:w-[40%]'} border-outline-variant/20 flex flex-col overflow-y-auto playground-sidebar-scroll ${isFullscreen ? 'h-full bg-surface-container-lowest border-l p-6 md:p-8 shadow-xl z-10' : 'md:border-l md:pl-6 h-full'}`}
         >
           <div className="flex justify-between items-center mb-4 pb-2 border-b border-primary/10 sticky top-0 bg-surface-container-lowest/80 backdrop-blur-sm z-10">
             <span className="font-mono text-[10px] tracking-tighter text-primary font-bold">EXECUTION_TRACE</span>
@@ -134,7 +134,7 @@ export default function BarsVisualizer({
                       Step {idx + 1}
                     </p>
                     <p className="font-sans text-xs text-on-surface-variant mt-1">
-                      {step.description.en}
+                      {step.description}
                     </p>
                     {step.state_snapshot.array && (
                       <div className="mt-2 font-mono text-[8px] text-outline tracking-tight bg-surface-container-high p-1 rounded-sm overflow-x-auto whitespace-nowrap">

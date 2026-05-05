@@ -4,8 +4,12 @@ import { useEffect, useState, useRef } from "react";
 
 const sections = [
   { id: "visualization", label: "Visualization" },
-  { id: "proof", label: "Mathematical Proof" },
+  { id: "analysis", label: "Computational Analysis" },
+  { id: "logic", label: "Procedural Logic" },
   { id: "implementation", label: "Implementation" },
+  { id: "applications", label: "Real-world Applications" },
+  { id: "comparisons", label: "Comparative Analysis" },
+  { id: "citations", label: "Academic References" },
   { id: "benchmarks", label: "Benchmarks" },
 ];
 

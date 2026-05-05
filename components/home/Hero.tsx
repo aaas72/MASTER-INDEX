@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import algorithmsData from "@/data/algorithms.json";
-import { home as t } from "@/locales/en/home";
 
 export default function Hero() {
   const streamsRef = useRef<HTMLDivElement[]>([]);
@@ -72,23 +71,23 @@ export default function Hero() {
           01011001 11001010 01110101
         </div>
         <div className="data-stream" style={{ top: "15%", right: "10%" }} ref={(el) => { if (el) streamsRef.current[1] = el; }}>
-          {t.hero.streams.traversal}
+          DEPTH_FIRST_TRAVERSAL
         </div>
         <div className="data-stream" style={{ bottom: "20%", left: "8%" }} ref={(el) => { if (el) streamsRef.current[2] = el; }}>
-          {t.hero.streams.expansion}
+          SYSTEM_EXPANSION_ACTIVE
         </div>
         <div className="data-stream" style={{ bottom: "10%", right: "15%" }} ref={(el) => { if (el) streamsRef.current[3] = el; }}>
-          {t.hero.streams.memory}
+          CACHE_MEMORY_OPTIMIZED
         </div>
       </div>
 
       <div className="w-full">
         <div className="relative z-10 w-full max-w-3xl text-left">
           <span className="mb-4 block font-mono text-xs uppercase tracking-[0.3em] text-[#002FA7]">
-            {t.hero.kicker}
+            COMPUTATIONAL_DNA_ENGINE
           </span>
           <h2 className="mb-12 font-sans text-5xl font-extrabold leading-[0.95] tracking-tighter text-black md:text-7xl">
-            {t.hero.title}
+            The Master Index_
           </h2>
           <div className="group relative w-full">
             <div className="pointer-events-none absolute inset-y-0 left-6 flex items-center">
@@ -98,7 +97,7 @@ export default function Hero() {
             </div>
             <input
               className="w-full border-none border-b-2 border-outline-variant bg-white/90 px-16 py-8 text-xl font-body italic outline-none backdrop-blur-sm transition-all focus:border-primary-container focus:ring-0 placeholder:text-slate-400 shadow-custom"
-              placeholder={t.hero.placeholder}
+              placeholder="Search computational patterns..."
               type="text"
             />
             <div className="absolute inset-y-0 right-6 flex items-center space-x-2">
@@ -113,14 +112,14 @@ export default function Hero() {
 
           <div className="mt-8 flex items-center justify-between">
             <p className="font-mono text-xs uppercase tracking-widest text-slate-500">
-              {t.hero.stats.replace('[{totalAlgorithms}]', `[${totalAlgorithms}]`).replace('[{totalCategories}]', `[${totalCategories}]`)}
+              [INDEXED: {totalAlgorithms} ALGORITHMS] // [PARADIGMS: {totalCategories}]
             </p>
             <div className="flex gap-4">
               <span className="bg-surface-container-high px-3 py-1 font-mono text-[10px] uppercase text-primary">
-                {t.hero.trending}
+                TRENDING: QUICK_SORT
               </span>
               <span className="bg-surface-container-high px-3 py-1 font-mono text-[10px] uppercase text-primary">
-                {t.hero.new}
+                NEW: MERGE_SORT
               </span>
             </div>
           </div>

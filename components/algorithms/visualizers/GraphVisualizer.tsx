@@ -73,14 +73,14 @@ export default function GraphVisualizer({
         <div className={`${isFullscreen ? 'flex-1' : 'md:w-[60%]'} flex flex-col relative min-h-0 ${isFullscreen ? 'p-8 md:p-12 lg:p-16' : ''}`}>
           <div className={`flex-1 relative min-h-0 border-outline-variant/20 pb-2 ${isFullscreen ? 'border-0' : 'h-full border-b md:border-b-0'}`}>
             <InfiniteCanvas>
-              <Graph nodes={nodes} edges={edges} width={800} height={500} activeNodeId={activeNodeId} statusMessage={logicStep.description.en} />
+              <Graph nodes={nodes} edges={edges} width={800} height={500} activeNodeId={activeNodeId} statusMessage={logicStep.description} />
             </InfiniteCanvas>
           </div>
         </div>
 
         {/* Execution Trace — reads from fullTrace (FIXED: was reading algoData.simulation_trace) */}
         {/* Right: Execution Trace (40% in normal, fixed 96 in fullscreen) */}
-        <div className={`w-full ${isFullscreen ? 'md:w-96' : 'md:w-[40%]'} border-outline-variant/20 flex flex-col overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isFullscreen ? 'h-full bg-surface-container-lowest border-l p-6 md:p-8 shadow-xl z-10' : 'md:border-l md:pl-6 h-full'}`}>
+        <div className={`w-full ${isFullscreen ? 'md:w-96' : 'md:w-[40%]'} border-outline-variant/20 flex flex-col overflow-y-auto playground-sidebar-scroll ${isFullscreen ? 'h-full bg-surface-container-lowest border-l p-6 md:p-8 shadow-xl z-10' : 'md:border-l md:pl-6 h-full'}`}>
           <div className="flex justify-between items-center mb-4 pb-2 border-b border-primary/10 sticky top-0 bg-surface-container-lowest/80 backdrop-blur-sm z-10">
             <span className="font-mono text-[10px] tracking-tighter text-primary font-bold">EXECUTION_TRACE</span>
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
@@ -97,7 +97,7 @@ export default function GraphVisualizer({
                   </div>
                   <div className="pb-2">
                     <p className={`font-mono text-[10px] uppercase tracking-widest ${isCurrent ? 'text-primary font-bold' : 'text-slate-500'}`}>Step {idx + 1}</p>
-                    <p className="font-sans text-xs text-on-surface-variant mt-1">{step.description.en}</p>
+                    <p className="font-sans text-xs text-on-surface-variant mt-1">{step.description}</p>
                   </div>
                 </div>
               );
