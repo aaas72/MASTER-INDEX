@@ -86,9 +86,9 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
   return (
     <div className="bg-surface min-h-screen" id="algorithm-report">
       <main className="mx-auto flex w-full max-w-[1700px] flex-col px-6 pb-24 pt-8 lg:px-12">
-        {/* Top Header Area: Full Width */}
-        <header className="mb-12 border-b border-outline-variant/30 pb-4">
-          <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-8">
+        {/* Unified Header Area: Breadcrumbs + Hero */}
+        <header className="mb-24">
+          <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-12">
             <Link className="transition-colors hover:text-primary" href="/">
               INDEX
             </Link>
@@ -101,10 +101,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
               {algoData.metadata.title}
             </span>
           </div>
-        </header>
 
-        {/* Hero Section: Full Width */}
-        <header className="mb-24 relative">
           <div className="flex flex-col gap-3">
             <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
               {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
