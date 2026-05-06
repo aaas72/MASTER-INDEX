@@ -367,7 +367,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
                   <div className="space-y-10">
                     {algoData.citations.map((cite, idx) => (
                       <div key={idx} className="flex flex-col gap-2 max-w-2xl">
-                        <p className="font-serif text-lg md:text-xl font-bold text-black">{cite.source_name}</p>
+                        <p className="font-serif text-base md:text-lg font-bold text-primary italic">{cite.source_name}</p>
                         <p className="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest leading-loose">
                           Research Authors: {cite.authors}<br />
                           Reference Node: {cite.chapter_or_page}
