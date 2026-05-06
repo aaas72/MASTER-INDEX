@@ -127,14 +127,14 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
 
               {/* Description Section */}
               <section className="mb-24 max-w-3xl">
-              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-b-2 border-primary/10 pb-4">Abstract // Theoretical Basis</h2>
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Abstract // Theoretical Basis</h2>
                 <div className="font-serif text-base md:text-lg text-on-surface-variant leading-loose antialiased first-letter:text-4xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-primary">
                   <ScientificRenderer content={algoData.documentation.description} />
                 </div>
               </section>
 
             <section id="visualization" className="mb-32">
-              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Interactive Simulation</h2>
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Interactive Simulation</h2>
                 <div className="bg-surface-container-lowest border border-outline-variant/10 shadow-sm overflow-hidden h-[500px] flex flex-col">
                   {algoData.visualizer_config.type === "graph" ? (
                     <GraphVisualizer
@@ -223,7 +223,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
               </section>
 
               <section id="analysis" className="mb-24">
-                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Computational Analysis</h2>
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Computational Analysis</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="border border-outline-variant/10 bg-surface-container-low p-8">
                     <h3 className="font-mono text-[10px] uppercase font-black text-primary mb-4">Average Time Complexity</h3>
@@ -251,7 +251,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
               </section>
 
               <section id="logic" className="mb-32">
-              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Procedural Methodology</h2>
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Procedural Methodology</h2>
                 <div className="space-y-12">
                   {algoData.documentation.how_it_works.map((step, idx) => (
                     <div key={idx} className="flex gap-10 items-start max-w-3xl group">
@@ -270,7 +270,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
 
               <section id="implementation" className="mb-32">
               <div className="flex items-center justify-between mb-12">
-                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black">Reference Implementation</h2>
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Reference Implementation</h2>
               </div>
                 <div className="bg-surface-container-lowest border border-outline-variant/10 shadow-2xl overflow-hidden mb-8">
                   <CodeVisualizer
@@ -287,7 +287,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
 
             {algoData.documentation.pitfalls && (
               <section id="pitfalls" className="mb-32">
-                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Theoretical Constraints & Pitfalls</h2>
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Theoretical Constraints & Pitfalls</h2>
                 <div className="space-y-12">
                   {algoData.documentation.pitfalls.map((pitfall, idx) => (
                     <div key={idx} className="flex gap-10 items-start max-w-3xl group">
@@ -319,7 +319,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
 
             {/* Nomenclature Section */}
             <section className="mb-32 border-t border-outline-variant/10 pt-16">
-              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Technical Nomenclature</h2>
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Technical Nomenclature</h2>
               <div className="grid grid-cols-1 gap-y-10">
                 <div className="flex gap-6 items-center">
                   <AcademicLabel prefix="TH-CST" />
@@ -338,7 +338,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
 
             {algoData.documentation.comparisons && (
               <section id="comparisons" className="mb-32">
-                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Comparative Analysis</h2>
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Comparative Analysis</h2>
                 <div className="space-y-12">
                   {algoData.documentation.comparisons.map((comp, idx) => (
                     <div key={idx} className="flex gap-10 items-start max-w-3xl group">
@@ -360,7 +360,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
 
             {algoData.citations && algoData.citations.length > 0 && (
               <section id="citations" className="mb-32 border-t border-outline-variant/20 pt-16">
-                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Academic Index & Citations</h2>
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-r-4 border-primary/20 pr-6 inline-block">Academic Index & Citations</h2>
                   <div className="space-y-10">
                     {algoData.citations.map((cite, idx) => (
                       <div key={idx} className="flex flex-col gap-2 max-w-2xl">
