@@ -87,31 +87,58 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
     <div className="bg-surface min-h-screen" id="algorithm-report">
       <main className="mx-auto flex w-full max-w-[1700px] flex-col px-6 pb-24 lg:px-12">
         {/* Unified Header Area: Breadcrumbs + Hero */}
-        <header className="mb-12 border-b border-outline-variant/10 pb-12 pt-12 bg-white -mx-6 px-6 lg:-mx-12 lg:px-12 shadow-[0_1px_3px_rgba(0,0,0,0,02)]">
-          <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-12">
-            <Link className="transition-colors hover:text-primary" href="/">
-              INDEX
-            </Link>
-            <span className="text-outline">/</span>
-            <Link className="transition-colors hover:text-primary" href="/categories/sorting-search">
-              ALGORITHMS
-            </Link>
-            <span className="text-outline">/</span>
-            <span className="font-bold text-primary">
-              {algoData.metadata.title}
-            </span>
+        <header className="mb-12 border-b border-outline-variant/10 pb-12 pt-12 bg-white -mx-6 px-6 lg:-mx-12 lg:px-12 shadow-[0_1px_3px_rgba(0,0,0,0,02)] relative overflow-hidden group">
+          {/* Decorative Watermark: Faded representation of the algorithm type */}
+          <div className="absolute right-0 top-0 bottom-0 w-1/2 pointer-events-none flex items-center justify-end pr-12 lg:pr-24 opacity-[0.04] transition-opacity duration-1000 group-hover:opacity-[0.07]">
+            {algoData.visualizer_config.type === "bars" ? (
+              <div className="flex items-end gap-2 h-32">
+                {[40, 70, 45, 90, 60, 85, 30].map((h, i) => (
+                  <div key={i} className="w-4 bg-primary" style={{ height: `${h}%` }} />
+                ))}
+              </div>
+            ) : algoData.visualizer_config.type === "graph" || algoData.visualizer_config.type === "tree" ? (
+              <svg width="200" height="200" viewBox="0 0 200 200" className="text-primary fill-current">
+                <circle cx="100" cy="40" r="15" />
+                <circle cx="40" cy="140" r="15" />
+                <circle cx="160" cy="140" r="15" />
+                <line x1="100" y1="40" x2="40" y2="140" stroke="currentColor" strokeWidth="4" />
+                <line x1="100" y1="40" x2="160" y2="140" stroke="currentColor" strokeWidth="4" />
+              </svg>
+            ) : (
+              <div className="grid grid-cols-4 gap-2 opacity-50">
+                {Array.from({ length: 16 }).map((_, i) => (
+                  <div key={i} className="w-6 h-6 border border-primary" />
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col gap-3">
-            <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
-              {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
-            </span>
-            <h1 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-black uppercase leading-[0.9] mb-2">
-              {algoData.metadata.title}<span className="text-primary">_</span>
-            </h1>
-            <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl">
-              {algoData.metadata.subtitle}
-            </p>
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-12">
+              <Link className="transition-colors hover:text-primary" href="/">
+                INDEX
+              </Link>
+              <span className="text-outline">/</span>
+              <Link className="transition-colors hover:text-primary" href="/categories/sorting-search">
+                ALGORITHMS
+              </Link>
+              <span className="text-outline">/</span>
+              <span className="font-bold text-primary">
+                {algoData.metadata.title}
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
+                {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
+              </span>
+              <h1 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-black uppercase leading-[0.9] mb-2">
+                {algoData.metadata.title}<span className="text-primary">_</span>
+              </h1>
+              <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl">
+                {algoData.metadata.subtitle}
+              </p>
+            </div>
           </div>
         </header>
 
