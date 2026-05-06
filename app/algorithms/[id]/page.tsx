@@ -251,7 +251,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
                 {algoData.complexity.space.notes && (
                   <div className="mt-8 border-l-2 border-primary/30 pl-6">
                     <p className="font-serif text-sm italic text-on-surface-variant leading-relaxed">
-                      Note on Space Allocation: {algoData.complexity.space.notes}
+                      Note on Space Allocation: <ScientificRenderer content={algoData.complexity.space.notes} />
                     </p>
                   </div>
                 )}
