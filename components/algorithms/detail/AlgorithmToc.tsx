@@ -58,7 +58,7 @@ export default function AlgorithmToc() {
 
   return (
     <nav className="relative hidden w-44 shrink-0 lg:block">
-      <div className="fixed top-48 w-44 flex flex-col gap-5 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
+      <div className="sticky top-24 flex flex-col gap-5 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
         <div className="mb-4 flex items-center gap-3 border-b border-outline-variant/20 pb-3">
           <div className="h-2 w-2 bg-primary" />
           <h3 className="font-bold text-on-surface tracking-[0.15em]">CONTENTS</h3>
