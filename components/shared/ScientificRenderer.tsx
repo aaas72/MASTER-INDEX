@@ -22,7 +22,7 @@ export default function ScientificRenderer({
   if (!content) return null;
 
   // If it's a pure LaTeX string (often used in complexity fields) and isBlock is true
-  const isPureMath = !content.includes(" ") && (content.includes("\\") || content.includes("^"));
+  const isPureMath = content.includes('\\') || /^[O0123456789n\^\(\)\s\+\-\*\/\!]+$/i.test(content.trim());
   
   if (isBlock || (isPureMath && !content.includes("$"))) {
     return (

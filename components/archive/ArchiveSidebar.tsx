@@ -1,4 +1,4 @@
-import { BrutalistButton } from "@/components/shared";
+import { BrutalistButton, ScientificRenderer } from "@/components/shared";
 import React, { useState } from "react";
 
 interface ArchiveSidebarProps {
@@ -60,7 +60,9 @@ export default function ArchiveSidebar({
                     />
                     <span className="material-symbols-outlined absolute text-white text-[12px] opacity-0 peer-checked:opacity-100 pointer-events-none">check</span>
                   </div>
-                  <span className="font-mono text-xs font-bold text-slate-500 group-hover:text-primary transition-colors">{comp}</span>
+                  <span className="font-mono text-xs font-bold text-slate-500 group-hover:text-primary transition-colors">
+                    <ScientificRenderer content={comp} />
+                  </span>
                 </label>
               ))}
               {complexityOptions.length > 5 && (

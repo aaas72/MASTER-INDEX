@@ -5,8 +5,14 @@ export default function SettingsPage() {
     <div className="flex w-full min-h-screen">
       <Sidebar />
       <div className="flex-1 p-12 min-w-0">
-        <h1 className="page-title-sm mb-4 uppercase">Settings</h1>
-        <p className="body-copy mb-8">Objective: Environment customization and user interface adjustments.</p>
+        <div className="w-full border-b border-outline-variant/10 pb-6 mb-8 flex flex-col gap-2">
+          <h1 className="font-sans text-3xl font-black text-black uppercase tracking-tight">
+            System Settings
+          </h1>
+          <p className="font-mono text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
+            ENVIRONMENT_CUSTOMIZATION // USER_INTERFACE_ADJUSTMENTS
+          </p>
+        </div>
         
         <div className="space-y-6 max-w-xl">
           <div className="p-6 border border-slate-200">

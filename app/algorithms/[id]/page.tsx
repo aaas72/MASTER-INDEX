@@ -87,31 +87,29 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
     <div className="bg-surface min-h-screen" id="algorithm-report">
       <main className="mx-auto flex w-full max-w-[1700px] flex-col px-6 pb-24 lg:px-12">
         {/* Unified Header Area: Breadcrumbs + Hero */}
-        <header className="mb-12 border-b border-outline-variant/10 pb-12 pt-12 bg-white -mx-6 px-6 lg:-mx-12 lg:px-12 shadow-[0_1px_3px_rgba(0,0,0,0,02)]">
-          <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-12">
-            <Link className="transition-colors hover:text-primary" href="/">
-              INDEX
-            </Link>
-            <span className="text-outline">/</span>
-            <Link className="transition-colors hover:text-primary" href="/categories/sorting-search">
-              ALGORITHMS
-            </Link>
-            <span className="text-outline">/</span>
-            <span className="font-bold text-primary">
-              {algoData.metadata.title}
-            </span>
+        {/* Simplified Header: Matching Archive style */}
+        <header className="mb-12 border-b border-outline-variant/10 pb-6">
+          <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant mb-6">
+            <Link className="transition-colors hover:text-primary" href="/">INDEX</Link>
+            <span className="opacity-20">/</span>
+            <Link className="transition-colors hover:text-primary" href="/algorithms">ALGORITHMS</Link>
+            <span className="opacity-20">/</span>
+            <span className="text-primary font-bold">{algoData.metadata.title}</span>
           </div>
 
-          <div className="flex flex-col gap-3">
-            <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
-              {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
-            </span>
-            <h1 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-black uppercase leading-[0.9] mb-2">
+          <div className="flex flex-col gap-2">
+            <h1 className="font-sans text-4xl md:text-5xl font-black text-black uppercase tracking-tighter leading-none">
               {algoData.metadata.title}<span className="text-primary">_</span>
             </h1>
-            <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl">
-              {algoData.metadata.subtitle}
-            </p>
+            <div className="flex items-center gap-4">
+              <p className="font-mono text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
+                {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
+              </p>
+              <span className="w-1 h-1 bg-outline-variant rounded-full" />
+              <p className="font-serif text-sm text-on-surface-variant italic">
+                {algoData.metadata.subtitle}
+              </p>
+            </div>
           </div>
         </header>
 

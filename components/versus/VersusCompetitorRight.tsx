@@ -1,5 +1,4 @@
-import { BlockMath } from "react-katex";
-
+import { ScientificRenderer } from "@/components/shared";
 import { Algorithm } from "@/types/algorithm";
 
 type VersusCompetitorRightProps = {
@@ -7,11 +6,6 @@ type VersusCompetitorRightProps = {
 	isWinner: boolean;
 	visualizer?: React.ReactNode;
 	summaryPoints?: string[];
-};
-
-const toMathNotation = (value: any) => {
-	if (!value || typeof value !== 'string') return "";
-	return value.replaceAll("log", "\\log ").replaceAll("^2", "^{2}");
 };
 
 export default function VersusCompetitorRight({
@@ -28,7 +22,7 @@ export default function VersusCompetitorRight({
 						CHALLENGER_02
 					</span>
 					<h2 className="font-sans text-4xl font-bold text-on-surface mt-2">
-						{algorithm.metadata.title.en.replaceAll(" ", "")}
+						{algorithm.metadata.title.replaceAll(" ", "")}
 					</h2>
 					<p className="font-mono text-sm text-secondary mt-1">
 						{algorithm.metadata.category}
@@ -60,7 +54,7 @@ export default function VersusCompetitorRight({
 							Time Complexity
 						</span>
 						<div className="font-mono text-on-surface text-lg">
-							<BlockMath math={toMathNotation(algorithm.complexity.time.average.label)} />
+							<ScientificRenderer content={algorithm.complexity.time.average} isBlock />
 						</div>
 					</div>
 					<div className="bg-surface-container-lowest p-6 flex flex-col justify-center items-center">
@@ -68,7 +62,7 @@ export default function VersusCompetitorRight({
 							Space Complexity
 						</span>
 						<div className="font-mono text-primary text-lg">
-							<BlockMath math={toMathNotation(algorithm.complexity.space.label)} />
+							<ScientificRenderer content={algorithm.complexity.space.average} isBlock />
 						</div>
 					</div>
 					<div className="bg-surface-container-lowest p-6 flex flex-col justify-center items-center col-span-2">
@@ -87,7 +81,7 @@ export default function VersusCompetitorRight({
 					Mathematical Signal
 				</h3>
 				<div className="font-mono text-sm text-on-surface overflow-x-auto">
-					<BlockMath math={"O(f(n)) \\rightarrow \\Omega(g(n))"} />
+					<ScientificRenderer content={"O(f(n)) \\rightarrow \\Omega(g(n))"} isBlock />
 				</div>
 			</div>
 

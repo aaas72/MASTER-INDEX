@@ -7,7 +7,7 @@ import algorithmsData from "@/data/algorithms.json";
 
 export default function CategoriesPage() {
   const [sortBy, setSortBy] = useState<"Alpha" | "Pop" | "Cmplx">("Alpha");
-  
+
   const algorithms = Object.values(algorithmsData);
   const categoriesMap = algorithms.reduce((acc, algo: any) => {
     const category = algo.metadata?.category || "General";
@@ -48,26 +48,26 @@ export default function CategoriesPage() {
                 Browse by Paradigm
               </h1>
             </div>
-            
+
             <div className="w-full">
               <div className="flex items-center gap-4">
                 <span className="font-mono text-[10px] text-on-surface-variant uppercase tracking-[0.2em]">
                   Sort By:
                 </span>
                 <div className="flex bg-surface-container-low border border-outline-variant/20 p-1">
-                  <button 
+                  <button
                     onClick={() => setSortBy("Alpha")}
                     className={`px-4 py-1.5 font-mono text-xs tracking-wider border transition-all ${sortBy === "Alpha" ? "bg-surface-container-lowest text-primary border-outline-variant/20" : "text-on-surface-variant border-transparent hover:bg-surface-container-lowest/50"}`}
                   >
                     Alpha
                   </button>
-                  <button 
+                  <button
                     onClick={() => setSortBy("Pop")}
                     className={`px-4 py-1.5 font-mono text-xs tracking-wider border transition-all ${sortBy === "Pop" ? "bg-surface-container-lowest text-primary border-outline-variant/20" : "text-on-surface-variant border-transparent hover:bg-surface-container-lowest/50"}`}
                   >
                     Pop
                   </button>
-                  <button 
+                  <button
                     onClick={() => setSortBy("Cmplx")}
                     className={`px-4 py-1.5 font-mono text-xs tracking-wider border transition-all ${sortBy === "Cmplx" ? "bg-surface-container-lowest text-primary border-outline-variant/20" : "text-on-surface-variant border-transparent hover:bg-surface-container-lowest/50"}`}
                   >
