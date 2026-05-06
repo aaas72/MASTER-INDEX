@@ -57,7 +57,7 @@ export default function AlgorithmToc() {
   };
 
   return (
-    <div className="sticky top-32 flex flex-col gap-5 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
+    <div className="sticky top-8 flex flex-col gap-5 font-mono text-[10px] uppercase tracking-widest text-on-surface-variant">
         <div className="mb-4 flex items-center gap-3 border-b border-outline-variant/20 pb-3">
           <div className="h-2 w-2 bg-primary" />
           <h3 className="font-bold text-on-surface tracking-[0.15em]">CONTENTS</h3>

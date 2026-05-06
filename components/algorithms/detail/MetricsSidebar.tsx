@@ -1,22 +1,6 @@
 import { Algorithm } from "@/types/algorithm";
 import Link from "next/link";
-import { BrutalistButton } from "@/components/shared";
-import { InlineMath } from "react-katex";
-
-const MathText = ({ text }: { text: string }) => {
-  if (!text) return null;
-  const parts = text.split(/(\$.*?\$)/g);
-  return (
-    <>
-      {parts.map((part, i) => {
-        if (part.startsWith("$") && part.endsWith("$")) {
-          return <InlineMath key={i} math={part.slice(1, -1)} />;
-        }
-        return <span key={i}>{part}</span>;
-      })}
-    </>
-  );
-};
+import { BrutalistButton, ScientificRenderer } from "@/components/shared";
 
 const MetricRow = ({ label, value, isMath = true }: { label: string; value: any; isMath?: boolean }) => {
   const displayValue = typeof value === "boolean" ? (value ? "YES" : "NO") : (value || "N/A");
@@ -28,7 +12,7 @@ const MetricRow = ({ label, value, isMath = true }: { label: string; value: any;
       </span>
       <span className={`font-mono text-sm font-semibold tracking-tight ${isMath ? "text-primary" : "text-on-surface"}`}>
         {isMath && typeof value === 'string' && (value.includes('\\') || value.includes('$')) ? (
-          <MathText text={value.startsWith('$') ? value : `$${value}$`} />
+          <ScientificRenderer content={value.startsWith('$') ? value : `$${value}$`} />
         ) : (
           displayValue
         )}
@@ -46,8 +30,8 @@ interface MetricsSidebarProps {
 export default function MetricsSidebar({ algoData, onExport, isExporting }: MetricsSidebarProps) {
   return (
     <aside className="hidden w-full shrink-0 border-l border-outline-variant/20 bg-surface/50 backdrop-blur-sm lg:block no-export">
-      <div className="sticky top-0 flex h-screen flex-col overflow-hidden p-5">
-        <div className="mb-10 pt-4">
+      <div className="sticky top-8 flex h-[calc(100vh-2rem)] flex-col overflow-hidden p-5">
+        <div className="mb-10">
           <div className="mb-1 flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse bg-primary" />
             <h2 className="font-sans text-xs font-black uppercase tracking-[0.2em] text-on-surface">
@@ -90,7 +74,7 @@ export default function MetricsSidebar({ algoData, onExport, isExporting }: Metr
               <ul className="space-y-2">
                 {algoData.documentation.pitfalls.map((pitfall, idx) => (
                   <li key={idx} className="font-mono text-[9px] uppercase leading-tight text-on-surface-variant opacity-70">
-                    - <MathText text={pitfall} />
+                    - <ScientificRenderer content={pitfall} />
                   </li>
                 ))}
               </ul>
