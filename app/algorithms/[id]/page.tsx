@@ -116,14 +116,14 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
         </header>
 
         {/* Dynamic Layout: Sidebars start here */}
-        <div className="flex flex-col lg:flex-row gap-10">
+        <div className="flex flex-col lg:flex-row gap-0">
           {/* Left: Table of Contents */}
           <aside className="hidden lg:block w-64 shrink-0 border-r border-outline-variant/10 pr-10 no-export">
             <AlgorithmToc />
           </aside>
 
           {/* Center: Main Content */}
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 px-12">
 
               {/* Description Section */}
               <section className="mb-24 max-w-3xl">
