@@ -34,13 +34,15 @@ export const AcademicLabel: React.FC<AcademicLabelProps> = ({ prefix, index, cla
 
       {/* Academic Tooltip */}
       {isHovered && (
-        <div className="absolute bottom-full left-0 mb-2 w-64 z-50 animate-in fade-in slide-in-from-bottom-1 duration-200">
-          <div className="bg-black text-white p-3 text-[10px] font-mono leading-relaxed border border-white/10 shadow-2xl uppercase tracking-widest">
-            <div className="mb-1 flex items-center gap-2 border-b border-white/20 pb-1 text-primary">
-              <span className="material-symbols-outlined text-xs">info</span>
-              LEXICON_ENTRY
+        <div className="absolute bottom-full left-0 mb-2 w-72 z-50 animate-in fade-in slide-in-from-bottom-1 duration-200">
+          <div className="bg-white text-on-surface p-4 text-[9px] font-mono leading-relaxed border border-outline-variant/30 shadow-2xl uppercase tracking-[0.15em]">
+            <div className="mb-2 flex items-center gap-2 border-b border-outline-variant/10 pb-2 text-primary font-bold">
+              <span className="material-symbols-outlined text-[10px]">info</span>
+              LEXICON // DEFINITION
             </div>
-            {info}
+            <p className="text-on-surface-variant leading-normal">
+              {info}
+            </p>
           </div>
         </div>
       )}
