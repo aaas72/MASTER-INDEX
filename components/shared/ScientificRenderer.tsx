@@ -10,7 +10,7 @@ interface ScientificRendererProps {
 }
 
 /**
- * A smart component that renders technical and mathematical content.
+ * A centralized system-wide component that renders technical and mathematical content.
  * It automatically parses LaTeX delimiters ($...$) for inline math
  * and handles pure LaTeX strings for block math.
  */

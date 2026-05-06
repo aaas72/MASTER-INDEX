@@ -8,4 +8,5 @@ export { default as BrutalistTable } from "./BrutalistTable";
 export type { TableColumn } from "./BrutalistTable";
 export { default as BrutalistButton } from "./BrutalistButton";
 export { default as UnifiedFilterBar } from "./UnifiedFilterBar";
-export { default as RouteChangeListener } from "./RouteChangeListener";
+export { default as ScientificRenderer } from "./ScientificRenderer";
+export { default as RouteChangeListener } from "./RouteChangeListener";

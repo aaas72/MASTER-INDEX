@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { BarsVisualizer, GraphVisualizer, LinkedListVisualizer, MatrixVisualizer, GeometryVisualizer, TreeVisualizer, ArrayVisualizer } from "@/components/algorithms/visualizers";
 import algorithmsData from "@/data/algorithms.json";
 import { AlgorithmToc, MetricsSidebar, CodeVisualizer } from "@/components/algorithms/detail";
-import ScientificRenderer from "@/components/algorithms/ScientificRenderer";
+import { ScientificRenderer } from "@/components/shared";
 import { exportToPdf } from "@/utils/export-pdf";
 import { Algorithm } from "@/types/algorithm";
 import { generateSimulation } from "@/lib/engine/simulator";
