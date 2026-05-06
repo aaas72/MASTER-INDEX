@@ -7,10 +7,10 @@ const sections = [
   { id: "analysis", label: "Computational Analysis" },
   { id: "logic", label: "Procedural Logic" },
   { id: "implementation", label: "Implementation" },
+  { id: "pitfalls", label: "Theoretical Constraints" },
   { id: "applications", label: "Real-world Applications" },
   { id: "comparisons", label: "Comparative Analysis" },
   { id: "citations", label: "Academic References" },
-  { id: "benchmarks", label: "Benchmarks" },
 ];
 
 export default function AlgorithmToc() {

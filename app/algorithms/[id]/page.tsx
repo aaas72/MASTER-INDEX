@@ -3,13 +3,20 @@
 import { useMemo, useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BlockMath } from "react-katex";
 import { BarsVisualizer, GraphVisualizer, LinkedListVisualizer, MatrixVisualizer, GeometryVisualizer, TreeVisualizer, ArrayVisualizer } from "@/components/algorithms/visualizers";
 import algorithmsData from "@/data/algorithms.json";
 import { AlgorithmToc, MetricsSidebar, CodeVisualizer } from "@/components/algorithms/detail";
+import ScientificRenderer from "@/components/algorithms/ScientificRenderer";
 import { exportToPdf } from "@/utils/export-pdf";
 import { Algorithm } from "@/types/algorithm";
 import { generateSimulation } from "@/lib/engine/simulator";
+
+// Unified Academic Label Component
+const AcademicLabel = ({ prefix, index, className = "" }: { prefix: string, index?: number, className?: string }) => (
+  <span className={`inline-flex items-center gap-1 font-mono text-[9px] font-black uppercase tracking-widest px-2 py-1 bg-primary/5 text-primary border border-primary/10 ${className}`}>
+    {prefix}{index !== undefined && <span className="opacity-40">.{index.toString().padStart(2, '0')}</span>}
+  </span>
+);
 
 export default function AlgorithmDetailPage({ params }: { params: { id: string } }) {
   const algorithmId = params.id;
@@ -108,203 +115,192 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
                   {algoData.metadata.title}
                 </span>
               </div>
-              <h1 className="page-title mb-6 uppercase">
-                {algoData.metadata.title}
-              </h1>
-              <div className="flex flex-col gap-4">
-                <div className="body-copy text-sm md:text-base opacity-80 leading-relaxed">
-                  <p>{algoData.documentation.description}</p>
-                </div>
-                <div className="flex gap-2">
-                  <span className="bg-primary text-white px-3 py-1 font-mono text-[9px] uppercase font-black">
-                    Category: {algoData.metadata.category}
+            </header>
+              {/* Hero Section */}
+              <header className="mb-24 relative">
+                <div className="absolute -left-12 top-0 bottom-0 w-1 bg-primary opacity-10 hidden lg:block" />
+                <div className="flex flex-col gap-3">
+                  <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
+                    {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
                   </span>
-                  {algoData.metadata.stability && (
-                    <span className="border border-outline-variant px-3 py-1 font-mono text-[9px] uppercase font-bold text-on-surface-variant">
-                      {algoData.metadata.stability}
-                    </span>
+                  <h1 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-black uppercase leading-[0.9] mb-2">
+                    {algoData.metadata.title}<span className="text-primary">_</span>
+                  </h1>
+                  <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl border-l-4 border-outline-variant/20 pl-6 py-1">
+                    {algoData.metadata.subtitle}
+                  </p>
+                </div>
+              </header>
+
+              {/* Description Section */}
+              <section className="mb-24 max-w-3xl">
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12 border-b-2 border-primary/10 pb-4">Abstract // Theoretical Basis</h2>
+                <div className="font-serif text-base md:text-lg text-on-surface-variant leading-loose antialiased first-letter:text-4xl first-letter:font-black first-letter:mr-3 first-letter:float-left first-letter:text-primary">
+                  <ScientificRenderer content={algoData.documentation.description} />
+                </div>
+              </section>
+
+            <section id="visualization" className="mb-32">
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Interactive Simulation</h2>
+                <div className="bg-surface-container-lowest border border-outline-variant/10 shadow-sm overflow-hidden h-[500px] flex flex-col">
+                  {algoData.visualizer_config.type === "graph" ? (
+                    <GraphVisualizer
+                      algoData={algoData as any}
+                      currentStep={currentStep}
+                      setCurrentStep={setCurrentStep}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      hasLogicSteps={hasLogicSteps}
+                      fullTrace={fullTrace}
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                    />
+                  ) : algoData.visualizer_config.type === "tree" ? (
+                    <TreeVisualizer
+                      algoData={algoData as any}
+                      currentStep={currentStep}
+                      setCurrentStep={setCurrentStep}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      hasLogicSteps={hasLogicSteps}
+                      fullTrace={fullTrace}
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                    />
+                  ) : algoData.visualizer_config.type === "geometry" ? (
+                    <GeometryVisualizer
+                      algoData={algoData as any}
+                      currentStep={currentStep}
+                      setCurrentStep={setCurrentStep}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      hasLogicSteps={hasLogicSteps}
+                      fullTrace={fullTrace}
+                    />
+                  ) : algoData.visualizer_config.type === "matrix" ? (
+                    <MatrixVisualizer
+                      algoData={algoData as any}
+                      currentStep={currentStep}
+                      setCurrentStep={setCurrentStep}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      hasLogicSteps={hasLogicSteps}
+                      fullTrace={fullTrace}
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                    />
+                  ) : algoData.visualizer_config.type === "linkedlist" ? (
+                    <LinkedListVisualizer
+                      algoData={algoData as any}
+                      currentStep={currentStep}
+                      setCurrentStep={setCurrentStep}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      hasLogicSteps={hasLogicSteps}
+                      fullTrace={fullTrace}
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                    />
+                  ) : algoData.visualizer_config.type === "array" ? (
+                    <ArrayVisualizer
+                      algoData={algoData as any}
+                      currentStep={currentStep}
+                      setCurrentStep={setCurrentStep}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      hasLogicSteps={hasLogicSteps}
+                      fullTrace={fullTrace}
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                    />
+                  ) : (
+                    <BarsVisualizer
+                      algoData={algoData as any}
+                      currentStep={currentStep}
+                      setCurrentStep={setCurrentStep}
+                      handlePrev={handlePrev}
+                      handleNext={handleNext}
+                      hasLogicSteps={hasLogicSteps}
+                      fullTrace={fullTrace}
+                      isPlaying={isPlaying}
+                      setIsPlaying={setIsPlaying}
+                    />
                   )}
                 </div>
-              </div>
-            </header>
+              </section>
 
-            <section id="visualization" className="mb-24">
-              <h2 className="section-title text-lg mb-6 uppercase tracking-widest font-black">Visualization</h2>
-              <div className="bg-surface-container-lowest border border-outline-variant/10 shadow-sm overflow-hidden h-[500px] flex flex-col">
-                {algoData.visualizer_config.type === "graph" ? (
-                  <GraphVisualizer
-                    algoData={algoData as any}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
-                    hasLogicSteps={hasLogicSteps}
-                    fullTrace={fullTrace}
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                  />
-                ) : algoData.visualizer_config.type === "tree" ? (
-                  <TreeVisualizer
-                    algoData={algoData as any}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
-                    hasLogicSteps={hasLogicSteps}
-                    fullTrace={fullTrace}
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                  />
-                ) : algoData.visualizer_config.type === "geometry" ? (
-                  <GeometryVisualizer
-                    algoData={algoData as any}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
-                    hasLogicSteps={hasLogicSteps}
-                    fullTrace={fullTrace}
-                  />
-                ) : algoData.visualizer_config.type === "matrix" ? (
-                  <MatrixVisualizer
-                    algoData={algoData as any}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
-                    hasLogicSteps={hasLogicSteps}
-                    fullTrace={fullTrace}
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                  />
-                ) : algoData.visualizer_config.type === "linkedlist" ? (
-                  <LinkedListVisualizer
-                    algoData={algoData as any}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
-                    hasLogicSteps={hasLogicSteps}
-                    fullTrace={fullTrace}
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                  />
-                ) : algoData.visualizer_config.type === "array" ? (
-                  <ArrayVisualizer
-                    algoData={algoData as any}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
-                    hasLogicSteps={hasLogicSteps}
-                    fullTrace={fullTrace}
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                  />
-                ) : (
-                  <BarsVisualizer
-                    algoData={algoData as any}
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    handlePrev={handlePrev}
-                    handleNext={handleNext}
-                    hasLogicSteps={hasLogicSteps}
-                    fullTrace={fullTrace}
-                    isPlaying={isPlaying}
-                    setIsPlaying={setIsPlaying}
-                  />
-                )}
-              </div>
-            </section>
-
-            <section id="analysis" className="mb-24">
-              <h2 className="section-title text-lg mb-6 uppercase tracking-widest font-black">Computational Analysis</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="border border-outline-variant/10 bg-surface-container-low p-8">
-                  <h3 className="font-mono text-[10px] uppercase font-black text-primary mb-4">Average Time Complexity</h3>
-                  <div className="math-display text-base md:text-lg">
-                    <BlockMath math={algoData.complexity.time.average} />
-                  </div>
-                </div>
-                {algoData.complexity.recurrence_relation && (
+              <section id="analysis" className="mb-24">
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Computational Analysis</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="border border-outline-variant/10 bg-surface-container-low p-8">
-                    <h3 className="font-mono text-[10px] uppercase font-black text-primary mb-4">Recurrence Relation</h3>
-                    <div className="math-display text-base md:text-lg">
-                      <BlockMath math={algoData.complexity.recurrence_relation} />
+                    <h3 className="font-mono text-[10px] uppercase font-black text-primary mb-4">Average Time Complexity</h3>
+                    <div className="text-base md:text-lg">
+                      <ScientificRenderer content={algoData.complexity.time.average} isBlock />
                     </div>
+                  </div>
+                  {algoData.complexity.recurrence_relation && (
+                    <div className="border border-outline-variant/10 bg-surface-container-low p-8">
+                      <h3 className="font-mono text-[10px] uppercase font-black text-primary mb-4">Recurrence Relation</h3>
+                      <div className="text-base md:text-lg">
+                        <ScientificRenderer content={algoData.complexity.recurrence_relation} isBlock />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {algoData.complexity.space.notes && (
+                  <div className="mt-8 border-l-2 border-primary/30 pl-6">
+                    <p className="font-serif text-sm italic text-on-surface-variant leading-relaxed">
+                      Note on Space Allocation: {algoData.complexity.space.notes}
+                    </p>
                   </div>
                 )}
-              </div>
-              
-              {/* Complexity Notes */}
-              {algoData.complexity.space.notes && (
-                <div className="mt-6 font-mono text-[10px] text-on-surface-variant opacity-60 uppercase tracking-widest leading-loose max-w-3xl">
-                  Note: {algoData.complexity.space.notes}
-                </div>
-              )}
-            </section>
-
-            <section id="logic" className="mb-24">
-              <h2 className="section-title text-lg mb-6 uppercase tracking-widest font-black">Procedural Logic</h2>
-              <div className="space-y-4">
-                {algoData.documentation.how_it_works.map((step, idx) => (
-                  <div key={idx} className="flex gap-6 items-start group">
-                    <span className="font-mono text-xs text-primary font-bold opacity-30 group-hover:opacity-100 transition-opacity">0{idx + 1}</span>
-                    <p className="body-copy text-sm italic">{step}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section id="implementation" className="mb-24">
-              <h2 className="section-title text-lg mb-6 uppercase tracking-widest font-black">Implementation</h2>
-              <div className="bg-surface-container-lowest border-2 border-primary/20 shadow-xl overflow-hidden mb-6">
-                <CodeVisualizer
-                  code={algoData.implementations[0].snippet}
-                  activeLine={logicStep?.state_snapshot?.activeLine ?? -1}
-                />
-              </div>
-              <p className="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest opacity-60">
-                {algoData.implementations[0].explanation}
-              </p>
-            </section>
-
-            {algoData.documentation.applications && (
-              <section id="applications" className="mb-24">
-                <h2 className="section-title text-lg mb-6 uppercase tracking-widest font-black">Real-world Applications</h2>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {algoData.documentation.applications.map((app, idx) => (
-                    <li key={idx} className="bg-surface-container-low p-6 border border-outline-variant/10 hover:border-primary/30 transition-colors">
-                      <p className="font-sans text-sm font-bold text-on-surface leading-snug">{app}</p>
-                    </li>
-                  ))}
-                </ul>
               </section>
-            )}
 
-            {algoData.documentation.comparisons && (
-              <section id="comparisons" className="mb-24">
-                <h2 className="section-title text-lg mb-6 uppercase tracking-widest font-black">Comparative Analysis</h2>
-                <div className="space-y-6">
-                  {algoData.documentation.comparisons.map((comp, idx) => (
-                    <div key={idx} className="border-l-4 border-primary pl-8 py-2">
-                      <h4 className="font-mono text-[10px] uppercase font-black text-primary mb-2">Alternative to: {comp.alternative_to.toUpperCase()}</h4>
-                      <p className="body-copy text-sm">{comp.reason}</p>
+              <section id="logic" className="mb-32">
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Procedural Methodology</h2>
+                <div className="space-y-12">
+                  {algoData.documentation.how_it_works.map((step, idx) => (
+                    <div key={idx} className="flex gap-10 items-start max-w-3xl group">
+                      <span className="font-mono text-xl text-primary font-black opacity-10 group-hover:opacity-100 transition-opacity duration-500">
+                        {(idx + 1).toString().padStart(2, '0')}
+                      </span>
+                      <div className="flex-1 pt-0.5">
+                        <p className="font-serif text-base md:text-lg text-on-surface leading-loose">
+                          <ScientificRenderer content={step} />
+                        </p>
+                      </div>
                     </div>
                   ))}
                 </div>
               </section>
-            )}
 
-            {algoData.citations && algoData.citations.length > 0 && (
-              <section id="citations" className="mb-24 border-t border-outline-variant/20 pt-12">
-                <h2 className="font-mono text-[10px] mb-8 uppercase tracking-[0.3em] font-black text-on-surface-variant">Academic References</h2>
-                <div className="space-y-6">
-                  {algoData.citations.map((cite, idx) => (
-                    <div key={idx} className="flex flex-col gap-1">
-                      <p className="font-sans text-sm font-bold text-black">{cite.source_name}</p>
-                      <p className="font-mono text-[10px] text-on-surface-variant uppercase tracking-wider">
-                        Authors: {cite.authors} // {cite.chapter_or_page}
+              <section id="implementation" className="mb-32">
+              <div className="flex items-center justify-between mb-12">
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black">Reference Implementation</h2>
+              </div>
+                <div className="bg-surface-container-lowest border border-outline-variant/10 shadow-2xl overflow-hidden mb-8">
+                  <CodeVisualizer
+                    code={algoData.implementations[0].snippet}
+                    activeLine={logicStep?.state_snapshot?.activeLine ?? -1}
+                  />
+                </div>
+                <div className="max-w-2xl border-l-2 border-primary/20 pl-6 py-1">
+                  <p className="font-serif text-sm italic text-on-surface-variant leading-relaxed">
+                    {algoData.implementations[0].explanation}
+                  </p>
+                </div>
+              </section>
+
+            {algoData.documentation.pitfalls && (
+              <section id="pitfalls" className="mb-32">
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Theoretical Constraints & Pitfalls</h2>
+                <div className="space-y-12">
+                  {algoData.documentation.pitfalls.map((pitfall, idx) => (
+                    <div key={idx} className="flex gap-10 items-start max-w-3xl group">
+                      <AcademicLabel prefix="TH-CST" index={idx + 1} className="shrink-0" />
+                      <p className="font-serif text-lg md:text-xl text-on-surface-variant leading-loose antialiased italic">
+                        <ScientificRenderer content={pitfall} />
                       </p>
                     </div>
                   ))}
@@ -312,29 +308,80 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
               </section>
             )}
 
-            <section id="benchmarks" className="mb-24">
-              <h2 className="section-title text-lg mb-6 uppercase tracking-widest font-black">Benchmarks</h2>
-              <div className="border-2 border-outline-variant/10 overflow-hidden">
-                <table className="w-full font-mono text-xs">
-                  <thead className="bg-primary/5 text-left text-primary">
-                    <tr>
-                      <th className="p-4 uppercase tracking-widest font-black">Input Size</th>
-                      <th className="p-4 uppercase tracking-widest font-black">Execution (ms)</th>
-                      <th className="p-4 uppercase tracking-widest font-black">Environment</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-outline-variant/10">
-                    {(algoData.benchmarks || []).map((benchmark: any, index: number) => (
-                      <tr key={index} className="bg-white hover:bg-primary/5 transition-colors">
-                        <td className="p-4">{benchmark.input_size.toLocaleString('en-US')}</td>
-                        <td className="p-4 font-bold text-primary">{benchmark.execution_time_ms}</td>
-                        <td className="p-4 opacity-50 uppercase text-[9px] tracking-widest">{benchmark.environment_specs}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {algoData.documentation.applications && (
+              <section id="applications" className="mb-32">
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Industrial Domain Applications</h2>
+                <div className="grid grid-cols-1 gap-y-12">
+                  {algoData.documentation.applications.map((app, idx) => (
+                    <div key={idx} className="flex gap-6 items-start group">
+                      <AcademicLabel prefix="APP-DMN" index={idx + 1} className="shrink-0" />
+                      <p className="font-serif text-base md:text-lg text-on-surface-variant leading-relaxed antialiased">
+                        <ScientificRenderer content={app} />
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Nomenclature Section */}
+            <section className="mb-32 border-t border-outline-variant/10 pt-16">
+              <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Technical Nomenclature</h2>
+              <div className="grid grid-cols-1 gap-y-10">
+                <div className="flex gap-6 items-center">
+                  <AcademicLabel prefix="TH-CST" />
+                  <p className="font-serif text-base md:text-lg text-on-surface-variant italic leading-relaxed">Theoretical Constraint: Denotes a mathematical or architectural limitation inherent to the algorithm's design.</p>
+                </div>
+                <div className="flex gap-6 items-center">
+                  <AcademicLabel prefix="APP-DMN" />
+                  <p className="font-serif text-base md:text-lg text-on-surface-variant italic leading-relaxed">Application Domain: Identifies specific industrial or computational environments where the algorithm is implemented.</p>
+                </div>
+                <div className="flex gap-6 items-center">
+                  <AcademicLabel prefix="CMP-ANL" />
+                  <p className="font-serif text-base md:text-lg text-on-surface-variant italic leading-relaxed">Comparative Analysis: Evaluates performance trade-offs between current and alternative algorithmic paradigms.</p>
+                </div>
               </div>
             </section>
+
+            {algoData.documentation.comparisons && (
+              <section id="comparisons" className="mb-32">
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Comparative Analysis</h2>
+                <div className="space-y-12">
+                  {algoData.documentation.comparisons.map((comp, idx) => (
+                    <div key={idx} className="flex gap-10 items-start max-w-3xl group">
+                      <AcademicLabel prefix="CMP-ANL" index={idx + 1} className="shrink-0" />
+                      <div className="flex-1 pt-0.5">
+                        <h4 className="font-sans text-lg font-bold text-black mb-4 flex items-center gap-4">
+                          <span className="material-symbols-outlined text-primary text-base">compare_arrows</span>
+                          Versus {comp.alternative_to.replace('-', ' ').toUpperCase()}
+                        </h4>
+                        <p className="font-serif text-base md:text-lg text-on-surface-variant leading-relaxed antialiased">
+                          <ScientificRenderer content={comp.reason} />
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {algoData.citations && algoData.citations.length > 0 && (
+              <section id="citations" className="mb-32 border-t border-outline-variant/20 pt-16">
+                <h2 className="font-sans text-xl font-black uppercase tracking-widest text-black mb-12">Academic Index & Citations</h2>
+                  <div className="space-y-10">
+                    {algoData.citations.map((cite, idx) => (
+                      <div key={idx} className="flex flex-col gap-2 max-w-2xl">
+                        <p className="font-serif text-lg md:text-xl font-bold text-black">{cite.source_name}</p>
+                        <p className="font-mono text-[10px] text-on-surface-variant uppercase tracking-widest leading-loose">
+                          Research Authors: {cite.authors}<br />
+                          Reference Node: {cite.chapter_or_page}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
           </div>
 
           {/* Right: Metrics Sidebar */}
