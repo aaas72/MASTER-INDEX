@@ -87,7 +87,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
     <div className="bg-surface min-h-screen" id="algorithm-report">
       <main className="mx-auto flex w-full max-w-[1700px] flex-col px-6 pb-24 pt-8 lg:px-12">
         {/* Unified Header Area: Breadcrumbs + Hero */}
-        <header className="mb-24 border-b border-outline-variant/10 pb-12">
+        <header className="mb-24 border-b border-outline-variant/10 pb-12 pt-12 bg-white -mx-6 px-6 lg:-mx-12 lg:px-12 shadow-[0_1px_3px_rgba(0,0,0,0,02)]">
           <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-12">
             <Link className="transition-colors hover:text-primary" href="/">
               INDEX
