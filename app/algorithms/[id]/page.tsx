@@ -93,6 +93,39 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
   return (
     <div className="bg-surface min-h-screen" id="algorithm-report">
       <main className="mx-auto flex w-full max-w-[1700px] flex-col px-6 pb-24 pt-8 lg:px-12">
+        {/* Top Header Area: Full Width */}
+        <header className="mb-12 border-b border-outline-variant/30 pb-4">
+          <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-8">
+            <Link className="transition-colors hover:text-primary" href="/">
+              INDEX
+            </Link>
+            <span className="text-outline">/</span>
+            <Link className="transition-colors hover:text-primary" href="/categories/sorting-search">
+              ALGORITHMS
+            </Link>
+            <span className="text-outline">/</span>
+            <span className="font-bold text-primary">
+              {algoData.metadata.title}
+            </span>
+          </div>
+        </header>
+
+        {/* Hero Section: Full Width */}
+        <header className="mb-24 relative">
+          <div className="flex flex-col gap-3">
+            <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
+              {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
+            </span>
+            <h1 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-black uppercase leading-[0.9] mb-2">
+              {algoData.metadata.title}<span className="text-primary">_</span>
+            </h1>
+            <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl">
+              {algoData.metadata.subtitle}
+            </p>
+          </div>
+        </header>
+
+        {/* Dynamic Layout: Sidebars start here */}
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Left: Table of Contents */}
           <aside className="hidden lg:block w-44 shrink-0 no-export">
@@ -101,35 +134,6 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
 
           {/* Center: Main Content */}
           <div className="min-w-0 flex-1">
-            <header className="mb-12 border-b border-outline-variant/30 pb-4">
-              <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-on-surface-variant mb-8">
-                <Link className="transition-colors hover:text-primary" href="/">
-                  INDEX
-                </Link>
-                <span className="text-outline">/</span>
-                <Link className="transition-colors hover:text-primary" href="/categories/sorting-search">
-                  ALGORITHMS
-                </Link>
-                <span className="text-outline">/</span>
-                <span className="font-bold text-primary">
-                  {algoData.metadata.title}
-                </span>
-              </div>
-            </header>
-              {/* Hero Section */}
-              <header className="mb-24 relative">
-                <div className="flex flex-col gap-3">
-                  <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
-                    {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
-                  </span>
-                  <h1 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-black uppercase leading-[0.9] mb-2">
-                    {algoData.metadata.title}<span className="text-primary">_</span>
-                  </h1>
-                  <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl">
-                    {algoData.metadata.subtitle}
-                  </p>
-                </div>
-              </header>
 
               {/* Description Section */}
               <section className="mb-24 max-w-3xl">
