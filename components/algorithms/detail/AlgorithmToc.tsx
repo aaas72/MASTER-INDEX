@@ -68,7 +68,7 @@ export default function AlgorithmToc() {
             key={section.id}
             href={`#${section.id}`}
             onClick={(e) => scrollToSection(e, section.id)}
-            className={`group pl-4 transition-colors duration-200 ${
+            className={`group pl-4 transition-colors duration-200 whitespace-nowrap ${
               activeSection === section.id
                 ? "border-l-[3px] border-primary font-bold text-primary"
                 : "border-l-[3px] border-transparent text-slate-500 hover:text-black"
