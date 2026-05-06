@@ -38,9 +38,9 @@ export const AcademicLabel: React.FC<AcademicLabelProps> = ({ prefix, index, cla
           <div className="bg-white text-on-surface p-4 text-[9px] font-mono leading-relaxed border border-outline-variant/30 shadow-2xl uppercase tracking-[0.15em]">
             <div className="mb-2 flex items-center gap-2 border-b border-outline-variant/10 pb-2 text-primary font-bold">
               <span className="material-symbols-outlined text-[10px]">info</span>
-              LEXICON // DEFINITION
+              LEXICON
             </div>
-            <p className="text-on-surface-variant leading-normal">
+            <p className="text-on-surface-variant leading-normal whitespace-normal">
               {info}
             </p>
           </div>
