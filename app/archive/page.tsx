@@ -2,11 +2,11 @@
 
 import { useState, useMemo } from "react";
 import { ArchiveSidebar } from "@/components/archive";
-import { SidebarLayout, BrutalistTable, type TableColumn } from "@/components/shared";
+import { SidebarLayout, BrutalistTable, type TableColumn, ScientificRenderer } from "@/components/shared";
 import { archive as t } from "@/locales/en/archive";
 import algorithmsData from "@/data/algorithms.json";
 import { Algorithm } from "@/types/algorithm";
-import { Search } from "lucide-react";
+import Link from "next/link";
 
 const typedAlgorithmsData = algorithmsData as unknown as Record<string, Algorithm>;
 
@@ -25,15 +25,15 @@ export default function ArchivePage() {
   const [selectedTaxonomies, setSelectedTaxonomies] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
-  // Transform real data
+  // Transform real data using correct DNA schema
   const allAlgorithms = useMemo(() => {
     return Object.entries(typedAlgorithmsData).map(([id, algo]) => ({
       id,
-      name: algo.metadata.title.en,
+      name: algo.metadata.title,
       cat: algo.metadata.category,
-      avg: algo.complexity.time.average.label,
-      worst: algo.complexity.time.worst.label,
-      space: algo.complexity.space.label,
+      avg: algo.complexity.time.average,
+      worst: algo.complexity.time.worst,
+      space: algo.complexity.space.average,
       tags: algo.metadata.tags,
     }));
   }, []);
@@ -71,9 +71,12 @@ export default function ArchivePage() {
       header: t.table.nomenclature, 
       key: "name",
       render: (item) => (
-        <span className="font-sans text-sm font-bold text-black transition-colors group-hover:text-primary-container">
+        <Link 
+          href={`/algorithms/${item.id}`}
+          className="font-sans text-sm font-bold text-black transition-colors hover:text-primary"
+        >
           {item.name}
-        </span>
+        </Link>
       )
     },
     { 
@@ -88,19 +91,27 @@ export default function ArchivePage() {
     { 
       header: t.table.avg_time, 
       key: "avg", 
-      align: "right",
       render: (item) => (
-        <span className="font-mono text-[10px] font-bold text-on-surface">
-          {item.avg}
-        </span>
+        <div className="font-mono text-xs text-on-surface">
+          <ScientificRenderer content={item.avg} />
+        </div>
       )
     },
+    { 
+        header: "SPACE", 
+        key: "space", 
+        render: (item) => (
+          <div className="font-mono text-xs text-on-surface">
+            <ScientificRenderer content={item.space} />
+          </div>
+        )
+      },
     { 
       header: t.table.status, 
       key: "status", 
       align: "right",
       render: () => (
-        <span className="font-mono text-[10px] font-bold text-primary-container uppercase">
+        <span className="font-mono text-[10px] font-bold text-primary/40 uppercase">
           {t.status_verified}
         </span>
       )
@@ -109,37 +120,41 @@ export default function ArchivePage() {
 
   return (
     <SidebarLayout>
-      <div className="flex gap-12">
-        <main className="flex-1 min-w-0">
-          <div className="flex justify-between items-end mb-10 pb-4 border-b border-outline-variant/20">
+      <div className="flex flex-col lg:flex-row gap-0">
+        <main className="flex-1 min-w-0 pr-12">
+          <div className="flex justify-between items-end mb-10 pb-4 border-b border-outline-variant/10">
             <div>
-              <h1 className="page-title-sm">
-                {t.results_found.replace('{count}', filteredAlgorithms.length.toString())}
+              <h1 className="font-sans text-3xl font-black text-black uppercase tracking-tight mb-2">
+                {t.index_title}
               </h1>
-              <p className="body-copy">{t.displaying_results}</p>
+              <p className="font-mono text-[10px] font-bold text-primary uppercase tracking-[0.2em]">
+                {t.results_found.replace('{count}', filteredAlgorithms.length.toString())}
+              </p>
             </div>
           </div>
 
           <BrutalistTable 
-            title={t.index_title} 
-            subtitle={t.index_subtitle}
             columns={columns}
             data={filteredAlgorithms}
+            className="border-none bg-transparent"
           />
         </main>
-        <ArchiveSidebar 
-          complexityOptions={filterOptions.complexities}
-          taxonomyOptions={filterOptions.taxonomies}
-          tagOptions={filterOptions.tags}
-          selectedComplexities={selectedComplexities}
-          selectedTaxonomies={selectedTaxonomies}
-          selectedTags={selectedTags}
-          onToggleComplexity={(v) => toggleFilter(selectedComplexities, setSelectedComplexities, v)}
-          onToggleTaxonomy={(v) => toggleFilter(selectedTaxonomies, setSelectedTaxonomies, v)}
-          onToggleTag={(v) => toggleFilter(selectedTags, setSelectedTags, v)}
-          onApply={handleClear}
-          isFiltered={(selectedComplexities.length > 0 || selectedTaxonomies.length > 0 || selectedTags.length > 0)}
-        />
+
+        <aside className="hidden lg:block w-80 shrink-0 border-l border-outline-variant/10 pl-10 no-export">
+            <ArchiveSidebar 
+            complexityOptions={filterOptions.complexities}
+            taxonomyOptions={filterOptions.taxonomies}
+            tagOptions={filterOptions.tags}
+            selectedComplexities={selectedComplexities}
+            selectedTaxonomies={selectedTaxonomies}
+            selectedTags={selectedTags}
+            onToggleComplexity={(v) => toggleFilter(selectedComplexities, setSelectedComplexities, v)}
+            onToggleTaxonomy={(v) => toggleFilter(selectedTaxonomies, setSelectedTaxonomies, v)}
+            onToggleTag={(v) => toggleFilter(selectedTags, setSelectedTags, v)}
+            onApply={handleClear}
+            isFiltered={(selectedComplexities.length > 0 || selectedTaxonomies.length > 0 || selectedTags.length > 0)}
+            />
+        </aside>
       </div>
     </SidebarLayout>
   );

@@ -118,7 +118,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
         {/* Dynamic Layout: Sidebars start here */}
         <div className="flex flex-col lg:flex-row gap-0">
           {/* Left: Table of Contents */}
-          <aside className="hidden lg:block w-64 shrink-0 border-r border-outline-variant/10 pr-10 no-export">
+          <aside className="hidden lg:block w-52 shrink-0 border-r border-outline-variant/10 pr-10 no-export">
             <AlgorithmToc />
           </aside>
 
