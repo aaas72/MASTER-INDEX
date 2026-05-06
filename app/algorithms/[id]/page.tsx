@@ -95,9 +95,9 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
       <main className="mx-auto flex w-full max-w-[1700px] flex-col px-6 pb-24 pt-8 lg:px-12">
         <div className="flex flex-col lg:flex-row gap-10">
           {/* Left: Table of Contents */}
-          <div className="hidden lg:block w-44 shrink-0 no-export">
+          <aside className="hidden lg:block w-44 shrink-0 no-export">
             <AlgorithmToc />
-          </div>
+          </aside>
 
           {/* Center: Main Content */}
           <div className="min-w-0 flex-1">
