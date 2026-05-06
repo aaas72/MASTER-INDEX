@@ -118,7 +118,6 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
             </header>
               {/* Hero Section */}
               <header className="mb-24 relative">
-                <div className="absolute -left-12 top-0 bottom-0 w-1 bg-primary opacity-10 hidden lg:block" />
                 <div className="flex flex-col gap-3">
                   <span className="font-mono text-[10px] uppercase font-black tracking-[0.4em] text-primary">
                     {algoData.metadata.category} // {algoData.metadata.stability?.toUpperCase()}
@@ -126,7 +125,7 @@ export default function AlgorithmDetailPage({ params }: { params: { id: string }
                   <h1 className="font-sans text-5xl md:text-7xl font-black tracking-tighter text-black uppercase leading-[0.9] mb-2">
                     {algoData.metadata.title}<span className="text-primary">_</span>
                   </h1>
-                  <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl border-l-4 border-outline-variant/20 pl-6 py-1">
+                  <p className="font-serif text-lg md:text-xl text-on-surface-variant italic leading-relaxed max-w-2xl">
                     {algoData.metadata.subtitle}
                   </p>
                 </div>
