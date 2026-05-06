@@ -6,17 +6,10 @@ import { notFound } from "next/navigation";
 import { BarsVisualizer, GraphVisualizer, LinkedListVisualizer, MatrixVisualizer, GeometryVisualizer, TreeVisualizer, ArrayVisualizer } from "@/components/algorithms/visualizers";
 import algorithmsData from "@/data/algorithms.json";
 import { AlgorithmToc, MetricsSidebar, CodeVisualizer } from "@/components/algorithms/detail";
-import { ScientificRenderer } from "@/components/shared";
+import { ScientificRenderer, AcademicLabel } from "@/components/shared";
 import { exportToPdf } from "@/utils/export-pdf";
 import { Algorithm } from "@/types/algorithm";
 import { generateSimulation } from "@/lib/engine/simulator";
-
-// Unified Academic Label Component
-const AcademicLabel = ({ prefix, index, className = "" }: { prefix: string, index?: number, className?: string }) => (
-  <span className={`inline-flex items-center gap-1 font-mono text-[9px] font-black uppercase tracking-widest px-2 py-1 bg-primary/5 text-primary border border-primary/10 ${className}`}>
-    {prefix}{index !== undefined && <span className="opacity-40">.{index.toString().padStart(2, '0')}</span>}
-  </span>
-);
 
 export default function AlgorithmDetailPage({ params }: { params: { id: string } }) {
   const algorithmId = params.id;

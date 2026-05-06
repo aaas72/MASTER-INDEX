@@ -10,3 +10,4 @@ export { default as BrutalistButton } from "./BrutalistButton";
 export { default as UnifiedFilterBar } from "./UnifiedFilterBar";
 export { default as ScientificRenderer } from "./ScientificRenderer";
 export { default as RouteChangeListener } from "./RouteChangeListener";
+export { AcademicLabel } from "./AcademicLabel";
