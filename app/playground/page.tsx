@@ -7,26 +7,13 @@ import HistorySlider from "@/components/playground/HistorySlider";
 import { DataVisualizer } from "@/components/visualizer";
 import algorithmsData from "@/data/algorithms.json";
 import { playground as t } from "@/locales/en/playground";
-import { Algorithm } from "@/types/algorithm";
+import { Algorithm, SimulationNode, SimulationEdge } from "@/types/algorithm";
 import { generateSimulation } from "@/lib/engine/simulator";
-
-type NodePoint = {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-};
-
-type Edge = {
-  from: string;
-  to: string;
-  weight?: number;
-};
 
 type Snapshot = {
   bars: number[];
-  nodes: NodePoint[];
-  edges: Edge[];
+  nodes: SimulationNode[];
+  edges: SimulationEdge[];
   matrix: (number|null)[][];
   linkedList: any[];
   opsCount: { comparisons: number; swaps: number; steps: number };
@@ -37,20 +24,20 @@ type Snapshot = {
 const ALGORITHM_OPTIONS = Object.keys(algorithmsData);
 
 const DEFAULT_ARRAY = [45, 12, 89, 34, 67, 23, 91, 56, 78, 10];
-const DEFAULT_NODES: NodePoint[] = [
-  { id: "n1", label: "N1", x: 1500, y: 1400 },
-  { id: "n2", label: "N2", x: 1700, y: 1450 },
-  { id: "n3", label: "N3", x: 1900, y: 1420 },
-  { id: "n4", label: "N4", x: 1600, y: 1650 },
-  { id: "n5", label: "N5", x: 1850, y: 1680 },
+const DEFAULT_NODES: SimulationNode[] = [
+  { id: "n1", label: "N1", x: 1500, y: 1400, state: "default" },
+  { id: "n2", label: "N2", x: 1700, y: 1450, state: "default" },
+  { id: "n3", label: "N3", x: 1900, y: 1420, state: "default" },
+  { id: "n4", label: "N4", x: 1600, y: 1650, state: "default" },
+  { id: "n5", label: "N5", x: 1850, y: 1680, state: "default" },
 ];
 
-const DEFAULT_EDGES: Edge[] = [
-  { from: "n1", to: "n2" },
-  { from: "n2", to: "n3" },
-  { from: "n1", to: "n4" },
-  { from: "n4", to: "n5" },
-  { from: "n3", to: "n5" },
+const DEFAULT_EDGES: SimulationEdge[] = [
+  { from: "n1", to: "n2", state: "default" },
+  { from: "n2", to: "n3", state: "default" },
+  { from: "n1", to: "n4", state: "default" },
+  { from: "n4", to: "n5", state: "default" },
+  { from: "n3", to: "n5", state: "default" },
 ];
 
 const parseInputArray = (rawInput: string, fallbackSize: number) => {
@@ -85,8 +72,8 @@ export default function PlaygroundPage() {
   const [dataSize, setDataSize] = useState(10);
   const [inputValue, setInputValue] = useState("[45, 12, 89, 34, 67, 23, 91, 56, 78, 10]");
   const [bars, setBars] = useState<number[]>(DEFAULT_ARRAY);
-  const [nodes, setNodes] = useState<NodePoint[]>(DEFAULT_NODES);
-  const [edges, setEdges] = useState<Edge[]>(DEFAULT_EDGES);
+  const [nodes, setNodes] = useState<SimulationNode[]>(DEFAULT_NODES);
+  const [edges, setEdges] = useState<SimulationEdge[]>(DEFAULT_EDGES);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
@@ -219,7 +206,7 @@ export default function PlaygroundPage() {
     return formattedLog;
   }, []);
 
-  const takeSnapshot = useCallback((line: number, currentBars: number[], currentNodes: NodePoint[], currentEdges: Edge[], currentOps: { comparisons: number; swaps: number; steps: number }, currentMatrix: (number|null)[][], currentLinkedList: any[], logMsg?: string) => {
+  const takeSnapshot = useCallback((line: number, currentBars: number[], currentNodes: SimulationNode[], currentEdges: SimulationEdge[], currentOps: { comparisons: number; swaps: number; steps: number }, currentMatrix: (number|null)[][], currentLinkedList: any[], logMsg?: string) => {
     const log = logMsg ? pushLog(logMsg) : (logs[0] || "");
     const newSnapshot: Snapshot = {
       bars: [...currentBars],
@@ -383,8 +370,8 @@ export default function PlaygroundPage() {
       ops = { ...ops, steps: ops.steps + 1 };
 
       if (step.array_state) setBars([...step.array_state]);
-      if (step.nodes_state) setNodes(step.nodes_state.map((n: any) => ({ id: n.id, label: n.label, x: n.x, y: n.y })));
-      if (step.edges_state) setEdges(step.edges_state.map((e: any) => ({ from: e.from, to: e.to, weight: e.weight })));
+      if (step.nodes_state) setNodes(step.nodes_state.map((n: any) => ({ id: n.id, label: n.label, x: n.x, y: n.y, state: n.state || "default" })));
+      if (step.edges_state) setEdges(step.edges_state.map((e: any) => ({ from: e.from, to: e.to, weight: e.weight, state: e.state || "default" })));
       if (step.matrix_state) setMatrix(step.matrix_state);
       if (step.linked_list_state) setLinkedList(step.linked_list_state);
 
@@ -393,8 +380,8 @@ export default function PlaygroundPage() {
       takeSnapshot(
         step.active_line ?? -1, 
         step.array_state || bars, 
-        step.nodes_state?.map((n: any) => ({ id: n.id, label: n.label, x: n.x, y: n.y })) || nodes, 
-        step.edges_state?.map((e: any) => ({ from: e.from, to: e.to, weight: e.weight })) || edges, 
+        step.nodes_state?.map((n: any) => ({ id: n.id, label: n.label, x: n.x, y: n.y, state: n.state || "default" })) || nodes, 
+        step.edges_state?.map((e: any) => ({ from: e.from, to: e.to, weight: e.weight, state: e.state || "default" })) || edges, 
         ops, 
         step.matrix_state || matrix,
         step.linked_list_state || linkedList,
@@ -425,7 +412,7 @@ export default function PlaygroundPage() {
     const canvasRect = canvasRef.current.getBoundingClientRect();
     const x = (event.clientX - canvasRect.left) / zoom;
     const y = (event.clientY - canvasRect.top) / zoom;
-    setNodes([...nodes, { id: `n${Date.now()}`, label: `N${nodes.length + 1}`, x, y }]);
+    setNodes([...nodes, { id: `n${Date.now()}`, label: `N${nodes.length + 1}`, x, y, state: "default" }]);
   };
 
   const onNodeClick = (nodeId: string) => {
@@ -434,7 +421,7 @@ export default function PlaygroundPage() {
     else if (selectedNodeId === nodeId) setSelectedNodeId(null);
     else {
       const exists = edges.some(e => (e.from === selectedNodeId && e.to === nodeId) || (e.from === nodeId && e.to === selectedNodeId));
-      if (!exists) setEdges([...edges, { from: selectedNodeId, to: nodeId }]);
+      if (!exists) setEdges([...edges, { from: selectedNodeId, to: nodeId, state: "default" }]);
       setSelectedNodeId(null);
     }
   };

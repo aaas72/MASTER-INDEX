@@ -69,14 +69,30 @@ export interface Algorithm {
   }[];
 }
 
+export interface SimulationNode {
+  id: string;
+  x: number;
+  y: number;
+  label: string;
+  state: "default" | "active" | "processing" | "visited" | string;
+}
+
+export interface SimulationEdge {
+  from: string;
+  to: string;
+  directed?: boolean;
+  weight?: number;
+  state: "default" | "active" | string;
+}
+
 /**
  * Unified interface for a single logical frame of simulation.
  */
 export interface LogicStep {
   description_en: string;
   array_state?: number[];
-  nodes_state?: any[];
-  edges_state?: any[];
+  nodes_state?: SimulationNode[];
+  edges_state?: SimulationEdge[];
   matrix_state?: (number | null)[][];
   linked_list_state?: { value: number | string; state?: string }[];
   pivot_index?: number | null;

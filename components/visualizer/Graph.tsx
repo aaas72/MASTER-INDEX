@@ -2,26 +2,11 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-
-interface Node {
-  id: string;
-  label: string;
-  x: number;
-  y: number;
-  state?: "default" | "active" | "visited" | "highlight";
-}
-
-interface Edge {
-  from: string;
-  to: string;
-  weight?: string | number;
-  directed?: boolean;
-  state?: "default" | "active" | "highlight";
-}
+import { SimulationNode, SimulationEdge } from "@/types/algorithm";
 
 interface GraphProps {
-  nodes: Node[];
-  edges: Edge[];
+  nodes: SimulationNode[];
+  edges: SimulationEdge[];
   width?: number | string;
   height?: number | string;
   targetNodeId?: string;
