@@ -61,6 +61,7 @@ const clamp = (value: number, min: number, max: number) =>
 
 export default function PlaygroundPage() {
   const SIDEBAR_WIDTH = 240;
+  const RIGHT_SIDEBAR_WIDTH = 340;
   const CONSOLE_HEADER_HEIGHT = 40;
   const CONSOLE_BODY_HEIGHT = 160;
 
@@ -76,6 +77,7 @@ export default function PlaygroundPage() {
   const [edges, setEdges] = useState<SimulationEdge[]>(DEFAULT_EDGES);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true);
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
 
   const [opsCount, setOpsCount] = useState({ comparisons: 0, swaps: 0, steps: 0 });
@@ -454,6 +456,7 @@ export default function PlaygroundPage() {
 
   const consoleHeight = isConsoleOpen ? CONSOLE_HEADER_HEIGHT + CONSOLE_BODY_HEIGHT : CONSOLE_HEADER_HEIGHT;
   const currentSidebarWidth = isSidebarOpen ? SIDEBAR_WIDTH : 0;
+  const currentRightSidebarWidth = isRightSidebarOpen ? RIGHT_SIDEBAR_WIDTH : 0;
   const selectedNode = useMemo(() => nodes.find(n => n.id === selectedNodeId), [nodes, selectedNodeId]);
 
   return (
@@ -591,8 +594,8 @@ export default function PlaygroundPage() {
 
       <main
         ref={viewportRef}
-        className="fixed right-0 top-16 overflow-hidden transition-all duration-300 ease-in-out"
-        style={{ left: `${currentSidebarWidth}px`, bottom: `${consoleHeight}px` }}
+        className="fixed top-16 overflow-hidden transition-all duration-300 ease-in-out"
+        style={{ left: `${currentSidebarWidth}px`, right: `${currentRightSidebarWidth}px`, bottom: `${consoleHeight}px` }}
       >
         <DataVisualizer.InfiniteCanvas gridSize={30} initialZoom={zoom}>
           {renderVisualizer()}
@@ -627,23 +630,13 @@ export default function PlaygroundPage() {
               </AnimatePresence>
             </div>
           </motion.div>
-
-          {currentAlgoData && currentAlgoData.implementations && currentAlgoData.implementations[0] && (
-            <div className="w-[320px] h-[360px] shadow-2xl">
-              <CodePanel
-                code={currentAlgoData.implementations[0].snippet}
-                activeLine={activeLine}
-                language={currentAlgoData.implementations[0].language}
-              />
-            </div>
-          )}
         </div>
 
         <div
           className="fixed z-40 transition-all duration-300 ease-in-out"
           style={{
             left: `${currentSidebarWidth + 24}px`,
-            right: "24px",
+            right: `${currentRightSidebarWidth + 24}px`,
             bottom: `${consoleHeight + 24}px`
           }}
         >
@@ -655,6 +648,28 @@ export default function PlaygroundPage() {
           />
         </div>
       </main>
+
+      <aside
+        className={`fixed right-0 top-16 border-l border-[#C4C5D6] bg-[#0A1022] transition-transform duration-300 ease-in-out z-30 ${isRightSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}
+        style={{ width: `${RIGHT_SIDEBAR_WIDTH}px`, bottom: `${consoleHeight}px` }}
+      >
+        <button
+          onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+          className={`absolute top-1/2 -left-6 -translate-y-1/2 w-6 h-12 bg-[#0A1022] border border-[#C4C5D6] border-r-0 rounded-l-md flex items-center justify-center text-[#D5E2FF] shadow-sm hover:bg-slate-900 z-50`}
+        >
+          <span className="material-symbols-outlined text-[18px]">
+            {isRightSidebarOpen ? 'chevron_right' : 'chevron_left'}
+          </span>
+        </button>
+
+        {currentAlgoData && currentAlgoData.implementations && currentAlgoData.implementations[0] && (
+          <CodePanel
+            code={currentAlgoData.implementations[0].snippet}
+            activeLine={activeLine}
+            language={currentAlgoData.implementations[0].language}
+          />
+        )}
+      </aside>
 
       <section
         className={`fixed bottom-0 right-0 z-50 border-l border-[#C4C5D6] bg-[#0B1226] transition-all duration-300 ease-in-out`}
