@@ -25,7 +25,7 @@ export const Bars = React.memo(({
   const maxVal = Math.max(...data, 1);
 
   return (
-    <div 
+    <div
       className="flex items-end gap-1 px-8 pb-8 relative group"
       style={{ width, height }}
     >
@@ -37,7 +37,7 @@ export const Bars = React.memo(({
 
         let bgColor = "bg-[#DCE6FF]";
         let borderColor = "border-[#C4C5D6]";
-        
+
         if (isSwapping) {
           bgColor = "bg-[#FFD2D2]";
           borderColor = "border-[#FF0000]";
@@ -63,7 +63,7 @@ export const Bars = React.memo(({
                 {val}
               </span>
             )}
-            
+
             {/* Index Tooltip on Hover */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
               <span className="bg-black text-white text-[8px] px-1 font-mono">i:{idx}</span>
