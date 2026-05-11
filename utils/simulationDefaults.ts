@@ -1,8 +1,7 @@
 import { Algorithm } from "@/types/algorithm";
 
 export function getInitialState(algoData: Algorithm) {
-  const { type, initial_pattern, engine_params } = algoData.visualizer_config;
-  const size = engine_params.default_size || 10;
+  const { type, default_data_pattern: initial_pattern, default_data_size: size } = algoData.visualizer_config;
 
   switch (type) {
     case "bars":

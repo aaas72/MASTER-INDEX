@@ -4,7 +4,6 @@ import { Algorithm } from "@/types/algorithm";
 
 export default function AlgorithmTable({ categorySlug }: { categorySlug?: string }) {
   let algorithms = Object.entries(algorithmsData).map(([id, data]) => ({
-    id,
     ...data,
   })) as unknown as (Algorithm & { id: string })[];
 
@@ -38,12 +37,12 @@ export default function AlgorithmTable({ categorySlug }: { categorySlug?: string
                 </td>
                 <td className="px-6 py-5 font-sans text-sm font-bold text-black transition-colors group-hover:text-primary-container">
                   <Link href={`/algorithms/${algo.id}`} className="hover:underline">
-                    {algo.metadata.title.en}
+                    {algo.metadata.title}
                   </Link>
                 </td>
                 <td className="px-6 py-5 text-center">
                   <span className="inline-block bg-primary-fixed px-2 py-1 font-mono text-[10px] font-bold text-[#001355]">
-                    {algo.complexity.time.average.label}
+                    {algo.complexity.time.average}
                   </span>
                 </td>
                 <td className="px-6 py-5 text-right font-mono text-[10px] font-bold text-primary-container">

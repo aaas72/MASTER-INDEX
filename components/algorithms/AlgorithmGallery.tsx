@@ -17,11 +17,11 @@ export default function AlgorithmGallery() {
   const allAlgorithms = useMemo(() => {
     return Object.entries(typedAlgorithmsData).map(([id, algo]) => ({
       id,
-      name: algo.metadata.title.en,
+      name: algo.metadata.title,
       cat: algo.metadata.category,
-      avg: algo.complexity.time.average.label,
+      avg: algo.complexity.time.average,
       tags: algo.metadata.tags,
-      subtitle: algo.metadata.subtitle.en,
+      subtitle: algo.metadata.subtitle,
     }));
   }, []);
 
