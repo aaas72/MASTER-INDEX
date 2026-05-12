@@ -68,5 +68,272 @@
         "chapter_or_page": "Chapter 7: Quicksort, Sections 7.1 - 7.4"
       }
     ]
+  },
+  "merge-sort": {
+    "id": "merge-sort",
+    "metadata": {
+      "title": "Merge Sort",
+      "subtitle": "Stable, divide-and-conquer sorting algorithm",
+      "category": "Sorting",
+      "tags": ["Divide & Conquer", "Stable", "Sorting", "Recursive"],
+      "stability": "stable"
+    },
+    "complexity": {
+      "time": {
+        "best": "\\Theta(n \\log n)",
+        "average": "\\Theta(n \\log n)",
+        "worst": "\\Theta(n \\log n)",
+        "worst_weight": 0
+      },
+      "space": {
+        "average": "\\Theta(n)",
+        "notes": "Requires additional $\\Theta(n)$ space for temporary arrays during the merge step."
+      },
+      "recurrence_relation": "$T(n) = 2T(n/2) + \\Theta(n)$"
+    },
+    "documentation": {
+      "description": "Merge sort is an efficient, stable, comparison-based sorting algorithm that uses the divide-and-conquer paradigm. It divides the array into halves, sorts them, and then merges the sorted halves.",
+      "how_it_works": [
+        "Divide: Divide the n-element sequence to be sorted into two subsequences of n/2 elements each.",
+        "Conquer: Sort the two subsequences recursively using merge sort.",
+        "Combine: Merge the two sorted subsequences to produce the sorted answer."
+      ],
+      "applications": [
+        "Used when stability is required (equal elements maintain their relative order).",
+        "External sorting where data doesn't fit in memory.",
+        "Linked list sorting (can be implemented with O(1) extra space)."
+      ],
+      "pitfalls": [
+        "Higher space complexity compared to Quicksort or Heapsort.",
+        "Not in-place for arrays."
+      ],
+      "comparisons": [
+        {
+          "alternative_to": "quick-sort",
+          "reason": "Merge sort guarantees O(n log n) even in the worst case, whereas Quick Sort can degrade to O(n^2). However, Quick Sort is usually faster in practice due to lower overhead."
+        }
+      ]
+    },
+    "implementations": [
+      {
+        "language": "pseudocode",
+        "snippet": "MERGE-SORT(A, p, r)\n  if p < r\n    q = floor((p + r) / 2)\n    MERGE-SORT(A, p, q)\n    MERGE-SORT(A, q + 1, r)\n    MERGE(A, p, q, r)",
+        "explanation": "Classic recursive structure for Merge Sort."
+      }
+    ],
+    "visualizer_config": {
+      "type": "bars",
+      "default_data_size": 50,
+      "default_data_pattern": "random",
+      "complexity_level": "intermediate"
+    },
+    "citations": [
+      {
+        "source_name": "Introduction to Algorithms, Third Edition (CLRS)",
+        "authors": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
+        "chapter_or_page": "Chapter 2: Getting Started, Section 2.3"
+      }
+    ]
+  },
+  "binary-search": {
+    "id": "binary-search",
+    "metadata": {
+      "title": "Binary Search",
+      "subtitle": "Search a sorted array by repeatedly dividing the search interval in half",
+      "category": "Searching",
+      "tags": ["Search", "Sorted Data", "Logarithmic"],
+      "stability": "n/a"
+    },
+    "complexity": {
+      "time": {
+        "best": "\\Theta(1)",
+        "average": "\\Theta(\\log n)",
+        "worst": "\\Theta(\\log n)",
+        "worst_weight": 0
+      },
+      "space": {
+        "average": "\\Theta(1)",
+        "notes": "Iterative implementation uses constant space. Recursive uses $O(\\log n)$ stack space."
+      },
+      "recurrence_relation": "$T(n) = T(n/2) + \\Theta(1)$"
+    },
+    "documentation": {
+      "description": "Binary search is an efficient algorithm for finding an item from a sorted list of items. It works by repeatedly dividing in half the portion of the list that could contain the item, until you've narrowed down the possible locations to just one.",
+      "how_it_works": [
+        "Compare the target value to the middle element of the array.",
+        "If they are equal, the search is successful and the index is returned.",
+        "If the target is less than the middle element, repeat the search on the left half.",
+        "If the target is greater than the middle element, repeat the search on the right half."
+      ],
+      "applications": [
+        "Searching in sorted arrays or lists.",
+        "Finding roots of functions (Bisection method).",
+        "Debugging (Git bisect)."
+      ],
+      "pitfalls": [
+        "Only works on sorted data.",
+        "Integer overflow when calculating mid: `(low + high) / 2` should be `low + (high - low) / 2`."
+      ],
+      "comparisons": [
+        {
+          "alternative_to": "linear-search",
+          "reason": "Linear search is O(n) while Binary search is O(log n). For large datasets, Binary search is significantly faster."
+        }
+      ]
+    },
+    "implementations": [
+      {
+        "language": "cpp",
+        "snippet": "int binarySearch(int arr[], int low, int high, int x) {\n    while (low <= high) {\n        int mid = low + (high - low) / 2;\n        if (arr[mid] == x) return mid;\n        if (arr[mid] < x) low = mid + 1;\n        else high = mid - 1;\n    }\n    return -1;\n}",
+        "explanation": "Iterative implementation avoiding integer overflow."
+      }
+    ],
+    "visualizer_config": {
+      "type": "searching-array",
+      "default_data_size": 20,
+      "default_data_pattern": "sorted",
+      "complexity_level": "beginner"
+    },
+    "citations": [
+      {
+        "source_name": "The Art of Computer Programming",
+        "authors": "Donald Knuth",
+        "chapter_or_page": "Volume 3: Sorting and Searching, Section 6.2.1"
+      }
+    ]
+  },
+  "dijkstra": {
+    "id": "dijkstra",
+    "metadata": {
+      "title": "Dijkstra's Algorithm",
+      "subtitle": "Single-source shortest path algorithm for graphs with non-negative edge weights",
+      "category": "Graphs",
+      "tags": ["Graph", "Shortest Path", "Greedy"],
+      "stability": "n/a"
+    },
+    "complexity": {
+      "time": {
+        "best": "O(V + E \\log V)",
+        "average": "O(E \\log V)",
+        "worst": "O(E \\log V)",
+        "worst_weight": 0
+      },
+      "space": {
+        "average": "\\Theta(V)",
+        "notes": "Requires space for distance array and priority queue."
+      },
+      "recurrence_relation": "n/a"
+    },
+    "documentation": {
+      "description": "Dijkstra's algorithm finds the shortest path from a starting node to all other nodes in a weighted graph with non-negative edge weights.",
+      "how_it_works": [
+        "Initialize distances to all nodes as infinity, except the source node (0).",
+        "Insert all nodes into a priority queue based on distance.",
+        "While the queue is not empty, extract the node with the minimum distance.",
+        "For each neighbor, update its distance if a shorter path is found (Relaxation)."
+      ],
+      "applications": [
+        "GPS and Navigation systems.",
+        "Network routing protocols (OSPF).",
+        "Social networks (finding degrees of separation)."
+      ],
+      "pitfalls": [
+        "Does not work with negative edge weights (use Bellman-Ford instead).",
+        "Performance depends heavily on the priority queue implementation (Fibonacci heap vs Binary heap)."
+      ],
+      "comparisons": [
+        {
+          "alternative_to": "bfs",
+          "reason": "BFS works for shortest paths only in unweighted graphs. Dijkstra handles weighted graphs."
+        }
+      ]
+    },
+    "implementations": [
+      {
+        "language": "python",
+        "snippet": "import heapq\n\ndef dijkstra(graph, start):\n    distances = {node: float('inf') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    \n    while pq:\n        curr_dist, curr_node = heapq.heappop(pq)\n        if curr_dist > distances[curr_node]: continue\n        \n        for neighbor, weight in graph[curr_node].items():\n            distance = curr_dist + weight\n            if distance < distances[neighbor]:\n                distances[neighbor] = distance\n                heapq.heappush(pq, (distance, neighbor))\n    return distances",
+        "explanation": "Python implementation using heapq for the priority queue."
+      }
+    ],
+    "visualizer_config": {
+      "type": "graph",
+      "default_data_size": 10,
+      "default_data_pattern": "random-weighted",
+      "complexity_level": "advanced"
+    },
+    "citations": [
+      {
+        "source_name": "A Note on Two Problems in Connexion with Graphs",
+        "authors": "Edsger W. Dijkstra",
+        "chapter_or_page": "Numerische Mathematik 1, 269–271 (1959)"
+      }
+    ]
+  },
+  "fibonacci-dp": {
+    "id": "fibonacci-dp",
+    "metadata": {
+      "title": "Fibonacci (DP)",
+      "subtitle": "Calculating Fibonacci numbers using Dynamic Programming (Memoization/Tabulation)",
+      "category": "Dynamic Programming",
+      "tags": ["DP", "Recursion", "Mathematics", "Optimization"],
+      "stability": "n/a"
+    },
+    "complexity": {
+      "time": {
+        "best": "\\Theta(n)",
+        "average": "\\Theta(n)",
+        "worst": "\\Theta(n)",
+        "worst_weight": 0
+      },
+      "space": {
+        "average": "\\Theta(n)",
+        "notes": "Tabulation uses O(n) space. Optimized iterative version uses O(1)."
+      },
+      "recurrence_relation": "$F(n) = F(n-1) + F(n-2)$"
+    },
+    "documentation": {
+      "description": "Calculating the nth Fibonacci number efficiently using Dynamic Programming to avoid redundant calculations of subproblems.",
+      "how_it_works": [
+        "Identify the recurrence relation: F(n) = F(n-1) + F(n-2).",
+        "Memoization (Top-Down): Store results of subproblems in a map/array during recursion.",
+        "Tabulation (Bottom-Up): Fill an array from 0 to n sequentially."
+      ],
+      "applications": [
+        "Sequence prediction.",
+        "Financial modeling.",
+        "Introduction to Dynamic Programming concepts."
+      ],
+      "pitfalls": [
+        "Plain recursion is O(2^n) - extremely slow for large n.",
+        "Integer overflow happens very quickly for Fibonacci numbers (needs BigInt for large n)."
+      ],
+      "comparisons": [
+        {
+          "alternative_to": "recursive-fibonacci",
+          "reason": "DP reduces the complexity from exponential O(2^n) to linear O(n)."
+        }
+      ]
+    },
+    "implementations": [
+      {
+        "language": "javascript",
+        "snippet": "function fib(n) {\n    if (n <= 1) return n;\n    let table = new Array(n + 1).fill(0);\n    table[1] = 1;\n    for (let i = 2; i <= n; i++) {\n        table[i] = table[i - 1] + table[i - 2];\n    }\n    return table[n];\n}",
+        "explanation": "Bottom-up tabulation approach in JavaScript."
+      }
+    ],
+    "visualizer_config": {
+      "type": "dp-table",
+      "default_data_size": 15,
+      "default_data_pattern": "sequential",
+      "complexity_level": "beginner"
+    },
+    "citations": [
+      {
+        "source_name": "Introduction to Algorithms, Third Edition (CLRS)",
+        "authors": "Thomas H. Cormen, Charles E. Leiserson, Ronald L. Rivest, Clifford Stein",
+        "chapter_or_page": "Chapter 15: Dynamic Programming"
+      }
+    ]
   }
+
 }

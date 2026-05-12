@@ -6,9 +6,19 @@ import { Header, Footer, RouteChangeListener } from "@/components/shared";
 export default function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   
-  // Hide Footer on Playground, but keep Header
+  // Dashboard has its own completely independent layout
+  const isDashboard = pathname?.startsWith("/dashboard");
   const isPlayground = pathname === "/playground";
   const isNotFound = pathname === "/not-found";
+
+  if (isDashboard) {
+    return (
+      <>
+        <RouteChangeListener />
+        {children}
+      </>
+    );
+  }
 
   if (isPlayground) {
     return (
