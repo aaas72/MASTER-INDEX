@@ -55,7 +55,45 @@ const STRUCTURAL_SIMULATORS: Record<string, () => LogicStep[]> = {
   "singly-linked-list": simulateLinkedList,
 };
 
-import { validateTrace } from "./validator";
+import algorithmsData from "@/data/algorithms.json";
+
+/**
+ * DYNAMIC SIMULATION ENGINE (DSL Interpreter)
+ */
+function simulateDynamic(algorithmId: string, initialData?: number[]): LogicStep[] {
+  const algo = (algorithmsData as any)[algorithmId];
+  if (!algo || !algo.logic || !algo.logic.steps) return [];
+
+  const data = initialData && initialData.length > 0 ? initialData : [10, 20, 30, 40, 50];
+  
+  // Transform JSON steps into LogicStep trace
+  return algo.logic.steps.map((step: any) => {
+    const logicStep: LogicStep = {
+      description_en: step.description_en || `Executing ${step.action}`,
+      active_line: step.active_line || -1,
+    };
+
+    // Apply DSL actions to state
+    switch (step.action) {
+      case "HIGHLIGHT":
+        logicStep.highlighted_indices = step.params.indices;
+        break;
+      case "COMPARE":
+        logicStep.comparing_indices = step.params.indices;
+        break;
+      case "SWAP":
+        // This is a simplified mock of the state change
+        logicStep.description_en += ` (Indices ${step.params.indices[0]} and ${step.params.indices[1]})`;
+        break;
+      default:
+        break;
+    }
+
+    // Pass through data state
+    logicStep.array_state = data; 
+    return logicStep;
+  });
+}
 
 /**
  * Generate a full simulation trace for any algorithm.
@@ -68,19 +106,22 @@ export function generateSimulation(algorithmId: string, initialData?: number[]):
   let steps: LogicStep[] = [];
   let inputForValidation: any = null;
 
-  // 1. Check structural simulators (no array data needed)
-  if (STRUCTURAL_SIMULATORS[algorithmId]) {
+  // 1. Check for DYNAMIC logic in JSON first
+  const algo = (algorithmsData as any)[algorithmId];
+  if (algo?.logic?.steps) {
+    steps = simulateDynamic(algorithmId, initialData);
+  }
+  // 2. Check structural simulators (no array data needed)
+  else if (STRUCTURAL_SIMULATORS[algorithmId]) {
     steps = STRUCTURAL_SIMULATORS[algorithmId]();
   }
-
-  // 2. Check array-based simulators
+  // 3. Check array-based simulators
   else if (SIMULATORS[algorithmId]) {
     const data = initialData && initialData.length > 0 ? initialData : getDefaultData(algorithmId);
     inputForValidation = data;
     steps = SIMULATORS[algorithmId](data);
   }
-
-  // 3. Fallback: return a minimal single-step trace
+  // 4. Fallback: return a minimal single-step trace
   else {
     steps = [{ description_en: `Simulation for "${algorithmId}" is not yet implemented.`, active_line: -1 }];
   }

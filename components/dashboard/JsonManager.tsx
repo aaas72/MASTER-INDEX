@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import algorithmsData from '@/data/algorithms.json';
+import { AlgorithmSchema } from '@/lib/schemas/algorithm';
+import { z } from 'zod';
 
 type Algorithm = any;
 
@@ -46,12 +48,19 @@ export const JsonManager = () => {
   }, [selectedId, algos]);
 
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setJsonText(e.target.value);
+    const value = e.target.value;
+    setJsonText(value);
     try {
-      JSON.parse(e.target.value);
-      setError(null);
+      const parsed = JSON.parse(value);
+      const result = AlgorithmSchema.safeParse(parsed);
+      if (!result.success) {
+        const firstError = result.error.errors[0];
+        setError(`${firstError.path.join('.')}: ${firstError.message}`);
+      } else {
+        setError(null);
+      }
     } catch (err: any) {
-      setError(err.message);
+      setError(`JSON Syntax: ${err.message}`);
     }
   };
 
@@ -74,11 +83,19 @@ export const JsonManager = () => {
     if (error) return;
     try {
       const parsed = JSON.parse(jsonText);
-      const newAlgos = { ...algos, [selectedId!]: parsed };
+      const result = AlgorithmSchema.safeParse(parsed);
+      
+      if (!result.success) {
+        const firstError = result.error.errors[0];
+        setError(`${firstError.path.join('.')}: ${firstError.message}`);
+        return;
+      }
+
+      const newAlgos = { ...algos, [selectedId!]: result.data };
       setAlgos(newAlgos);
-      alert("Changes applied to UI state. Please ask the AI to update the actual 'algorithms.json' file with these changes.");
+      alert("Validation Successful. Changes applied to UI state. Please ask the AI to update the actual 'algorithms.json' file.");
     } catch (err) {
-      setError("Invalid JSON structure.");
+      setError("Critical: Invalid JSON structure.");
     }
   };
 
