@@ -4,6 +4,7 @@ import { simulateBinarySearch, simulateLinearSearch, simulateJumpSearch } from "
 import { simulateBFS, simulateDFS, simulateDijkstra } from "./simulators/graph";
 import { simulateFibonacciDP, simulateKnapsack, simulateLCS } from "./simulators/dp";
 import { simulateBSTInsertion, simulateInorderTraversal, simulateMaxHeapify, simulateLinkedList } from "./simulators/structures";
+import { validateTrace } from "./validator";
 
 /**
  * MASTER SIMULATION ENGINE
@@ -76,7 +77,7 @@ function simulateDynamic(algorithmId: string, initialData?: number[]): LogicStep
     // Apply DSL actions to state
     switch (step.action) {
       case "HIGHLIGHT":
-        logicStep.highlighted_indices = step.params.indices;
+        logicStep.highlight_indices = step.params.indices;
         break;
       case "COMPARE":
         logicStep.comparing_indices = step.params.indices;

@@ -98,6 +98,7 @@ export interface LogicStep {
   pivot_index?: number | null;
   partition_range?: [number, number] | null;
   highlight_indices?: number[];
+  comparing_indices?: number[];
   active_line?: number;
   pointers?: Record<string, number>;
 }
